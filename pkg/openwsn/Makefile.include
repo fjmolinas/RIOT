@@ -1,0 +1,2 @@
+INCLUDES += -I$(RIOTBASE)/pkg/openwsn/include \
+            -I$(PKGDIRBASE)/openwsn/src/include
