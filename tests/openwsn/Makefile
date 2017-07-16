@@ -1,7 +1,7 @@
-APPLICATION = openwsn
+APPLICATION = openwsn_test
 include ../Makefile.tests_common
 
-USEMODULE += openwsn
 USEPKG += openwsn
+USEMODULE += openwsn
 
 include $(RIOTBASE)/Makefile.include

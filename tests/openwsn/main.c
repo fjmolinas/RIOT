@@ -20,11 +20,13 @@
  */
 
 #include <stdio.h>
-#include "inc/opendefs.h"
-#include "openstack/openstack.h"
+#include "opendefs.h"
+#include "04-TRAN/openudp.h"
 
 int main(void)
 {
+
+    openudp_init();
     puts("Hello World!");
 
     printf("You are running RIOT on a(n) %s board.\n", RIOT_BOARD);
