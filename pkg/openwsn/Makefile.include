@@ -1,2 +1,1 @@
-INCLUDES += -I$(RIOTBASE)/pkg/openwsn/include \
-            -I$(PKGDIRBASE)/openwsn/src/include
+INCLUDES += -I$(BINDIRBASE)/pkg/$(BOARD)/openwsn-fw \
