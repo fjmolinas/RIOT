@@ -1,1 +1,8 @@
-INCLUDES += -I$(BINDIRBASE)/pkg/$(BOARD)/openwsn-fw \
+INCLUDES += -I$(PKGDIRBASE)/openwsn-fw \
+      -I$(PKGDIRBASE)/openwsn-fw/openstack \
+      -I$(PKGDIRBASE)/openwsn-fw/kernel \
+      -I$(PKGDIRBASE)/openwsn-fw/inc \
+      -I$(PKGDIRBASE)/openwsn-fw/bsp/boards/ \
+      -I$(PKGDIRBASE)/openwsn-fw/bsp/boards/common \
+      -I$(PKGDIRBASE)/openwsn-fw/bsp/boards/riot-adaption \
+			-I$(PKGDIRBASE)/openwsn-fw/openstack/04-TRAN \
