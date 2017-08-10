@@ -42,6 +42,11 @@ void pm_reboot(void);
 void pm_off(void);
 
 /**
+* Function set for test
+*/
+void pm_set(unsigned mode);
+
+/**
  * @brief   Switches the MCU to the lowest possible power mode
  *
  * This function will be called by the idle thread.
