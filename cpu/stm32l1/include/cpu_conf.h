@@ -8,7 +8,7 @@
 
 /**
  * @defgroup        cpu_stm32l1 STM32L1
- * @brief           CPU specific implementations for the STM32F1
+ * @brief           CPU specific implementations for the STM32L1
  * @ingroup         cpu
  * @{
  *
@@ -24,6 +24,8 @@
 #include "cpu_conf_common.h"
 
 #include "vendor/stm32l1xx.h"
+
+#define CPU_NUMBER_OF_PORTS 6
 
 #ifdef __cplusplus
 extern "C" {
