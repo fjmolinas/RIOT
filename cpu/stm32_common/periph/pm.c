@@ -25,11 +25,64 @@
 
 #include "irq.h"
 #include "periph/pm.h"
-#include "periph/gpio.h"
-#include "board.h"
 
+#include "cpu.h" // For numbers of ports
 #define ENABLE_DEBUG (0)
 #include "debug.h"
+
+
+/* Variables definitions to LPM */
+static uint32_t ahb_gpio_clocks;
+static uint32_t tmpreg;
+static uint16_t lpm_portmask_system[CPU_NUMBER_OF_PORTS] = { 0 };
+static uint16_t lpm_portmask_user[CPU_NUMBER_OF_PORTS] = { 0 };
+
+
+
+void lpm_before_i_go_to_sleep(void){
+    uint8_t i;
+    uint8_t p;
+    uint32_t mask;
+    GPIO_TypeDef *port;
+
+    /* save GPIO clock configuration */
+    ahb_gpio_clocks = RCC->AHBENR & 0xFF;
+    /* enable all GPIO clocks */
+    periph_clk_en(AHB, 0xFF);
+    
+    for (i = 0; i < CPU_NUMBER_OF_PORTS; i++) {
+        port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
+        mask = 0xFFFFFFFF;
+        
+        for (p = 0; p < 16; p ++) {
+            /* exclude GPIOs registered for external interrupts */
+            /* they may be used as wakeup sources */
+            if (EXTI->IMR & (1 << p)) {
+                if (((SYSCFG->EXTICR[p >> 2]) >> ((p & 0x03) * 4)) == i) {
+                    mask &= ~((uint32_t)0x03 << (p*2));
+                }
+            }
+            
+            /* exclude GPIOs we previously set with pin_set */
+            if ((lpm_portmask_system[i] | lpm_portmask_user[i]) & (1 << p)) {
+                mask &= ~((uint32_t)0x03 << (p*2));
+            }
+        }
+
+        /* disable pull-ups on GPIOs */
+        tmpreg = port->PUPDR;
+        tmpreg &= ~mask;
+        port->PUPDR = tmpreg;
+        
+        /* set GPIOs to AIN mode */
+        tmpreg = port->MODER;
+        tmpreg |= mask;
+        port->MODER = tmpreg;
+        
+        /* set lowest speed */
+        port->OSPEEDR = 0;
+    }
+}
 
 
 void pm_set(unsigned mode)
@@ -60,19 +113,16 @@ void pm_set(unsigned mode)
 
 #if defined(CPU_FAM_STM32L1)
     switch (mode) {
-        case 0:         /* Stand by mode */
-
-            /* Clear Wakeup flag */    
-            PWR->CR |= PWR_CR_CWUF;
-        
-            /* Select STANDBY mode */
-            PWR->CR |= PWR_CR_PDDS;
-
+        case 0:             /* Stand by mode */
             /* Set SLEEPDEEP bit of Cortex System Control Register */
             SCB->SCR |= (uint32_t)SCB_SCR_SLEEPDEEP;
-
-            /* Enable Ultra Low Power mode */
+            /* Select STANDBY mode */
+            PWR->CR |= PWR_CR_PDDS;
+            /* Clear Wakeup flag */    
+            PWR->CR |= PWR_CR_CWUF;         
+            /* Enable Ultra Low Power mode Ver */
             PWR->CR |= PWR_CR_ULP;
+            /* TODO:Clear RTC flag */
 
             /* This option is used to ensure that store operations are completed */
             #if defined (__CC_ARM)
@@ -82,40 +132,28 @@ void pm_set(unsigned mode)
             irq_disable();
             
             /* Request Wait For Interrupt */
-            __DSB();
+            //__DSB();
             __WFI();
+            deep = 1;
 
 
-        case 1:           /* Stop mode */
-
-            /* Disable ADC */
-            ADC1->CR2 &= ~ADC_CR2_ADON;
-            ADC1->CR1 |= ADC_CR1_PDI;
-            ADC1->CR1 |= ADC_CR1_PDD;
-            ADC1->CR2 |= ADC_CR2_ADON;
-            /* Disable DAC */
-            DAC->CR &= ~DAC_CR_EN1;
-            DAC->CR &= ~DAC_CR_EN2;
+        case 1:             /* Stop mode */
+            /* Set SLEEPDEEP bit of Cortex System Control Register */
+            SCB->SCR |= (uint32_t)SCB_SCR_SLEEPDEEP;
+            /* Clear PDDS bit */
+            PWR->CR &= ~PWR_CR_PDDS;
             /* Clear Wakeup flag */    
             PWR->CR |= PWR_CR_CWUF;
             /* Regulator in LP mode */
             PWR->CR |= PWR_CR_LPSDSR;
             /* Enable Ultra Low Power mode */
             PWR->CR |= PWR_CR_ULP;
-            /* Enable stop mode */
-            PWR->CR &= ~PWR_CR_PDDS;
-            /* Set SLEEPDEEP bit of Cortex System Control Register */
-            SCB->SCR |= (uint32_t)SCB_SCR_SLEEPDEEP;
-
             irq_disable();
-
-             /* Request Wait For Interrupt */
-            __DSB();
+            lpm_before_i_go_to_sleep();
+            /* Request Wait For Interrupt */
             __WFI();
-
             /* Clear SLEEPDEEP bit */
             SCB->SCR &= (uint32_t) ~((uint32_t)SCB_SCR_SLEEPDEEP);
-
             irq_enable();
             break;
 
@@ -130,7 +168,7 @@ void pm_set(unsigned mode)
 
             irq_disable();
             
-            //*** lpm_before_i_go_to_sleep();
+            lpm_before_i_go_to_sleep();
 
             /* Switch to 65kHz clock */
             //*** switch_to_msi(RCC_ICSCR_MSIRANGE_0, RCC_CFGR_HPRE_DIV1);
