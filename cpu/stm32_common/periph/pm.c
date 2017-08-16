@@ -37,8 +37,6 @@ static uint32_t tmpreg;
 static uint16_t lpm_portmask_system[CPU_NUMBER_OF_PORTS] = { 0 };
 static uint16_t lpm_portmask_user[CPU_NUMBER_OF_PORTS] = { 0 };
 
-
-
 void lpm_before_i_go_to_sleep(void){
     uint8_t i;
     uint8_t p;
@@ -114,8 +112,7 @@ void pm_set(unsigned mode)
 #if defined(CPU_FAM_STM32L1)
     switch (mode) {
         case 0:             /* Stand by mode */
-            /* Set SLEEPDEEP bit of Cortex System Control Register */
-            SCB->SCR |= (uint32_t)SCB_SCR_SLEEPDEEP;
+
             /* Select STANDBY mode */
             PWR->CR |= PWR_CR_PDDS;
             /* Clear Wakeup flag */    
@@ -123,23 +120,14 @@ void pm_set(unsigned mode)
             /* Enable Ultra Low Power mode Ver */
             PWR->CR |= PWR_CR_ULP;
             /* TODO:Clear RTC flag */
-
+            //lpm_before_i_go_to_sleep();
             /* This option is used to ensure that store operations are completed */
             #if defined (__CC_ARM)
             __force_stores();
             #endif
-            
-            irq_disable();
-            
-            /* Request Wait For Interrupt */
-            //__DSB();
-            __WFI();
             deep = 1;
 
-
         case 1:             /* Stop mode */
-            /* Set SLEEPDEEP bit of Cortex System Control Register */
-            SCB->SCR |= (uint32_t)SCB_SCR_SLEEPDEEP;
             /* Clear PDDS bit */
             PWR->CR &= ~PWR_CR_PDDS;
             /* Clear Wakeup flag */    
@@ -148,13 +136,9 @@ void pm_set(unsigned mode)
             PWR->CR |= PWR_CR_LPSDSR;
             /* Enable Ultra Low Power mode */
             PWR->CR |= PWR_CR_ULP;
-            irq_disable();
+            //irq_disable();
             lpm_before_i_go_to_sleep();
-            /* Request Wait For Interrupt */
-            __WFI();
-            /* Clear SLEEPDEEP bit */
-            SCB->SCR &= (uint32_t) ~((uint32_t)SCB_SCR_SLEEPDEEP);
-            irq_enable();
+            deep = 1;
             break;
 
         case 2:              /* Low power sleep mode TODO*/  
@@ -168,11 +152,6 @@ void pm_set(unsigned mode)
 
             irq_disable();
             
-            lpm_before_i_go_to_sleep();
-
-            /* Switch to 65kHz clock */
-            //*** switch_to_msi(RCC_ICSCR_MSIRANGE_0, RCC_CFGR_HPRE_DIV1);
-
             /* Request Wait For Interrupt */
             __DSB();
             __WFI();
@@ -191,18 +170,7 @@ void pm_set(unsigned mode)
     cortexm_sleep(deep);
 }
 
-#if defined(CPU_FAM_STM32F1) || defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F4)
-void pm_off(void)
-{
-    irq_disable();
-   
-    pm_set(0); 
-    
-}
-#endif
-
-
-#if defined(CPU_FAM_STM32L1)
+#if defined(CPU_FAM_STM32F1) || defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F4) || defined(CPU_FAM_STM32L1)
 void pm_off(void)
 {
     irq_disable();
