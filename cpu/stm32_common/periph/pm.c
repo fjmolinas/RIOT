@@ -47,11 +47,11 @@ void lpm_before_i_go_to_sleep(void){
     ahb_gpio_clocks = RCC->AHBENR & 0xFF;
     /* enable all GPIO clocks */
     periph_clk_en(AHB, 0xFF);
-    
+
     for (i = 0; i < CPU_NUMBER_OF_PORTS; i++) {
         port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
         mask = 0xFFFFFFFF;
-        
+
         for (p = 0; p < 16; p ++) {
             /* exclude GPIOs registered for external interrupts */
             /* they may be used as wakeup sources */
@@ -60,7 +60,7 @@ void lpm_before_i_go_to_sleep(void){
                     mask &= ~((uint32_t)0x03 << (p*2));
                 }
             }
-            
+
             /* exclude GPIOs we previously set with pin_set */
             if ((lpm_portmask_system[i] | lpm_portmask_user[i]) & (1 << p)) {
                 mask &= ~((uint32_t)0x03 << (p*2));
@@ -71,12 +71,12 @@ void lpm_before_i_go_to_sleep(void){
         tmpreg = port->PUPDR;
         tmpreg &= ~mask;
         port->PUPDR = tmpreg;
-        
+
         /* set GPIOs to AIN mode */
         tmpreg = port->MODER;
         tmpreg |= mask;
         port->MODER = tmpreg;
-        
+
         /* set lowest speed */
         port->OSPEEDR = 0;
     }
@@ -115,8 +115,8 @@ void pm_set(unsigned mode)
 
             /* Select STANDBY mode */
             PWR->CR |= PWR_CR_PDDS;
-            /* Clear Wakeup flag */    
-            PWR->CR |= PWR_CR_CWUF;         
+            /* Clear Wakeup flag */
+            PWR->CR |= PWR_CR_CWUF;
             /* Enable Ultra Low Power mode Ver */
             PWR->CR |= PWR_CR_ULP;
             /* TODO:Clear RTC flag */
@@ -130,7 +130,7 @@ void pm_set(unsigned mode)
         case 1:             /* Stop mode */
             /* Clear PDDS bit */
             PWR->CR &= ~PWR_CR_PDDS;
-            /* Clear Wakeup flag */    
+            /* Clear Wakeup flag */
             PWR->CR |= PWR_CR_CWUF;
             /* Regulator in LP mode */
             PWR->CR |= PWR_CR_LPSDSR;
@@ -141,9 +141,9 @@ void pm_set(unsigned mode)
             deep = 1;
             break;
 
-        case 2:              /* Low power sleep mode TODO*/  
+        case 2:              /* Low power sleep mode TODO*/
 
-             /* Clear Wakeup flag */    
+             /* Clear Wakeup flag */
             PWR->CR |= PWR_CR_CWUF;
             /* Enable low-power mode of the voltage regulator */
             PWR->CR |= PWR_CR_LPSDSR;
@@ -151,16 +151,16 @@ void pm_set(unsigned mode)
             SCB->SCR &= ~((uint32_t)SCB_SCR_SLEEPDEEP);
 
             irq_disable();
-            
+
             /* Request Wait For Interrupt */
             __DSB();
             __WFI();
-            
+
             /* Switch back to default speed */
             //***lpm_select_run_mode(lpm_run_mode);
 
             //***lpm_when_i_wake_up();
-          
+
             irq_enable();
             deep = 1;
             break;
@@ -174,8 +174,8 @@ void pm_set(unsigned mode)
 void pm_off(void)
 {
     irq_disable();
-   
-    pm_set(0); 
-    
+
+    pm_set(0);
+
 }
 #endif

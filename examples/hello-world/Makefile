@@ -11,7 +11,8 @@ RIOTBASE ?= $(CURDIR)/../..
 # which is not needed in a production environment but helps in the
 # development process:
 CFLAGS += -DDEVELHELP
-
+USEMODULE += xtimer
+USEMODULE += timex
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
 
