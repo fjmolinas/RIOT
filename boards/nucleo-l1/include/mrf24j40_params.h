@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2016 Freie Universität Berlin
+ * Copyright (C) 2017 Neo Nenaco <neo@nenaco.de>
+ * Copyright (C) 2017 Koen Zandberg <koen@bergzand.net>
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -7,62 +8,59 @@
  */
 
 /**
- * @defgroup    boards_nucleo_common STM Nucleo Common
- * @ingroup     boards
- * @brief       Common files for STM Nucleo boards
+ * @ingroup     drivers_mrf24j40
+ *
  * @{
- *
  * @file
- * @brief       Common pin definitions and board configuration options
+ * @brief       Configuration for nucleo-l1 the MRF24J40 driver
  *
- * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
- * @author      Sebastian Meiling <s@mlng.net>
  */
 
-#ifndef BOARD_COMMON_H
-#define BOARD_COMMON_H
+#ifndef MRF24J40_PARAMS_H
+#define MRF24J40_PARAMS_H
 
-#include "cpu.h"
-#include "periph_conf.h"
-#include "arduino_pinmap.h"
+#include "board.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/**
- * @brief   LED pin definitions and handlers
- * @{
- */
-#ifdef CPU_MODEL_STM32F302R8
-#define LED0_PIN            GPIO_PIN(PORT_B, 13)
-#define LED0_MASK           (1 << 13)
-#else
-#define LED0_PIN            GPIO_PIN(PORT_A, 5)
-#define LED0_MASK           (1 << 5)
+#ifndef MRF24J40_PARAM_SPI
+#define MRF24J40_PARAM_SPI          (SPI_DEV(0))
+#endif
+#ifndef MRF24J40_PARAM_SPI_CLK
+#define MRF24J40_PARAM_SPI_CLK      (SPI_CLK_5MHZ)
+#endif
+#ifndef MRF24J40_PARAM_CS
+#define MRF24J40_PARAM_CS           (GPIO_PIN(PORT_B, 6))
+#endif
+#ifndef MRF24J40_PARAM_INT
+#define MRF24J40_PARAM_INT          (GPIO_PIN(PORT_A, 8))
+#endif
+#ifndef MRF24J40_PARAM_RESET
+#define MRF24J40_PARAM_RESET        (GPIO_PIN(PORT_B, 4))
 #endif
 
-#define LED0_ON             (GPIOA->BSRR = LED0_MASK)
-#define LED0_OFF            (GPIOA->BSRR = (LED0_MASK << 16))
-#define LED0_TOGGLE         (GPIOA->ODR  ^= LED0_MASK)
-/** @} */
+#define MRF24J40_PARAMS_DEFAULT     { .spi = MRF24J40_PARAM_SPI, \
+                                      .spi_clk = MRF24J40_PARAM_SPI_CLK, \
+                                      .cs_pin = MRF24J40_PARAM_CS, \
+                                      .int_pin = MRF24J40_PARAM_INT, \
+                                      .reset_pin = MRF24J40_PARAM_RESET }
 
 /**
- * @brief   User button
- * @{
+ * @brief   MRF24J40 configuration
  */
-#define BTN0_PIN            GPIO_PIN(PORT_C, 13)
-#define BTN0_MODE           GPIO_IN_PU
-/** @} */
-
-/**
- * @brief   Initialize board specific hardware, including clock, LEDs and std-IO
- */
-void board_init(void);
-
+static const mrf24j40_params_t mrf24j40_params[] =
+{
+#ifdef MRF24J40_PARAMS_BOARD
+    MRF24J40_PARAMS_BOARD,
+#else
+    MRF24J40_PARAMS_DEFAULT,
+#endif
+};
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* BOARD_COMMON_H */
+#endif /* MRF24J40_PARAMS_H */
 /** @} */

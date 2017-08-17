@@ -44,6 +44,8 @@ void mrf24j40_reset(mrf24j40_t *dev)
 {
     eui64_t addr_long;
 
+    puts("help");
+
     mrf24j40_init(dev);
 
     /* reset options and sequence number */

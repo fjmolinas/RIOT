@@ -23,8 +23,13 @@
 
 void board_init(void)
 {
+
+    gpio_init(GPIO_PIN(PORT_C, 0), GPIO_OUT);
+    gpio_set(GPIO_PIN(PORT_C, 0));
+
     /* initialize the CPU */
     cpu_init();
+
 
 #ifdef AUTO_INIT_LED0
     /* The LED pin is also used for SPI, so we enable it

@@ -30,12 +30,33 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
+#include "board.h"
+
 
 /* Variables definitions to LPM */
 static uint32_t ahb_gpio_clocks;
 static uint32_t tmpreg;
 static uint16_t lpm_portmask_system[CPU_NUMBER_OF_PORTS] = { 0 };
 static uint16_t lpm_portmask_user[CPU_NUMBER_OF_PORTS] = { 0 };
+// 
+// /* We are not using gpio_init as it sets GPIO clock speed to maximum */
+// /* We add GPIOs we touched to exclusion mask lpm_portmask_system */
+// static void pin_set(GPIO_TypeDef* port, uint8_t pin, uint8_t value) {
+//     tmpreg = port->MODER;
+//     tmpreg &= ~(3 << (2*pin));
+//     tmpreg |= (1 << (2*pin));
+//     port->MODER = tmpreg;
+//
+//     port->PUPDR &= ~(3 << (2*pin));
+//     port->OTYPER &= ~(1 << pin);
+//     if (value) {
+//         port->ODR |= (1 << pin);
+//     } else {
+//         port->ODR &= ~(1 << pin);
+//     }
+//
+//     lpm_portmask_system[((uint32_t)port >> 10) & 0x0f] |= 1 << pin;
+// }
 
 void lpm_before_i_go_to_sleep(void){
     uint8_t i;
@@ -47,6 +68,14 @@ void lpm_before_i_go_to_sleep(void){
     ahb_gpio_clocks = RCC->AHBENR & 0xFF;
     /* enable all GPIO clocks */
     periph_clk_en(AHB, 0xFF);
+
+    /* specifically set GPIOs used for external SPI devices */
+    /* NSS = 1, MOSI = 0, SCK = 0, MISO doesn't matter */
+    /* NSS = 1, MOSI = 0, SCK = 0, MISO doesn't matter */
+
+    // pin_set(PORT_A, 7, 1);
+    // pin_set(PORT_A, 5, 0);
+    // pin_set(PORT_A, 6, 0);
 
     for (i = 0; i < CPU_NUMBER_OF_PORTS; i++) {
         port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
