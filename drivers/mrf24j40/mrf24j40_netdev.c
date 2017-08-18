@@ -345,9 +345,6 @@ static int _set_state(mrf24j40_t *dev, netopt_state_t state)
         case NETOPT_STATE_RESET:
             mrf24j40_reset(dev);
             break;
-        case NETOPT_STATE_INIT:
-            _init((netdev_t *) dev);
-            break;
         default:
             return -ENOTSUP;
     }

@@ -92,7 +92,7 @@ void mrf24j40_init(mrf24j40_t *dev)
     mrf24j40_reg_write_short(dev, MRF24J40_REG_WAKECON, MRF24J40_WAKECON_IMMWAKE);
 
     /* set interrupt pin polarity, rising edge */
-    mrf24j40_reg_write_long(dev, MRF24J40_REG_SLPCON0, MRF24J40_SLPCON0_INTEDGE );
+    mrf24j40_reg_write_long(dev, MRF24J40_REG_SLPCON0, (MRF24J40_SLPCON0_INTEDGE) | (MRF24J40_SLPCON0_SLPCLKEN));
     /* reset RF state machine */
     mrf24j40_reset_state_machine(dev);
 
