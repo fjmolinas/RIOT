@@ -379,7 +379,6 @@ typedef enum {
                                  *   state of the network device is @ref NETOPT_STATE_IDLE */
     NETOPT_STATE_STANDBY,       /**< standby mode. The devices is awake but
                                  *   not listening to packets. */
-    NETOPT_STATE_INIT,
     /* add other states if needed */
 } netopt_state_t;
 

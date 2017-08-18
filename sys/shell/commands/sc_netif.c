@@ -680,10 +680,6 @@ static int _netif_set_state(kernel_pid_t dev, char *state_str)
              (strcmp("RESET", state_str) == 0)) {
         state = NETOPT_STATE_RESET;
     }
-    else if ((strcmp("init", state_str) == 0) ||
-             (strcmp("INIT", state_str) == 0)) {
-        state = NETOPT_STATE_INIT;
-    }
     else {
         puts("usage: ifconfig <if_id> set state [off|sleep|idle|reset]");
         return 1;
