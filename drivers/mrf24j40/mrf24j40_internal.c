@@ -60,47 +60,47 @@ void mrf24j40_init(mrf24j40_t *dev)
     }
 #endif
 
-    /* do a soft reset */
-    mrf24j40_reg_write_short(dev, MRF24J40_REG_SOFTRST, MRF24J40_SOFTRST_RSTPWR |
-                                                        MRF24J40_SOFTRST_RSTBB  |
-                                                        MRF24J40_SOFTRST_RSTMAC );
+      /* do a soft reset */
+      mrf24j40_reg_write_short(dev, MRF24J40_REG_SOFTRST, MRF24J40_SOFTRST_RSTPWR |
+                                                      MRF24J40_SOFTRST_RSTBB  |
+                                                      MRF24J40_SOFTRST_RSTMAC );
 
-    /* flush RX FIFO */
-    mrf24j40_reg_write_short(dev, MRF24J40_REG_RXFLUSH, MRF24J40_RXFLUSH_RXFLUSH);
+      /* flush RX FIFO */
+      mrf24j40_reg_write_short(dev, MRF24J40_REG_RXFLUSH, MRF24J40_RXFLUSH_RXFLUSH);
 
-    /* Here starts init-process as described on MRF24J40 Manual Chap. 3.2 */
-    mrf24j40_reg_write_short(dev, MRF24J40_REG_PACON2,  (MRF24J40_PACON2_TXONTS2 |
-                                                         MRF24J40_PACON2_TXONTS1 |
-                                                         MRF24J40_PACON2_FIFOEN));
-    mrf24j40_reg_write_short(dev, MRF24J40_REG_TXSTBL, (MRF24J40_TXSTBL_RFSTBL3 |
-                                                        MRF24J40_TXSTBL_RFSTBL0 |
-                                                        MRF24J40_TXSTBL_MSIFS2  |
-                                                        MRF24J40_TXSTBL_MSIFS0));
-    mrf24j40_reg_write_long(dev, MRF24J40_REG_RFCON1, MRF24J40_RFCON1_VCOOPT1);
-    mrf24j40_reg_write_long(dev, MRF24J40_REG_RFCON2, MRF24J40_RFCON2_PLLEN);
-    mrf24j40_reg_write_long(dev, MRF24J40_REG_RFCON6, (MRF24J40_RFCON6_TXFIL |
-                                                       MRF24J40_RFCON6_20MRECVR));
-    mrf24j40_reg_write_long(dev, MRF24J40_REG_RFCON7, MRF24J40_RFCON7_SLPCLKSEL1 );
-    mrf24j40_reg_write_long(dev, MRF24J40_REG_RFCON8, MRF24J40_RFCON8_RFVCO );
-    mrf24j40_reg_write_long(dev, MRF24J40_REG_SLPCON1, (MRF24J40_SLPCON1_CLKOUTEN |
-                                                        MRF24J40_SLPCON1_SLPCLKDIV0));
-    mrf24j40_reg_write_short(dev, MRF24J40_REG_BBREG2, MRF25J40_BBREG2_CCAMODE1 );
-    mrf24j40_reg_write_short(dev, MRF24J40_REG_CCAEDTH, 0x60);
-    mrf24j40_reg_write_short(dev, MRF24J40_REG_BBREG6, MRF24J40_BBREG6_RSSIMODE2 );
+      /* Here starts init-process as described on MRF24J40 Manual Chap. 3.2 */
+      mrf24j40_reg_write_short(dev, MRF24J40_REG_PACON2,  (MRF24J40_PACON2_TXONTS2 |
+                                                       MRF24J40_PACON2_TXONTS1 |
+                                                       MRF24J40_PACON2_FIFOEN));
+      mrf24j40_reg_write_short(dev, MRF24J40_REG_TXSTBL, (MRF24J40_TXSTBL_RFSTBL3 |
+                                                      MRF24J40_TXSTBL_RFSTBL0 |
+                                                      MRF24J40_TXSTBL_MSIFS2  |
+                                                      MRF24J40_TXSTBL_MSIFS0));
+      mrf24j40_reg_write_long(dev, MRF24J40_REG_RFCON1, MRF24J40_RFCON1_VCOOPT1);
+      mrf24j40_reg_write_long(dev, MRF24J40_REG_RFCON2, MRF24J40_RFCON2_PLLEN);
+      mrf24j40_reg_write_long(dev, MRF24J40_REG_RFCON6, (MRF24J40_RFCON6_TXFIL |
+                                                     MRF24J40_RFCON6_20MRECVR));
+      mrf24j40_reg_write_long(dev, MRF24J40_REG_RFCON7, MRF24J40_RFCON7_SLPCLKSEL1 );
+      mrf24j40_reg_write_long(dev, MRF24J40_REG_RFCON8, MRF24J40_RFCON8_RFVCO );
+      mrf24j40_reg_write_long(dev, MRF24J40_REG_SLPCON1, (MRF24J40_SLPCON1_CLKOUTEN |
+                                                      MRF24J40_SLPCON1_SLPCLKDIV0));
+      mrf24j40_reg_write_short(dev, MRF24J40_REG_BBREG2, MRF25J40_BBREG2_CCAMODE1 );
+      mrf24j40_reg_write_short(dev, MRF24J40_REG_CCAEDTH, 0x60);
+      mrf24j40_reg_write_short(dev, MRF24J40_REG_BBREG6, MRF24J40_BBREG6_RSSIMODE2 );
 
-    /* Enable immediate sleep mode */
-    mrf24j40_reg_write_short(dev, MRF24J40_REG_WAKECON, MRF24J40_WAKECON_IMMWAKE);
+      /* Enable immediate sleep mode */
+      mrf24j40_reg_write_short(dev, MRF24J40_REG_WAKECON, MRF24J40_WAKECON_IMMWAKE);
 
-    /* set interrupt pin polarity, rising edge */
-    mrf24j40_reg_write_long(dev, MRF24J40_REG_SLPCON0, (MRF24J40_SLPCON0_INTEDGE) | (MRF24J40_SLPCON0_SLPCLKEN));
-    /* reset RF state machine */
-    mrf24j40_reset_state_machine(dev);
+      /* set interrupt pin polarity, rising edge */
+      mrf24j40_reg_write_long(dev, MRF24J40_REG_SLPCON0, MRF24J40_SLPCON0_INTEDGE );
+      /* reset RF state machine */
+      mrf24j40_reset_state_machine(dev);
 
-    /* clear interrupts */
-    mrf24j40_reg_read_short(dev, MRF24J40_REG_INTSTAT);
+      /* clear interrupts */
+      mrf24j40_reg_read_short(dev, MRF24J40_REG_INTSTAT);
 
-    /* mrf24j40_set_interrupts */
-    mrf24j40_reg_write_short(dev, MRF24J40_REG_INTCON, ~(MRF24J40_INTCON_RXIE | MRF24J40_INTCON_TXNIE));
+      /* mrf24j40_set_interrupts */
+      mrf24j40_reg_write_short(dev, MRF24J40_REG_INTCON, ~(MRF24J40_INTCON_RXIE | MRF24J40_INTCON_TXNIE));
 }
 
 uint8_t mrf24j40_reg_read_short(mrf24j40_t *dev, const uint8_t addr)
