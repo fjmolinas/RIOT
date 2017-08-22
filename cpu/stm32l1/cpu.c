@@ -39,8 +39,6 @@
 #error "Please provide CLOCK_HSI or CLOCK_HSE in boards/NAME/includes/perhip_cpu.h"
 #endif
 
-static void clk_init(void);
-
 void cpu_init(void)
 {
     /* initialize the Cortex-M core */
@@ -54,7 +52,7 @@ void cpu_init(void)
 /**
  * @brief Configure the clock system of the stm32f1
  */
-static void clk_init(void)
+void clk_init(void)
 {
     /* Reset the RCC clock configuration to the default reset state(for debug purpose) */
     /* Set MSION bit */

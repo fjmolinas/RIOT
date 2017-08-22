@@ -40,6 +40,8 @@ extern "C" {
 #define CPU_FLASH_BASE                  FLASH_BASE
 /** @} */
 
+void clk_init(void);
+
 #ifdef __cplusplus
 }
 #endif
