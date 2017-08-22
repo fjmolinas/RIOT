@@ -29,6 +29,7 @@
 #include "cpu.h" // For numbers of ports
 #define ENABLE_DEBUG (0)
 #include "debug.h"
+#include "periph/init.h"
 
 #include "board.h"
 
@@ -36,11 +37,16 @@
 /* Variables definitions to LPM */
 static uint32_t ahb_gpio_clocks;
 static uint32_t tmpreg;
+static uint32_t lpm_gpio_moder[CPU_NUMBER_OF_PORTS];
+static uint32_t lpm_gpio_pupdr[CPU_NUMBER_OF_PORTS];
+static uint16_t lpm_gpio_otyper[CPU_NUMBER_OF_PORTS];
+static uint16_t lpm_gpio_odr[CPU_NUMBER_OF_PORTS];
 static uint16_t lpm_portmask_system[CPU_NUMBER_OF_PORTS] = { 0 };
 static uint16_t lpm_portmask_user[CPU_NUMBER_OF_PORTS] = { 0 };
-// 
-// /* We are not using gpio_init as it sets GPIO clock speed to maximum */
-// /* We add GPIOs we touched to exclusion mask lpm_portmask_system */
+// static uint8_t  lpm_usart[UART_NUMOF];
+
+/* We are not using gpio_init as it sets GPIO clock speed to maximum */
+/* We add GPIOs we touched to exclusion mask lpm_portmask_system */
 // static void pin_set(GPIO_TypeDef* port, uint8_t pin, uint8_t value) {
 //     tmpreg = port->MODER;
 //     tmpreg &= ~(3 << (2*pin));
@@ -58,57 +64,113 @@ static uint16_t lpm_portmask_user[CPU_NUMBER_OF_PORTS] = { 0 };
 //     lpm_portmask_system[((uint32_t)port >> 10) & 0x0f] |= 1 << pin;
 // }
 
+/* Do not change GPIO state in sleep mode */
+void lpm_arch_add_gpio_exclusion(gpio_t gpio) {
+	uint8_t port = ((uint32_t)gpio >> 10) & 0x0f;
+	uint8_t pin = ((uint32_t)gpio & 0x0f);
+
+	lpm_portmask_user[port] |= (uint16_t)(1<<pin);
+}
+
+/* Change GPIO state to AIN in sleep mode */
+void lpm_arch_del_gpio_exclusion(gpio_t gpio) {
+	uint8_t port = ((uint32_t)gpio >> 10) & 0x0f;
+	uint8_t pin = ((uint32_t)gpio & 0x0f);
+
+	lpm_portmask_user[port] &= ~(uint16_t)(1<<pin);
+}
+
 void lpm_before_i_go_to_sleep(void){
     uint8_t i;
     uint8_t p;
     uint32_t mask;
     GPIO_TypeDef *port;
 
+
+    for (i = 0; i < CPU_NUMBER_OF_PORTS; i++) {
+        port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
+
+        /* save GPIO registers values */
+        lpm_gpio_moder[i] = port->MODER;
+        lpm_gpio_pupdr[i] = port->PUPDR;
+        lpm_gpio_otyper[i] = (uint16_t)(port->OTYPER & 0xFFFF);
+        lpm_gpio_odr[i] = (uint16_t)(port->ODR & 0xFFFF);
+	}
+
+    /* specifically set GPIOs used for external SPI devices */
+    /* NSS = 1, MOSI = 0, SCK = 0, MISO doesn't matter */
+    /* NSS = 1, MOSI = 0, SCK = 0, MISO doesn't matter */
+    // pin_set(PORT_A, 7, 1);
+    // pin_set(PORT_A, 5, 0);
+    // pin_set(PORT_A, 6, 0);
+    p = ((uint32_t)PORT_A >> 10) & 0x0f;
+    lpm_portmask_system[p] &= ~(1 << 7);
+    lpm_portmask_system[p] &= ~(1 << 5);
+    lpm_portmask_system[p] &= ~(1 << 6);
+
     /* save GPIO clock configuration */
     ahb_gpio_clocks = RCC->AHBENR & 0xFF;
     /* enable all GPIO clocks */
     periph_clk_en(AHB, 0xFF);
 
-    /* specifically set GPIOs used for external SPI devices */
-    /* NSS = 1, MOSI = 0, SCK = 0, MISO doesn't matter */
-    /* NSS = 1, MOSI = 0, SCK = 0, MISO doesn't matter */
+    for (i = 0; i < CPU_NUMBER_OF_PORTS; i++) {
+           port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
+           mask = 0xFFFFFFFF;
+           if (EXTI->IMR) {
+               for (p = 0; p < 16; p ++) {
+                   /* exclude GPIOs we previously set with pin_set */
+                   if ((lpm_portmask_system[i] | lpm_portmask_user[i]) & (1 << p)) {
+                       mask &= ~(0x03 << (p*2));
+                   } else {
+                       if ((EXTI->IMR & (1 << p)) && ((((SYSCFG->EXTICR[p >> 2]) >> ((p & 0x03) * 4)) & 0xF) == i)) {
+                           mask &= ~(0x03 << (p*2));
+                       }
+                   }
+               }
+           }
 
-    // pin_set(PORT_A, 7, 1);
-    // pin_set(PORT_A, 5, 0);
-    // pin_set(PORT_A, 6, 0);
+           /* disable pull-ups on GPIOs */
+           tmpreg = port->PUPDR;
+           tmpreg &= ~mask;
+           port->PUPDR = tmpreg;
 
+           /* set GPIOs to AIN mode */
+           tmpreg = port->MODER;
+           tmpreg |= mask;
+           port->MODER = tmpreg;
+       }
+
+    /* restore GPIO clocks */
+    tmpreg = RCC->AHBENR;
+    tmpreg &= ~((uint32_t)0xFF);
+    tmpreg |= ahb_gpio_clocks;
+    periph_clk_en(AHB, tmpreg);
+}
+
+/* restore GPIO settings */
+static void lpm_when_i_wake_up (void) {
+    /* enable all GPIO clocks */
+    periph_clk_en(AHB, 0xFF);
+
+    uint8_t i;
+    GPIO_TypeDef *port;
+
+    /* restore GPIO settings */
     for (i = 0; i < CPU_NUMBER_OF_PORTS; i++) {
         port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
-        mask = 0xFFFFFFFF;
 
-        for (p = 0; p < 16; p ++) {
-            /* exclude GPIOs registered for external interrupts */
-            /* they may be used as wakeup sources */
-            if (EXTI->IMR & (1 << p)) {
-                if (((SYSCFG->EXTICR[p >> 2]) >> ((p & 0x03) * 4)) == i) {
-                    mask &= ~((uint32_t)0x03 << (p*2));
-                }
-            }
-
-            /* exclude GPIOs we previously set with pin_set */
-            if ((lpm_portmask_system[i] | lpm_portmask_user[i]) & (1 << p)) {
-                mask &= ~((uint32_t)0x03 << (p*2));
-            }
-        }
-
-        /* disable pull-ups on GPIOs */
-        tmpreg = port->PUPDR;
-        tmpreg &= ~mask;
-        port->PUPDR = tmpreg;
-
-        /* set GPIOs to AIN mode */
-        tmpreg = port->MODER;
-        tmpreg |= mask;
-        port->MODER = tmpreg;
-
-        /* set lowest speed */
-        port->OSPEEDR = 0;
+        port->PUPDR = lpm_gpio_pupdr[i];
+        port->OTYPER = lpm_gpio_otyper[i];
+        port->ODR = lpm_gpio_odr[i];
+        port->MODER = lpm_gpio_moder[i];
     }
+
+    /* restore GPIO clocks */
+    tmpreg = RCC->AHBENR;
+    tmpreg &= ~((uint32_t)0xFF);
+    tmpreg |= ahb_gpio_clocks;
+    periph_clk_en(AHB, tmpreg);
+
 }
 
 
@@ -149,7 +211,7 @@ void pm_set(unsigned mode)
             /* Enable Ultra Low Power mode Ver */
             PWR->CR |= PWR_CR_ULP;
             /* TODO:Clear RTC flag */
-            //lpm_before_i_go_to_sleep();
+            // lpm_before_i_go_to_sleep();
             /* This option is used to ensure that store operations are completed */
             #if defined (__CC_ARM)
             __force_stores();
@@ -157,16 +219,34 @@ void pm_set(unsigned mode)
             deep = 1;
 
         case 1:             /* Stop mode */
-            /* Clear PDDS bit */
-            PWR->CR &= ~PWR_CR_PDDS;
+
             /* Clear Wakeup flag */
             PWR->CR |= PWR_CR_CWUF;
             /* Regulator in LP mode */
             PWR->CR |= PWR_CR_LPSDSR;
             /* Enable Ultra Low Power mode */
             PWR->CR |= PWR_CR_ULP;
-            //irq_disable();
+
+            /* Set SLEEPDEEP bit of Cortex System Control Register */
+            SCB->SCR |= (uint32_t)SCB_SCR_SLEEPDEEP;
+
+            irq_disable();
+
             lpm_before_i_go_to_sleep();
+
+            /* Request Wait For Interrupt */
+            __DSB();
+            __WFI();
+
+            /* Clear SLEEPDEEP bit */
+            SCB->SCR &= (uint32_t) ~((uint32_t)SCB_SCR_SLEEPDEEP);
+
+            clk_init();
+
+            lpm_when_i_wake_up();
+
+			irq_enable();
+
             deep = 1;
             break;
 
@@ -179,24 +259,16 @@ void pm_set(unsigned mode)
             /* Clear SLEEPDEEP bit */
             SCB->SCR &= ~((uint32_t)SCB_SCR_SLEEPDEEP);
 
-            irq_disable();
-
-            /* Request Wait For Interrupt */
-            __DSB();
-            __WFI();
-
-            /* Switch back to default speed */
-            //***lpm_select_run_mode(lpm_run_mode);
-
-            //***lpm_when_i_wake_up();
-
-            irq_enable();
             deep = 1;
             break;
     }
 #endif
 
-    cortexm_sleep(deep);
+    (void) deep;
+
+    // cortexm_sleep(deep);
+
+    // lpm_when_i_wake_up();
 }
 
 #if defined(CPU_FAM_STM32F1) || defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F4) || defined(CPU_FAM_STM32L1)
