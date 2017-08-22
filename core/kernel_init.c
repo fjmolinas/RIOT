@@ -66,7 +66,8 @@ static void *idle_thread(void *arg)
     (void) arg;
 
     while (1) {
-        pm_set_lowest();
+        // BUG stack overflow
+        // pm_set_lowest();
     }
 
     return NULL;
