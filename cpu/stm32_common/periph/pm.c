@@ -25,6 +25,8 @@
 
 #include "irq.h"
 #include "periph/pm.h"
+#include "periph/spi.h"
+#include "periph_conf.h"
 
 #include "cpu.h" // For numbers of ports
 #define ENABLE_DEBUG (0)
@@ -45,24 +47,51 @@ static uint16_t lpm_portmask_system[CPU_NUMBER_OF_PORTS] = { 0 };
 static uint16_t lpm_portmask_user[CPU_NUMBER_OF_PORTS] = { 0 };
 // static uint8_t  lpm_usart[UART_NUMOF];
 
+static inline GPIO_TypeDef *_port(gpio_t pin)
+{
+    return (GPIO_TypeDef *)(pin & ~(0x0f));
+}
+
+/**
+ * @brief   Extract the port number form the given identifier
+ *
+ * The port number is extracted by looking at bits 10, 11, 12, 13 of the base
+ * register addresses.
+ */
+static inline int _port_num(gpio_t pin)
+{
+    return ((pin >> 10) & 0x0f);
+}
+
+/**
+ * @brief   Extract the pin number from the last 4 bit of the pin identifier
+ */
+static inline int _pin_num(gpio_t pin)
+{
+    return (pin & 0x0f);
+}
+
 /* We are not using gpio_init as it sets GPIO clock speed to maximum */
 /* We add GPIOs we touched to exclusion mask lpm_portmask_system */
-// static void pin_set(GPIO_TypeDef* port, uint8_t pin, uint8_t value) {
-//     tmpreg = port->MODER;
-//     tmpreg &= ~(3 << (2*pin));
-//     tmpreg |= (1 << (2*pin));
-//     port->MODER = tmpreg;
-//
-//     port->PUPDR &= ~(3 << (2*pin));
-//     port->OTYPER &= ~(1 << pin);
-//     if (value) {
-//         port->ODR |= (1 << pin);
-//     } else {
-//         port->ODR &= ~(1 << pin);
-//     }
-//
-//     lpm_portmask_system[((uint32_t)port >> 10) & 0x0f] |= 1 << pin;
-// }
+static void pin_set(gpio_t pin, uint8_t value) {
+    GPIO_TypeDef *port = _port(pin);
+    int pin_num = _pin_num(pin);
+    tmpreg = port->MODER;
+    tmpreg &= ~(3 << (2*pin_num));
+    tmpreg |= (1 << (2*pin_num));
+    port->MODER = tmpreg;
+
+    port->PUPDR &= ~(3 << (2*pin_num));
+    port->OTYPER &= ~(1 << pin_num);
+    if (value) {
+        port->ODR |= (1 << pin_num);
+    } else {
+        port->ODR &= ~(1 << pin_num);
+    }
+
+    // lpm_portmask_system[((uint32_t)&port>> 10) & 0x0f] |= 1 << pin;
+    lpm_portmask_system[_port_num(pin)] |= 1 << pin_num;
+}
 
 /* Do not change GPIO state in sleep mode */
 void lpm_arch_add_gpio_exclusion(gpio_t gpio) {
@@ -98,15 +127,17 @@ void lpm_before_i_go_to_sleep(void){
 	}
 
     /* specifically set GPIOs used for external SPI devices */
-    /* NSS = 1, MOSI = 0, SCK = 0, MISO doesn't matter */
-    /* NSS = 1, MOSI = 0, SCK = 0, MISO doesn't matter */
-    // pin_set(PORT_A, 7, 1);
-    // pin_set(PORT_A, 5, 0);
-    // pin_set(PORT_A, 6, 0);
-    p = ((uint32_t)PORT_A >> 10) & 0x0f;
-    lpm_portmask_system[p] &= ~(1 << 7);
-    lpm_portmask_system[p] &= ~(1 << 5);
-    lpm_portmask_system[p] &= ~(1 << 6);
+    if (SPI_0_ISON()) {
+        pin_set(spi_config[0].sclk_pin, 0);
+        pin_set(spi_config[0].mosi_pin, 0);
+        pin_set(spi_config[0].cs_pin, 1);
+    } else {
+		p = ((uint32_t)PORT_A >> 10) & 0x0f;
+		lpm_portmask_system[p] &= ~(1 << 5);
+		lpm_portmask_system[p] &= ~(1 << 7);
+        p = ((uint32_t)PORT_B >> 10) & 0x0f;
+		lpm_portmask_system[p] &= ~(1 << 6);
+	}
 
     /* save GPIO clock configuration */
     ahb_gpio_clocks = RCC->AHBENR & 0xFF;
