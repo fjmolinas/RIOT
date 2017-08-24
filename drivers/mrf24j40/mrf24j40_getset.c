@@ -432,6 +432,7 @@ void mrf24j40_sleep(mrf24j40_t *dev)
     /* First force a Power Management Reset */
     mrf24j40_reg_write_short(dev, MRF24J40_REG_SOFTRST, MRF24J40_SOFTRST_RSTPWR);
     /* Go to SLEEP mode */
+    mrf24j40_reg_write_long(dev, MRF24J40_REG_SLPCON0, MRF24J40_SLPCON0_SLPCLKEN );
     mrf24j40_reg_write_short(dev, MRF24J40_REG_SLPACK, MRF24J40_SLPACK_SLPACK);
     dev->state = MRF24J40_PSEUDO_STATE_SLEEP;
 }

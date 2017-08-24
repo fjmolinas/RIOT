@@ -24,8 +24,8 @@
 void board_init(void)
 {
 
-    gpio_init(GPIO_PIN(PORT_C, 0), GPIO_OUT);
-    gpio_set(GPIO_PIN(PORT_C, 0));
+    gpio_init(GPIO_PIN(PORT_A, 1), GPIO_OUT);
+    gpio_set(GPIO_PIN(PORT_A, 1));
 
     /* initialize the CPU */
     cpu_init();
