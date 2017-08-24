@@ -40,6 +40,7 @@ extern "C" {
 #define CPU_FLASH_BASE                  FLASH_BASE
 /** @} */
 
+/* clock init exposing for uC star-up*/
 void clk_init(void);
 
 #ifdef __cplusplus
