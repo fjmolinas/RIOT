@@ -35,10 +35,10 @@ extern "C" {
 #define MRF24J40_PARAM_CS           (GPIO_PIN(PORT_B, 6))
 #endif
 #ifndef MRF24J40_PARAM_INT
-#define MRF24J40_PARAM_INT          (GPIO_PIN(PORT_A, 8))
+#define MRF24J40_PARAM_INT          (GPIO_PIN(PORT_B, 4))
 #endif
 #ifndef MRF24J40_PARAM_RESET
-#define MRF24J40_PARAM_RESET        (GPIO_PIN(PORT_B, 4))
+#define MRF24J40_PARAM_RESET        (GPIO_PIN(PORT_B, 5))
 #endif
 
 #define MRF24J40_PARAMS_DEFAULT     { .spi = MRF24J40_PARAM_SPI, \
