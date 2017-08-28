@@ -7,11 +7,11 @@
  */
 
 /**
- * @ingroup     boards_nucleo-l1
+ * @ingroup     boards_nucleo-l152
  * @{
  *
  * @file
- * @brief       Board specific implementations for the nucleo-l1 board
+ * @brief       Board specific implementations for the nucleo-l152 board
  *
  * @author      Thomas Eichinger <thomas.eichinger@fu-berlin.de>
  *
@@ -23,13 +23,8 @@
 
 void board_init(void)
 {
-
-    gpio_init(GPIO_PIN(PORT_A, 1), GPIO_OUT);
-    gpio_set(GPIO_PIN(PORT_A, 1));
-
     /* initialize the CPU */
     cpu_init();
-
 
 #ifdef AUTO_INIT_LED0
     /* The LED pin is also used for SPI, so we enable it
