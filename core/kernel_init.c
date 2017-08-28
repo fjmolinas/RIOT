@@ -29,6 +29,7 @@
 #include "log.h"
 
 #include "periph/pm.h"
+#include "periph/gpio.h"
 
 #ifdef MODULE_SCHEDSTATISTICS
 #include "sched.h"
@@ -44,6 +45,9 @@
 extern int main(void);
 static void *main_trampoline(void *arg)
 {
+    gpio_init(GPIO_PIN(PORT_C, 0), GPIO_OUT);
+    gpio_set(GPIO_PIN(PORT_C, 0));
+
     (void) arg;
 
 #ifdef MODULE_AUTO_INIT
