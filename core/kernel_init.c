@@ -45,8 +45,8 @@
 extern int main(void);
 static void *main_trampoline(void *arg)
 {
-    gpio_init(GPIO_PIN(PORT_C, 0), GPIO_OUT);
-    gpio_set(GPIO_PIN(PORT_C, 0));
+    gpio_init(GPIO_PIN(PORT_C, 11), GPIO_OUT);
+    gpio_set(GPIO_PIN(PORT_C, 11));
 
     (void) arg;
 
@@ -70,7 +70,6 @@ static void *idle_thread(void *arg)
     (void) arg;
 
     while (1) {
-        // BUG stack overflow
         pm_set_lowest();
     }
 
