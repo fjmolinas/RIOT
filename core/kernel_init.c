@@ -45,9 +45,10 @@
 extern int main(void);
 static void *main_trampoline(void *arg)
 {
+#ifdef NUCLEO
     gpio_init(GPIO_PIN(PORT_C, 11), GPIO_OUT);
     gpio_set(GPIO_PIN(PORT_C, 11));
-
+#endif
     (void) arg;
 
 #ifdef MODULE_AUTO_INIT
