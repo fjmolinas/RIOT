@@ -34,7 +34,7 @@
 #include "mrf24j40_internal.h"
 #include "mrf24j40_registers.h"
 
-#define ENABLE_DEBUG (0)
+#define ENABLE_DEBUG (1)
 #include "debug.h"
 
 #define _MAX_MHR_OVERHEAD   (25)

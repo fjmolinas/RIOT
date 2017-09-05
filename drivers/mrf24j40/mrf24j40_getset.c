@@ -25,7 +25,7 @@
 #include "mrf24j40_registers.h"
 #include "xtimer.h"
 
-#define ENABLE_DEBUG (0)
+#define ENABLE_DEBUG (1)
 #include "debug.h"
 
 /* Values of RFCON3 - Address: 0x203
