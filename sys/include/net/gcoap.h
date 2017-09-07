@@ -308,7 +308,7 @@ extern "C" {
  *
  * Set to 0 to disable timeout.
  */
-#define GCOAP_NON_TIMEOUT       (1U)
+#define GCOAP_NON_TIMEOUT       (100U)
 
 /**
  * @brief   Identifies waiting timed out for a response to a sent message
