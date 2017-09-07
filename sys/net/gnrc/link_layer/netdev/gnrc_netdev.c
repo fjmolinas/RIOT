@@ -79,6 +79,8 @@ static void _event_cb(netdev_t *dev, netdev_event_t event)
                 break;
             case NETDEV_EVENT_TX_COMPLETE:
                 dev->stats.tx_success++;
+                gnrc_pktsnip_t *pkt = gnrc_pktbuf_add(NULL, NULL, 0, GNRC_NETTYPE_UNDEF);
+                gnrc_netapi_dispatch(GNRC_NETTYPE_UNDEF, GNRC_NETREG_DEMUX_CTX_ALL, 0x00, pkt);
                 break;
 #endif
             default:
