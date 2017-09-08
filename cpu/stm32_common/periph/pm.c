@@ -27,7 +27,6 @@
 #include "periph/pm.h"
 #include "periph/spi.h"
 #include "periph_conf.h"
-
 #include "cpu.h" // For numbers of ports
 #define ENABLE_DEBUG (0)
 #include "debug.h"
@@ -261,7 +260,7 @@ void pm_set(unsigned mode)
             /* Set SLEEPDEEP bit of Cortex System Control Register */
             SCB->SCR |= (uint32_t)SCB_SCR_SLEEPDEEP;
 
-            irq_disable();
+            unsigned state = irq_disable();
 
             lpm_before_i_go_to_sleep();
 
@@ -276,7 +275,7 @@ void pm_set(unsigned mode)
 
             lpm_when_i_wake_up();
 
-			irq_enable();
+			irq_restore(state);
 
             deep = 1;
             break;

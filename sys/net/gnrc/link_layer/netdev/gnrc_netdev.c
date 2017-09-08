@@ -79,12 +79,13 @@ static void _event_cb(netdev_t *dev, netdev_event_t event)
                 break;
             case NETDEV_EVENT_TX_COMPLETE:
                 dev->stats.tx_success++;
-                gnrc_pktsnip_t *pkt = gnrc_pktbuf_add(NULL, NULL, 0, GNRC_NETTYPE_UNDEF);
-                gnrc_netapi_dispatch(GNRC_NETTYPE_UNDEF, GNRC_NETREG_DEMUX_CTX_ALL, 0xAA, pkt);
+                msg_t msg;
+                msg.type = MRF24J40_TX_COMPLETE;
+                msg_try_send(&msg, CONTROL_PID);
                 break;
 #endif
             default:
-                DEBUG("gnrc_netdev: warning: unhandled event %u.\n", event);
+                printf("gnrc_netdev: warning: unhandled event %u.\n", event);
         }
     }
 }
