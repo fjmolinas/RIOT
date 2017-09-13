@@ -83,6 +83,10 @@ static void _event_cb(netdev_t *dev, netdev_event_t event)
                 msg.type = MRF24J40_TX_COMPLETE;
                 msg_try_send(&msg, CONTROL_PID);
                 break;
+            case NETDEV_EVENT_TX_NOACK:
+                msg.type = MRF24J40_TX_NOACK;
+                msg_try_send(&msg, CONTROL_PID);
+                break;
 #endif
             default:
                 printf("gnrc_netdev: warning: unhandled event %u.\n", event);
