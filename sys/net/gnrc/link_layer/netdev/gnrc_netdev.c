@@ -80,11 +80,11 @@ static void _event_cb(netdev_t *dev, netdev_event_t event)
             case NETDEV_EVENT_TX_COMPLETE:
                 dev->stats.tx_success++;
                 msg_t msg;
-                msg.type = MRF24J40_TX_COMPLETE;
+                msg.type = TX_COMPLETE;
                 msg_try_send(&msg, CONTROL_PID);
                 break;
             case NETDEV_EVENT_TX_NOACK:
-                msg.type = MRF24J40_TX_NOACK;
+                msg.type = TX_NOACK;
                 msg_try_send(&msg, CONTROL_PID);
                 break;
 #endif
