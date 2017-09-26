@@ -8,7 +8,7 @@
 
 /**
  * @defgroup    drivers_nvram Non-volatile RAM
- * @ingroup     drivers_storage
+ * @ingroup     drivers
  * @brief       Non-volatile RAM interface
  *
  * This API is designed around non-volatile memories which do not need blockwise
@@ -24,15 +24,11 @@
  * @author      Joakim Nohlgård <joakim.nohlgard@eistec.se>
  */
 
-#ifndef NVRAM_H
-#define NVRAM_H
+#ifndef DRIVERS_NVRAM_H_
+#define DRIVERS_NVRAM_H_
 
 #include <stdint.h>
 #include <stddef.h>
-
-#if MODULE_VFS
-#include "vfs.h"
-#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -76,6 +72,28 @@ typedef struct nvram {
      */
     int (*write)(struct nvram *dev, const uint8_t *src, uint32_t dst, size_t size);
 
+    /**
+     * @brief Clears all contents of NVRAM.
+     *
+     * @param[in]  dev   Pointer to NVRAM device descriptor
+     *
+     * @return           Number of bytes in NVRAM on success
+     * @return           <0 on errors
+     */
+    int (*clear)(struct nvram *dev);
+
+    /**
+     * @brief Clears part of NVRAM content
+     *
+     * @param[in]  dev   Pointer to NVRAM device descriptor
+     * @param[in]  start Start address of the fragment to clear
+     * @param[in]  size  Size of the fragment to clear
+     *
+     * @return           Number of cleared bytes in NVRAM on success
+     * @return           <0 on errors
+     */
+    int (*clearpart)(struct nvram *dev, uint32_t start, size_t size);
+
     /** @brief Device capacity */
     size_t size;
 
@@ -83,13 +101,9 @@ typedef struct nvram {
     void *extra;
 } nvram_t;
 
-#if MODULE_VFS
-extern const vfs_file_ops_t nvram_vfs_ops;
-#endif
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* NVRAM_H */
+#endif /* DRIVERS_NVRAM_H_ */
 /** @} */
