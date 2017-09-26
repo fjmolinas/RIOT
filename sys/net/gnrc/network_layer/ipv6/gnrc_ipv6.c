@@ -750,6 +750,11 @@ static void _send(gnrc_pktsnip_t *pkt, bool prep_hdr)
         iface = _next_hop_l2addr(l2addr, &l2addr_len, iface, &hdr->dst, pkt);
 
         if (iface == KERNEL_PID_UNDEF) {
+#ifdef AIOT_INFORM
+            msg_t msg;
+            msg.type = NDP_LOST_NEXT_HOP;
+            msg_try_send(&msg, CONTROL_PID);
+#endif
             DEBUG("ipv6: error determining next hop's link layer address\n");
             gnrc_pktbuf_release(pkt);
             return;

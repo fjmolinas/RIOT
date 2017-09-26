@@ -62,6 +62,9 @@ static void _event_cb(netdev_t *dev, netdev_event_t event)
     }
     else {
         DEBUG("gnrc_netdev: event triggered -> %i\n", event);
+#ifdef AIOT_INFORM
+        msg_t msg;
+#endif
         switch(event) {
             case NETDEV_EVENT_RX_COMPLETE:
                 {
@@ -73,19 +76,25 @@ static void _event_cb(netdev_t *dev, netdev_event_t event)
 
                     break;
                 }
-#ifdef MODULE_NETSTATS_L2
+#ifdef AIOT_INFORM
             case NETDEV_EVENT_TX_MEDIUM_BUSY:
-                dev->stats.tx_failed++;
+                msg.type = TX_FAILED;
+                msg_try_send(&msg, CONTROL_PID);
                 break;
             case NETDEV_EVENT_TX_COMPLETE:
-                dev->stats.tx_success++;
-                msg_t msg;
                 msg.type = TX_COMPLETE;
                 msg_try_send(&msg, CONTROL_PID);
                 break;
             case NETDEV_EVENT_TX_NOACK:
                 msg.type = TX_NOACK;
                 msg_try_send(&msg, CONTROL_PID);
+                break;
+#elif MODULE_NETSTATS_L2
+            case NETDEV_EVENT_TX_MEDIUM_BUSY:
+                dev->stats.tx_failed++;
+                break;
+            case NETDEV_EVENT_TX_COMPLETE:
+                dev->stats.tx_success++;
                 break;
 #endif
             default:
