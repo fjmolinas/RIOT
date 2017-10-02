@@ -535,7 +535,7 @@ static void _isr(netdev_t *netdev)
     if (dev->pending & MRF24J40_TASK_TX_READY) {
         dev->pending &= ~(MRF24J40_TASK_TX_READY);
         DEBUG("[mrf24j40] EVT - TX_END\n");
-#ifdef MODULE_NETSTATS_L2
+#if defined(MODULE_NETSTATS_L2) || defined(AIOT_INFORM)
         if (netdev->event_callback && (dev->netdev.flags & MRF24J40_OPT_TELL_TX_END)) {
             uint8_t txstat = mrf24j40_reg_read_short(dev, MRF24J40_REG_TXSTAT);
             /* transmision failed */
