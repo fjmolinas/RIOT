@@ -753,7 +753,7 @@ static void _send(gnrc_pktsnip_t *pkt, bool prep_hdr)
 #ifdef AIOT_INFORM
             msg_t msg;
             msg.type = NDP_LOST_NEXT_HOP;
-            msg_try_send(&msg, CONTROL_PID);
+            msg_try_send(&msg, REBOOT_PID);
 #endif
             DEBUG("ipv6: error determining next hop's link layer address\n");
             gnrc_pktbuf_release(pkt);
