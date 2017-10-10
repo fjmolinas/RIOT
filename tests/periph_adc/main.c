@@ -25,7 +25,7 @@
 #include "periph/adc.h"
 
 
-#define RES             ADC_RES_10BIT
+#define RES             ADC_RES_12BIT
 #define DELAY           (100LU * US_PER_MS) /* 100 ms */
 
 
@@ -50,6 +50,7 @@ int main(void)
 
     while (1) {
         for (int i = 0; i < ADC_NUMOF; i++) {
+            sample = adc_sample(ADC_LINE(i), RES);
             sample = adc_sample(ADC_LINE(i), RES);
             if (sample < 0) {
                 printf("ADC_LINE(%i): 10-bit resolution not applicable\n", i);

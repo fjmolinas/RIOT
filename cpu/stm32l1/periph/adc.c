@@ -89,8 +89,6 @@ int adc_init(adc_t line)
 
     /* enable the ADC module */
     ADC1->CR2 = ADC_CR2_ADON;
-    /* turn off during idle phase*/
-    ADC1->CR1 = ADC_CR1_PDI;
 
     /* free the device again */
     done();
@@ -100,7 +98,7 @@ int adc_init(adc_t line)
 
 int adc_sample(adc_t line, adc_res_t res)
 {
-    int sample;
+  int sample;
 
     /* check if resolution is applicable */
     if ( (res != ADC_RES_6BIT) &&
@@ -113,23 +111,51 @@ int adc_sample(adc_t line, adc_res_t res)
     /* lock and power on the ADC device  */
     prep();
 
-    /* set resolution, conversion channel and single read */
-    ADC1->CR1 |= res & ADC_CR1_RES;
-    ADC1->SQR1 &= ~ADC_SQR1_L;
+    /* Set resolution */
+    ADC1->CR1 &= ~ADC_CR1_RES;
+    ADC1->CR1 |= res;
+
+    /* TODO: clear CR2 config */
+    ADC1->CR2 &= ~(ADC_CR2_ALIGN | ADC_CR2_CONT | ADC_CR2_EXTEN);
+
+    /* assigned channel to be converted */
     ADC1->SQR5 = adc_config[line].chan;
 
-    /* wait for regulat channel to be ready*/
-    while (!(ADC1->SR & ADC_SR_RCNR)) {}
-    /* start conversion and wait for results */
-    ADC1->CR2 |= ADC_CR2_SWSTART;
-    while (!(ADC1->SR & ADC_SR_EOC)) {}
-    /* finally read sample and reset the STRT bit in the status register */
+    /* Enable temperature and Vref conversion */
+    if ((adc_config[line].pin == GPIO_UNDEF)) {
+        ADC->CCR |= ADC_CCR_TSVREFE;
+      }
+
+    /* Enable ADC */
+    ADC1->CR2 |= (uint32_t)ADC_CR2_ADON;
+
+    /* Wait for ADC to become ready */
+    while ((ADC1->SR & ADC_SR_ADONS) == 0);
+    /* This bit is set at end of regular conversion */
+    ADC1->CR2 |= ADC_CR2_EOCS;
+
+    /* Start conversion on regular channels. */
+    ADC1->CR2 |= (uint32_t)ADC_CR2_SWSTART;
+
+    /* Wait until the end of ADC conversion */
+    while ((ADC1->SR & ADC_SR_EOC) == 0);
+
+    /* read result */
     sample = (int)ADC1->DR;
-    ADC1 -> SR &= ~ADC_SR_STRT;
 
-    /* power off and unlock device again */
+    /* VDD calculation based on VREFINT */
+    if (adc_config[line].chan == ADC_VREF_CHANNEL) { /* VREFINT is ADC channel 17 */
+        uint16_t *cal = ADC_VREFINT_CAL;
+        sample = 3000 * (*cal) / sample ;
+    }
+
+    /* Disable temperature and Vref conversion */
+    ADC->CCR &= ~ADC_CCR_TSVREFE;
+
+    /* unlock and power off device */
+    ADC1->CR2 &= ~(ADC_CR2_ADON);
+
     done();
-
     return sample;
 }
 
