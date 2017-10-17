@@ -568,7 +568,7 @@ static void _isr(netdev_t *netdev)
 
             if (netdev->event_callback && (dev->netdev.flags & AT86RF2XX_OPT_TELL_TX_END)) {
                 switch (trac_status) {
-#ifdef MODULE_OPENTHREAD
+#if defined(MODULE_OPENTHREAD) || defined(AIOT_INFORM)
                     case AT86RF2XX_TRX_STATE__TRAC_SUCCESS:
                         netdev->event_callback(netdev, NETDEV_EVENT_TX_COMPLETE);
                         DEBUG("[at86rf2xx] TX SUCCESS\n");
