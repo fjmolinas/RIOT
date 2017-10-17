@@ -88,7 +88,7 @@ int adc_init(adc_t line)
     }
 
     /* enable the ADC module */
-    ADC1->CR2 = ADC_CR2_ADON;
+    // ADC1->CR2 = ADC_CR2_ADON;
 
     /* free the device again */
     done();
