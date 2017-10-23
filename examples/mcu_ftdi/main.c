@@ -23,10 +23,6 @@
 #include <stdlib.h>
 
 #include "board.h"
-#include "shell.h"
-#include "thread.h"
-#include "msg.h"
-#include "ringbuffer.h"
 #include "periph/uart.h"
 #include "uart_stdio.h"
 
@@ -55,8 +51,14 @@ static void rx_cb_2(void *arg, uint8_t data)
 
 int main(void)
 {
-    puts("UART ECHO");
+    printf("Uart FTDI runing on UART_DEV 0 & 1 \n \n");
 
+    if(UART_NUMOF<2){
+    	printf("This Board doesn't have enough uart devices \n");
+    }
+
+    // sscanf(buf, "%" #MAX_LEN "s", val);
+// printf ("%s\n", (char*) uart_config[2].rx_pin);
     uart_init(UART_DEV(0), 115200, rx_cb_1, (void *) 0);
     uart_init(UART_DEV(1), 115200, rx_cb_2, (void *) 1);
 
