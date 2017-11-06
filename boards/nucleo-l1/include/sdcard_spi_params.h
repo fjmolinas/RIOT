@@ -19,8 +19,6 @@
 #ifndef SDCARD_SPI_PARAMS_H
 #define SDCARD_SPI_PARAMS_H
 
-#error
-
 #include "board.h"
 
 #ifdef __cplusplus
@@ -44,7 +42,7 @@ extern "C" {
 #define SDCARD_SPI_PARAM_MOSI        (GPIO_PIN(PORT_B, 15))
 #endif
 #ifndef SDCARD_SPI_PARAM_MISO
-#define SDCARD_SPI_PARAM_MISO        (GPIO_PIN(PORT_B, 14)
+#define SDCARD_SPI_PARAM_MISO        (GPIO_PIN(PORT_B, 14))
 #endif
 #ifndef SDCARD_SPI_PARAM_POWER
 #define SDCARD_SPI_PARAM_POWER       (GPIO_UNDEF)
