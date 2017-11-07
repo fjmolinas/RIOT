@@ -353,7 +353,7 @@ int main(void)
     #if FATFS_FFCONF_OPT_FS_NORTC == 0
     /* the rtc is used in diskio.c for timestamps of files */
     puts("Initializing the RTC driver");
-    rtc_poweron();
+    // rtc_poweron();
     rtc_init();
 
     struct tm time;

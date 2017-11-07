@@ -38,7 +38,7 @@ extern "C" {
    before taking furter actions (see sd spec. 6.4.1.1 Power Up Time of Card) */
 #define SD_POWERSEQUENCE_CLOCK_COUNT 74
 
-#define SD_CARD_PREINIT_CLOCK_PERIOD_US 10 /* used to generate 100 kHz clock in init phase*/
+#define SD_CARD_PREINIT_CLOCK_PERIOD_US 100 /* used to generate 100 kHz clock in init phase*/
 #define SD_CARD_WAIT_AFTER_POWER_UP_US  1000
 
 /* R1 response bits (see sd spec. 7.3.2.1 Format R1) */

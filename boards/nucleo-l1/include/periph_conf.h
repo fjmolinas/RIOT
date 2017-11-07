@@ -188,8 +188,8 @@ static const spi_conf_t spi_config[] = {
     },
     {
         .dev      = SPI2,
-        .mosi_pin = GPIO_PIN(PORT_A, 15),
-        .miso_pin = GPIO_PIN(PORT_A, 14),
+        .mosi_pin = GPIO_PIN(PORT_B, 15),
+        .miso_pin = GPIO_PIN(PORT_B, 14),
         .sclk_pin = GPIO_PIN(PORT_B, 13),
         .cs_pin   = GPIO_UNDEF,
         .af       = GPIO_AF5,

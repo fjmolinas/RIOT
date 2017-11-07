@@ -32,16 +32,16 @@ extern "C" {
 #define SDCARD_SPI_PARAM_SPI         (SPI_DEV(1))
 #endif
 #ifndef SDCARD_SPI_PARAM_CS
-#define SDCARD_SPI_PARAM_CS          (GPIO_PIN(PORT_B, 12))
+#define SDCARD_SPI_PARAM_CS          (GPIO_PIN(PA, 14))
 #endif
 #ifndef SDCARD_SPI_PARAM_CLK
-#define SDCARD_SPI_PARAM_CLK         (GPIO_PIN(PORT_B, 13))
+#define SDCARD_SPI_PARAM_CLK         (GPIO_PIN(PB, 23))
 #endif
 #ifndef SDCARD_SPI_PARAM_MOSI
-#define SDCARD_SPI_PARAM_MOSI        (GPIO_PIN(PORT_B, 15))
+#define SDCARD_SPI_PARAM_MOSI        (GPIO_PIN(PB, 22))
 #endif
 #ifndef SDCARD_SPI_PARAM_MISO
-#define SDCARD_SPI_PARAM_MISO        (GPIO_PIN(PORT_B, 14))
+#define SDCARD_SPI_PARAM_MISO        (GPIO_PIN(PB, 2))
 #endif
 #ifndef SDCARD_SPI_PARAM_POWER
 #define SDCARD_SPI_PARAM_POWER       (GPIO_UNDEF)
