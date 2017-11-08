@@ -81,6 +81,13 @@ typedef enum {
 #define PM_BLOCKER_INITIAL  { .val_u32 = 0x01010101 }
 
 /**
+ * @name    Power management configuration
+ * @{
+ */
+#ifndef PROVIDES_PM_SET_LOWEST_CORTEXM
+#define PROVIDES_PM_SET_LOWEST_CORTEXM
+#endif
+/**
  * @brief   I2C configuration data structure
  */
 typedef struct {
