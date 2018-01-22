@@ -134,6 +134,7 @@ int uart_init(uart_t uart, uint32_t baudrate, uart_rx_cb_t rx_cb, void *arg) {
 
     /* calculate and apply baudrate */
     if (periph_uart_set_baudrate(uart, baudrate) != UART_OK) {
+
         return UART_NOBAUD;
     }
 
