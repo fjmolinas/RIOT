@@ -30,58 +30,109 @@
 static gnrc_netreg_entry_t server = GNRC_NETREG_ENTRY_INIT_PID(GNRC_NETREG_DEMUX_CTX_ALL,
                                                                KERNEL_PID_UNDEF);
 
-
 /**
-* @brief   PID of the pktdump thread
+* @brief   UDP server variables
 */
 kernel_pid_t server_thread_pid = KERNEL_PID_UNDEF;
-uint8_t server_port = 0x00;
 
-/**
-* @brief   Stack for the pktdump thread
-*/
-#define SERVER_MSG_QUEUE_SIZE   (8)
+#define SERVER_MSG_QUEUE_SIZE   (16)
 
 static char server_stack[THREAD_STACKSIZE_DEFAULT];
 
+static source_port;
+static char addr_str[IPV6_ADDR_MAX_STR_LEN];
+static unit8_t packet_data = []
+xtimer_t timer;
 
- static void *_server_thread(void *args)
- {
+static int server_echo(gnrc_pktsnip_t *pkt)
+{
+    udp_hdr_t *hdr = pkt->data;
+    ipv6_hdr_t *hdr = pkt->data;
 
-     (void) args;
-     msg_t msg, reply;
-     msg_t msg_queue[SERVER_MSG_QUEUE_SIZE];
+    uint8_t source_port = 0x00;
 
-     /* setup the message queue */
-     msg_init_queue(msg_queue, SERVER_MSG_QUEUE_SIZE);
+    switch (pkt->type) {
+        case GNRC_NETTYPE_UNDEF:
+            printf("NETTYPE_UNDEF (%i)\n", pkt->type);
+            od_hex_dump(pkt->data, pkt->size, OD_WIDTH_DEFAULT);
+            break;
+        case GNRC_NETTYPE_NETIF:
+            printf("NETTYPE_NETIF (%i)\n", pkt->type);
+            gnrc_pktbuf_release(pkt);
+            break;
+        case GNRC_NETTYPE_SIXLOWPAN:
+            printf("NETTYPE_SIXLOWPAN (%i)\n", pkt->type);
+            gnrc_pktbuf_release(pkt);
+            break;
+        case GNRC_NETTYPE_IPV6:
+            printf("NETTYPE_IPV6 (%i)\n", pkt->type);
+            ipv6_addr_to_str(addr_str, &hdr->dst, sizeof(addr_str));
+            gnrc_pktbuf_release(pkt);
+            break;
+        case GNRC_NETTYPE_ICMPV6:
+            printf("NETTYPE_ICMPV6 (%i)\n", pkt->type);
+            gnrc_pktbuf_release(pkt);
+            break;
+        case GNRC_NETTYPE_UDP:
+            printf("NETTYPE_UDP (%i)\n", pkt->type);
+            source_port = byteorder_ntohs(hdr->src_port);
+            gnrc_pktbuf_release(pkt);
+            break;
+        default:
+            printf("NETTYPE_UNKNOWN (%i)\n", pkt->type);
+            od_hex_dump(pkt->data, pkt->size, OD_WIDTH_DEFAULT);
+            break;
+    }
 
-     reply.content.value = (uint32_t)(-ENOTSUP);
-     reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
+}
 
-     while (1) {
-       msg_receive(&msg);
+static void *_server_thread(void *args)
+{
 
-       switch (msg.type) {
-           case GNRC_NETAPI_MSG_TYPE_RCV:
-               puts("PKTDUMP: data received:");
+    (void) args;
+    msg_t msg, reply;
+    msg_t msg_queue[SERVER_MSG_QUEUE_SIZE];
+
+    /* setup the message queue */
+    msg_init_queue(msg_queue, SERVER_MSG_QUEUE_SIZE);
+
+    reply.content.value = (uint32_t)(-ENOTSUP);
+    reply.type = GNRC_NETAPI_MSG_TYPE_ACK;
+    gnrc_pktsnip_t *pkt = NULL;
+
+    while (1)
+    {
+        msg_receive(&msg);
+
+        switch (msg.type)
+        {
+            case GNRC_NETAPI_MSG_TYPE_RCV:
+                puts("UDP_SERVER: data received:");
+                pkt = msg.content.ptr;
+                server_echo(pkt);
+                // xtimer_set_msg(&timer, 1U*US_PER_SEC, msg, server_thread_pid)
                 gnrc_pktbuf_release(msg.content.ptr);
-               break;
-           case GNRC_NETAPI_MSG_TYPE_SND:
-               puts("PKTDUMP: data to send:");
-               gnrc_pktbuf_release(msg.content.ptr);
-               break;
-           case GNRC_NETAPI_MSG_TYPE_GET:
-           case GNRC_NETAPI_MSG_TYPE_SET:
-               msg_reply(&msg, &reply);
-                puts("PKTDUMP: data to send:");
-               break;
-           default:
-               puts("PKTDUMP: received something unexpected");
-               break;
-      }
-     return NULL;
- }
-
+                break;
+            case GNRC_NETAPI_MSG_TYPE_SND:
+                puts("UDP_SERVER: data to send:");
+                gnrc_pktbuf_release(msg.content.ptr);
+                break;
+            case GNRC_NETAPI_MSG_TYPE_GET:
+            case GNRC_NETAPI_MSG_TYPE_SET:
+                msg_reply(&msg, &reply);
+                puts("UDP_SERVER: reply sent:");
+                break;
+            case DELAYED_ECHO:
+                puts("UDP_SERVER: echo reply sent:");
+                pkt = msg.content.ptr;
+                server_echo(pkt);
+                break;
+            default:
+                puts("UDP_SERVER: received something unexpected");
+                break;
+        }
+        return NULL;
+    }
 }
 
 static void send(char *addr_str, char *port_str, char *data, unsigned int num,
