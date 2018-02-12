@@ -343,6 +343,10 @@ auto_init_mpu9150();
     extern void auto_init_tmp006(void);
     auto_init_tmp006();
 #endif
+#ifdef MODULE_TMP102
+    extern void auto_init_tmp102(void);
+    auto_init_tmp102();
+#endif
 #ifdef MODULE_TCS37727
     extern void auto_init_tcs37727(void);
     auto_init_tcs37727();
