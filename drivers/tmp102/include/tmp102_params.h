@@ -43,7 +43,7 @@ static const tmp102_params_t tmp102_params[] =
 /**
  * @brief   Additional meta information to keep in the SAUL registry
  */
-const saul_reg_info_t tmp102_saul_info[] =
+static const saul_reg_info_t tmp102_saul_info[] =
 {
     { .name = "tmp102" }
 };

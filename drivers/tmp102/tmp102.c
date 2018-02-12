@@ -205,7 +205,7 @@ int tmp102_read_temperature(const tmp102_t *dev, int16_t *ta)
     float tamb;
 #endif
 
-#ifdef TMP102_LOW_POWER
+#if TMP102_USE_LOW_POWER
     if (tmp102_wakeup(dev)) {
         return TMP102_ERROR;
     }
@@ -219,7 +219,7 @@ int tmp102_read_temperature(const tmp102_t *dev, int16_t *ta)
     tmp102_convert(rawtemp, &tamb);
     *ta = (int16_t)(tamb*100);
 #endif
-#ifdef TMP102_LOW_POWER
+#if TMP102_USE_LOW_POWER
     if (tmp102_sleep(dev)) {
         return TMP102_ERROR;
     }
