@@ -22,15 +22,53 @@
 #include "cpu.h"
 #include "board.h"
 #include "stmclk.h"
+#include "periph_cpu_common.h"
 #include "periph_conf.h"
 #include "periph/init.h"
 
+static void gpio_set_ain(void){
+    uint32_t ahb_gpio_clocks;
+    uint32_t tmpreg;
+
+    /* determine available ports */
+    uint32_t cpu_ports_number = 0;
+    for (uint32_t i = GPIOA_BASE; i<=GPIOG_BASE; i += (GPIOB_BASE - GPIOA_BASE)) {
+        if (cpu_check_address((char *)i)) {
+            cpu_ports_number++;
+        }
+        else {
+            break;
+        }
+    }
+
+    /* save GPIO clock configuration */
+    ahb_gpio_clocks = RCC->AHBENR & 0xFF;
+    /* enable all GPIO clocks */
+    periph_clk_en(AHB, 0xFF);
+
+    /* switch all GPIOs to AIN mode to minimize power consumption */
+    GPIO_TypeDef *port;
+    for (uint8_t i = 0; i < cpu_ports_number; i++) {
+        port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
+        port->MODER = 0xffffffff;
+    }
+
+    /* restore GPIO clocks */
+    tmpreg = RCC->AHBENR;
+    tmpreg &= ~((uint32_t)0xFF);
+    tmpreg |= ahb_gpio_clocks;
+    periph_clk_en(AHB, tmpreg);
+}
+
 void cpu_init(void)
 {
+
     /* initialize the Cortex-M core */
     cortexm_init();
     /* initialize system clocks */
     stmclk_init_sysclk();
+    /* set all gpion as AIN at start-up*/
+    gpio_set_ain();
     /* trigger static peripheral initialization */
     periph_init();
 }
