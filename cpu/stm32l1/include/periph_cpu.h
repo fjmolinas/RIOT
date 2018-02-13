@@ -73,6 +73,18 @@ typedef enum {
 } adc_res_t;
 /** @} */
 
+
+/**
+ * @brief   Define the number of available PM modes
+ */
+#define PM_NUM_MODES    (3U)
+
+/**
+ * @brief   Override the default initial PM blocker
+ * @todo   we block all modes per default, until PM is cleanly implemented
+ */
+#define PM_BLOCKER_INITIAL  { .val_u32 = 0x01010101 }
+
 /**
  * @brief   I2C configuration data structure
  */
