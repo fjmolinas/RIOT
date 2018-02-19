@@ -68,7 +68,6 @@ void cortexm_init(void)
 #endif
 }
 
-
 bool cpu_check_address(volatile const char *address)
 {
 #if defined(CPU_ARCH_CORTEX_M3) || defined(CPU_ARCH_CORTEX_M4) || defined(CPU_ARCH_CORTEX_M4F)
@@ -93,6 +92,7 @@ bool cpu_check_address(volatile const char *address)
     return is_valid;
 #else
     /* Cortex-M0 doesn't have BusFault */
+    (void) address;
     puts("Cortex-M0 doesn't have BusFault");
     assert(false);
     return true;
