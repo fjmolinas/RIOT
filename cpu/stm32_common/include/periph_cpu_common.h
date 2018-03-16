@@ -289,6 +289,13 @@ typedef struct {
 } spi_conf_t;
 
 /**
+ * @brief   Get the actual core_clock frequency for the cpu
+ *
+ * @return              core clock frequency
+ */
+uint32_t stmclk_get_core_clock(void);
+
+/**
  * @brief   Get the actual bus clock frequency for the APB buses
  *
  * @param[in] bus       target APBx bus

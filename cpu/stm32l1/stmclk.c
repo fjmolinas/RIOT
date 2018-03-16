@@ -76,7 +76,17 @@
 
 static uint32_t tmpreg;
 static volatile uint32_t clock_source_rdy = 0;
-volatile uint32_t cpu_clock_global;
+
+/* Variable to keep track of global cpu clock */
+static volatile uint32_t cpu_clock_global;
+
+/**
+ * @brief   Returns current global core clock frequency
+ */
+uint32_t stmclk_get_core_clock(void)
+{
+    return cpu_clock_global;
+}
 
 /**
  * @brief Configure the clock system of the stm32l1

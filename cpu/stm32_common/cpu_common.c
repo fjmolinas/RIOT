@@ -94,7 +94,7 @@ uint32_t periph_apb_clk(uint8_t bus)
         }
         /* return CLOCK_APB2; */
     }
-    return cpu_clock_global / divider;
+    return stmclk_get_core_clock() / divider;
 }
 
 uint32_t periph_timer_clk(uint8_t bus)
