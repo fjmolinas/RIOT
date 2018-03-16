@@ -39,12 +39,21 @@
 #endif
 
 /* Make sure we have all needed information about the clock configuration */
-#if !defined(CLOCK_HSI) && !defined(CLOCK_HSE)
+#if !defined(CLOCK_HSI) && !defined(CLOCK_HSE) && !defined(CLOCK_MSI)
 #error "Please provide CLOCK_HSE or CLOCK_HSI in your board's perhip_conf.h"
 #endif
 #ifndef CLOCK_CORECLOCK
 #error "Please provide CLOCK_CORECLOCK in your board's periph_conf.h"
 #endif
+
+#if defined(CLOCK_MSI)
+#define CLOCK_MSIRANGE RCC_ICSCR_MSIRANGE_6
+#if (CLOCK_USE_PLL == 1)
+#error "PLL can't be used with MSI"
+#endif
+#endif
+
+#define MSI_RANGE_SHIFT           13
 
 /* Check the source to be used for the PLL, can be HSE, HSI or both*/
 #if defined(CLOCK_PLL_DIV_HSE) && defined(CLOCK_PLL_MUL_HSE) && \
@@ -143,6 +152,14 @@ void stmclk_init_sysclk(void)
     /* Wait until the Voltage Regulator is ready */
     while((PWR->CSR & PWR_CSR_VOSF) != 0) {}
 
+    /* Enable low-power run if permitted */
+#if CLOCK_MSI
+    if ((CLOCK_MSIRANGE == RCC_ICSCR_MSIRANGE_1) || (CLOCK_MSIRANGE == RCC_ICSCR_MSIRANGE_0))
+    {
+        PWR->CR |= PWR_CR_LPSDSR | PWR_CR_LPRUN;
+    }
+#endif
+
     /* set AHB, APB1 and APB2 clock dividers */
     tmpreg = RCC->CFGR;
     tmpreg &= ~RCC_CFGR_HPRE;
@@ -168,8 +185,14 @@ void stmclk_init_sysclk(void)
     RCC->CR |= RCC_CR_PLLON;
     /* Wait till PLL is ready */
     while ((RCC->CR & RCC_CR_PLLRDY) == 0) {}
+#elif CLOCK_MSI
+    tmpreg = RCC->ICSCR;
+    tmpreg &= ~(RCC_ICSCR_MSIRANGE);
+    tmpreg |= CLOCK_MSIRANGE;
+    RCC->ICSCR = tmpreg;
 #endif
 
+#if !defined(CLOCK_MSI)
     /* Select system clock source and turn of other clock sources*/
     tmpreg = RCC->CFGR;
     tmpreg &= ~RCC_CFGR_SW;
@@ -198,6 +221,16 @@ void stmclk_init_sysclk(void)
     /* Wait for sysyem clock to be ready before desabling other clocks*/
     while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS) != clock_cfgr_sw_rdy) {}
     RCC->CR &= ~(clock_disable_clocks);
+#else
+    tmpreg |= (uint32_t) RCC_CFGR_SW_MSI;
+
+    RCC->CFGR = tmpreg;
+    /* Wait till clock is used as system clock source */
+    while ((RCC->CFGR & (uint32_t)RCC_CFGR_SWS) != RCC_CFGR_SWS_MSI){}
+
+    /* Disable other clock sources */
+    RCC->CR &= ~(RCC_CR_HSEON | RCC_CR_HSION);
+#endif
 
     /* Restore isr state*/
     irq_restore(state);
