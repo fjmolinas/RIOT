@@ -48,12 +48,53 @@ static const uint8_t apbmul[] = {
 
 uint32_t periph_apb_clk(uint8_t bus)
 {
-    if (bus == APB1) {
-        return CLOCK_APB1;
+    uint8_t divider;
+
+    if (bus == APB1)
+    {
+        switch (CLOCK_APB1_DIV)
+        {
+        case RCC_CFGR_PPRE1_DIV1:
+            divider = 1;
+            break;
+        case RCC_CFGR_PPRE1_DIV2:
+            divider = 2;
+            break;
+        case RCC_CFGR_PPRE1_DIV4:
+            divider = 4;
+            break;
+        case RCC_CFGR_PPRE1_DIV8:
+            divider = 8;
+            break;
+        case RCC_CFGR_PPRE1_DIV16:
+            divider = 16;
+            break;
+        }
+        /* return CLOCK_APB1; */
     }
-    else {
-        return CLOCK_APB2;
+    else
+    {
+        switch (CLOCK_APB2_DIV)
+        {
+        case RCC_CFGR_PPRE2_DIV1:
+            divider = 1;
+            break;
+        case RCC_CFGR_PPRE2_DIV2:
+            divider = 2;
+            break;
+        case RCC_CFGR_PPRE2_DIV4:
+            divider = 4;
+            break;
+        case RCC_CFGR_PPRE2_DIV8:
+            divider = 8;
+            break;
+        case RCC_CFGR_PPRE2_DIV16:
+            divider = 16;
+            break;
+        }
+        /* return CLOCK_APB2; */
     }
+    return cpu_clock_global / divider;
 }
 
 uint32_t periph_timer_clk(uint8_t bus)

@@ -76,6 +76,7 @@
 
 static uint32_t tmpreg;
 static volatile uint32_t clock_source_rdy = 0;
+volatile uint32_t cpu_clock_global;
 
 /**
  * @brief Configure the clock system of the stm32l1
@@ -232,6 +233,8 @@ void stmclk_init_sysclk(void)
     RCC->CR &= ~(RCC_CR_HSEON | RCC_CR_HSION);
 #endif
 
+    cpu_clock_global = CLOCK_CORECLOCK;
+
     /* Restore isr state*/
     irq_restore(state);
 }
@@ -275,4 +278,7 @@ void stmclk_switch_msi(uint32_t msi_range, uint32_t ahb_divider)
     tmpreg &= ~(RCC_CR_HSION | RCC_CR_HSEON);
     tmpreg &= ~(RCC_CR_HSEBYP | RCC_CR_CSSON | RCC_CR_PLLON);
     RCC->CR = tmpreg;
+
+    /* Adjust cpu clock global frequency*/
+    cpu_clock_global = 65536 * (1 << (msi_range >> MSI_RANGE_SHIFT));
 }
