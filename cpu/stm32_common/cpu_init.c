@@ -63,9 +63,25 @@ void cpu_init(void)
     /* can't be more than 12 ports on STM32L1 */
     for (int i = 0; i < 12; i++) {
         port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
-        if (cpu_check_address((char *)port))
-            port->MODER = 0xffffffff;
-        else
+        if (cpu_check_address((char *)port)) {
+#if !defined (DISABLE_JTAG)
+            switch (i) {
+                /* preserve JTAG pins on PORTA and PORTB */
+                case 0:
+                    port->MODER = 0xABFFFFFF;
+                    break;
+                case 1:
+                    port->MODER = 0xFFFFFEBF;
+                    break;
+                default:
+                    port->MODER = 0xFFFFFFFF;
+                    break;
+            }
+#else
+            port->MODER = 0xFFFFFFFF;
+#endif
+        }
+        else {
             break;
         }
     /* restore GPIO clock */
