@@ -56,6 +56,11 @@
 #include "xtimer.h"
 #endif
 
+#ifdef MODULE_MSP430_COMMON
+#define _sheap __heap_start__
+#define _eheap __heap_end__
+#endif
+
 /**
  * @brief manage the heap
  */
