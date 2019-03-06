@@ -28,6 +28,23 @@
 extern "C" {
 #endif
 
+#define XTIMER_BACKOFF              (11)
+#define XTIMER_OVERHEAD             (6)
+#define XTIMER_WIDTH                (16)
+
+/**
+ * @name    sx1276 configuration
+ * @{
+ */
+#define SX127X_PARAM_SPI_NSS                GPIO_PIN(PORT_B, 0)
+
+#define SX127X_PARAM_RESET                  GPIO_PIN(PORT_A, 2)
+#define SX127X_PARAM_DIO0                   GPIO_PIN(PORT_B, 1)
+#define SX127X_PARAM_DIO1                   GPIO_PIN(PORT_B, 10)
+#define SX127X_PARAM_DIO2                   GPIO_PIN(PORT_B, 11)
+#define SX127X_PARAM_DIO3                   GPIO_PIN(PORT_B, 7)
+/** @} */
+
 /**
  * @brief   Initialize board specific hardware, including clock, LEDs and std-IO
  */

@@ -29,8 +29,9 @@ extern "C" {
  * @name    Clock system configuration
  * @{
  **/
-#define CLOCK_HSI           (16000000U)         /* internal oscillator */
+#define CLOCK_HSE           (16000000U)         /* internal oscillator */
 #define CLOCK_CORECLOCK     (32000000U)         /* desired core clock frequency */
+#define CLOCK_LSE           (1)                 /* this boards provides externeal oscilators */
 
 /* configuration of PLL prescaler and multiply values */
 /* CORECLOCK := HSI / CLOCK_PLL_DIV * CLOCK_PLL_MUL */
@@ -55,15 +56,15 @@ extern "C" {
  */
 static const timer_conf_t timer_config[] = {
     {
-        .dev      = TIM2,
-        .max      = 0xffffffff,
-        .rcc_mask = RCC_APB1ENR_TIM2EN,
+        .dev      = TIM3,
+        .max      = 0x0000ffff,
+        .rcc_mask = RCC_APB1ENR_TIM3EN,
         .bus      = APB1,
-        .irqn     = TIM2_IRQn
+        .irqn     = TIM3_IRQn
     }
 };
 
-#define TIMER_0_ISR         (isr_tim2)
+#define TIMER_0_ISR         (isr_tim3)
 
 #define TIMER_NUMOF         (sizeof(timer_config) / sizeof(timer_config[0]))
 /** @} */
@@ -117,9 +118,9 @@ static const uint8_t spi_divtable[2][5] = {
 static const spi_conf_t spi_config[] = {
     {
         .dev      = SPI1,
-        .mosi_pin = GPIO_PIN(PORT_B, 15),
-        .miso_pin = GPIO_PIN(PORT_B, 14),
-        .sclk_pin = GPIO_PIN(PORT_B, 13),
+        .mosi_pin = GPIO_PIN(PORT_A, 7),
+        .miso_pin = GPIO_PIN(PORT_A, 6),
+        .sclk_pin = GPIO_PIN(PORT_A, 5),
         .cs_pin   = GPIO_UNDEF,
         .af       = GPIO_AF5,
         .rccmask  = RCC_APB2ENR_SPI1EN,

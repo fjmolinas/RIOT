@@ -11,7 +11,7 @@
  * @{
  *
  * @file
- * @brief       Board specific implementations for the nz32-sc151 board
+ * @brief       Board specific implementations for the im880b board
  *
  * @author      Francisco Molina <francois-xavier.molina@inria.fr>
  *
