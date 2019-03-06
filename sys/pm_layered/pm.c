@@ -19,6 +19,7 @@
  */
 
 #include "irq.h"
+#include "log.h"
 #include "periph/pm.h"
 #include "pm_layered.h"
 
@@ -71,6 +72,8 @@ void pm_set_lowest(void)
 
 void pm_block(unsigned mode)
 {
+    LOG_DEBUG("%s: called from %pS, ...\n", __func__, __builtin_return_address(0));
+
     assert(pm_blocker.val_u8[mode] != 255);
 
     unsigned state = irq_disable();
@@ -80,6 +83,7 @@ void pm_block(unsigned mode)
 
 void pm_unblock(unsigned mode)
 {
+    LOG_DEBUG("%s: called from %pS, ...\n", __func__, __builtin_return_address(0));
     assert(pm_blocker.val_u8[mode] > 0);
 
     unsigned state = irq_disable();
