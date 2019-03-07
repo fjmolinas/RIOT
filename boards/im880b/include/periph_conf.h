@@ -31,7 +31,7 @@ extern "C" {
  **/
 #define CLOCK_HSE           (16000000U)         /* internal oscillator */
 #define CLOCK_CORECLOCK     (32000000U)         /* desired core clock frequency */
-#define CLOCK_LSE           (1)                 /* this boards provides externeal oscilators */
+#define CLOCK_LSE           (1)                 /* this boards provides external oscilators */
 
 /* configuration of PLL prescaler and multiply values */
 /* CORECLOCK := HSI / CLOCK_PLL_DIV * CLOCK_PLL_MUL */
