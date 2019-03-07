@@ -43,7 +43,11 @@ extern "C" {
 #define SX127X_PARAM_DIO1                   GPIO_PIN(PORT_B, 10)
 #define SX127X_PARAM_DIO2                   GPIO_PIN(PORT_B, 11)
 #define SX127X_PARAM_DIO3                   GPIO_PIN(PORT_B, 7)
+
+#define SX127X_PARAM_RX_SWITCH              GPIO_PIN(PORT_C, 13)
+#define SX127X_PARAM_TX_SWITCH              GPIO_PIN(PORT_A, 4)
 /** @} */
+
 
 /**
  * @brief   Initialize board specific hardware, including clock, LEDs and std-IO
