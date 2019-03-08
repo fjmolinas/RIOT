@@ -84,6 +84,15 @@ int sx127x_reset(const sx127x_t *dev)
 
     gpio_init(dev->params.reset_pin, GPIO_OUT);
 
+#ifdef SX127X_RXTX_SWITCH
+    /* initiate rx and tx switch pins as output */
+    gpio_init(dev->params.rx_switch_pin, GPIO_OUT);
+    gpio_init(dev->params.tx_switch_pin, GPIO_OUT);
+    /* Start in tx mode, rx pin in 0 and tx pin in 1 */
+    gpio_clear(dev->params.rx_switch_pin);
+    gpio_set(dev->params.tx_switch_pin);
+#endif
+
     /* Set reset pin to 0 */
     gpio_clear(dev->params.reset_pin);
 
