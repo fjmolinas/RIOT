@@ -37,25 +37,25 @@ extern void _wait_for_pending_operations(void);
 #error "periph/eeprom: EEPROM_START_ADDR is not defined"
 #endif
 
-static void erase_word(uint32_t pos)
+static void erase_word(uint32_t addres)
 {
-    assert(pos + sizeof(uint32_t) <= EEPROM_SIZE);
+    assert(addres <= EEPROM_START_ADDR + EEPROM_SIZE);
 
     /* Wait for last operation to be completed */
     _wait_for_pending_operations();
 
     /* Write "00000000h" to valid address in the data memory" */
-    *(__IO uint32_t *) pos = 0x00000000;
+    *(__IO uint32_t *) addres = 0x00000000;
 }
 
-static void write_word(uint32_t pos, uint32_t data)
+static void write_word(uint32_t addres, uint32_t data)
 {
-    assert(pos + sizeof(uint32_t) <= EEPROM_SIZE);
+    assert(addres <= EEPROM_START_ADDR + EEPROM_SIZE);
 
     /* Wait for last operation to be completed */
     _wait_for_pending_operations();
 
-    *(__IO uint32_t *) pos = data;
+    *(__IO uint32_t *) addres = data;
 
     /* Wait for last operation to be completed */
     _wait_for_pending_operations();
@@ -73,19 +73,19 @@ static void write_byte(uint32_t pos, uint8_t data)
 
     if(data != (uint8_t) 0x00)
     {
-        *(__IO uint8_t *)pos = data;
+        *(__IO uint8_t *) (pos + EEPROM_START_ADDR) = data;
 
         /* Wait for last operation to be completed */
         _wait_for_pending_operations();
     }
     else
     {
-        tmpaddr = pos & 0xFFFFFFFC;
+        tmpaddr = (pos + EEPROM_START_ADDR) & 0xFFFFFFFC;
         tmp = * (__IO uint32_t *) tmpaddr;
-        tmpaddr = 0xFF << ((uint32_t) (0x8 * (pos & 0x3)));
+        tmpaddr = 0xFF << ((uint32_t) (0x8 * ((pos + EEPROM_START_ADDR) & 0x3)));
         tmp &= ~tmpaddr;
-        erase_word(pos & 0xFFFFFFFC);
-        write_word((pos & 0xFFFFFFFC), tmp);
+        erase_word((pos + EEPROM_START_ADDR) & 0xFFFFFFFC);
+        write_word(((pos + EEPROM_START_ADDR) & 0xFFFFFFFC), tmp);
     }
 }
 
@@ -122,7 +122,7 @@ size_t eeprom_write(uint32_t pos, const uint8_t *data, size_t len)
 
     for (size_t i = 0; i < len; i++) {
         _wait_for_pending_operations();
-        write_byte((EEPROM_START_ADDR + pos++), *p++);
+        write_byte(pos++, *p++);
     }
 
     _wait_for_pending_operations();
