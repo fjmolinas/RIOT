@@ -73,3 +73,42 @@ void cortexm_init(void)
     cortexm_init_isr_priorities();
     cortexm_init_misc();
 }
+
+uint8_t cpu_check_address(volatile const char *address)
+{
+#if defined(CPU_ARCH_CORTEX_M3) || defined(CPU_ARCH_CORTEX_M4) || defined(CPU_ARCH_CORTEX_M4F)
+    uint8_t is_valid = 1;
+
+    /* Clear BFAR ADDRESS VALID flag */
+    SCB->CFSR |= SCB_CFSR_BFARVALID;
+
+    /*
+     * We want to turn off the hard fault interrupt because if we try to acces a invalid address
+     * we will get a Bus Fault withouth triggering the interrupt, which we can then use to know
+     * if the address checkes is valid
+     */
+    /* Ignore data BusFaults caused by load and store instructions */
+    SCB->CCR |= SCB_CCR_BFHFNMIGN;
+    /* Turn off hard fault interrupt */
+    __asm volatile ("cpsid f;");
+
+    /* Read address and check BFAR ADDRESS VALID flag*/
+    *address;
+    if ((SCB->CFSR & SCB_CFSR_BFARVALID) != 0)
+    {
+        /* Bus Fault occured reading the address */
+        is_valid = 0;
+    }
+
+    /* Turn on hard fault interrupt */
+    __asm volatile ("cpsie f;");
+    SCB->CCR &= ~SCB_CCR_BFHFNMIGN;
+
+    return is_valid;
+#else
+    /* Cortex-M0 doesn't have BusFault */
+    (void) address;
+    printf("[warning] %s: Cortex-M0 doesn't have BusFault\n", __func__);
+    return 1;
+#endif
+}
