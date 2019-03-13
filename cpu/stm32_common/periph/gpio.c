@@ -257,6 +257,34 @@ void isr_exti(void)
 }
 #endif /* MODULE_PERIPH_GPIO_IRQ */
 
+#ifdef CPU_FAM_STM32L1
+void gpio_pm_init(void)
+{
+    uint32_t ahb_gpio_clocks;
+    uint32_t tmpreg;
+    GPIO_TypeDef *port;
+
+    /* enable GPIO clock and save GPIO clock configuration */
+    ahb_gpio_clocks = RCC->AHBENR & 0xFF;
+    periph_clk_en(AHB, 0xFF);
+
+    /* switch all GPIOs to AIN*/
+    for (uint8_t i = 0; i < 8; i++) {
+        port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
+        if (cpu_check_address((char *)port)) {
+            port->MODER = 0xffffffff;
+        } else {
+            break;
+        }
+    }
+
+    /* restore GPIO clock */
+    tmpreg = RCC->AHBENR;
+    tmpreg &= ~((uint32_t)0xFF);
+    tmpreg |= ahb_gpio_clocks;
+    periph_clk_en(AHB, tmpreg);
+}
+#endif
 #else
 typedef int dont_be_pedantic;
 #endif

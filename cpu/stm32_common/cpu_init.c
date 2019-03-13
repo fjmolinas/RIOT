@@ -53,6 +53,9 @@ void cpu_init(void)
     /*  initialize DMA streams */
     dma_init();
 #endif
+#ifdef CPU_FAM_STM32L1
+    gpio_pm_init();
+#endif
     /* trigger static peripheral initialization */
     periph_init();
 }
