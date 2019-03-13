@@ -593,6 +593,16 @@ void gpio_init_af(gpio_t pin, gpio_af_t af);
  */
 void gpio_init_analog(gpio_t pin);
 
+#ifdef CPU_FAM_STM32L1
+/**
+ * @brief   Initialize gpio to AIN
+ *
+ * stm32l1 need to have all there pins initialized to AIN to achieve lowest power
+ * consumption (this makes the difference between 500uA and 1.7uA in STOP_MODE).
+ */
+void gpio_pm_init(void);
+#endif
+
 #ifdef MODULE_PERIPH_DMA
 /**
  * @brief   DMA stream not defined
