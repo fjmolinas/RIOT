@@ -31,6 +31,19 @@
 #include "periph/gpio.h"
 #include "periph_conf.h"
 
+#if defined (CPU_FAM_STM32L1) && defined (GPIO_PM)
+
+static uint32_t gpio_pm_moder[8];
+static uint16_t gpio_pm_otyper[8];
+static uint32_t gpio_pm_pupdr[8];
+#if defined (STM32L1XX_HD) || defined (STM32L1XX_XL)
+    static uint32_t gpio_pm_brr[8];
+#endif
+
+static uint16_t gpio_pm_ex_mask[8];
+
+#endif
+
 /* this implementation is not valid for the stm32f1 */
 #ifndef CPU_FAM_STM32F1
 
@@ -257,32 +270,92 @@ void isr_exti(void)
 }
 #endif /* MODULE_PERIPH_GPIO_IRQ */
 
-#ifdef CPU_FAM_STM32L1
-void gpio_pm_init(void)
+#if defined (CPU_FAM_STM32L1) && defined (GPIO_PM)
+
+void gpio_pm_add_exception(gpio_t pin)
+{
+	gpio_pm_ex_mask[_port_num] |= (uint16_t)(1<<_pin_num);
+}
+
+void gpio_pm_remove_exception(gpio_t pin)
+{
+    gpio_pm_ex_mask[_port_num(pin)] &= ~(uint16_t)(1<<_pin_num(pin));
+}
+
+
+void gpio_pm_set_ain(void)
 {
     uint32_t ahb_gpio_clocks;
     uint32_t tmpreg;
+    uint32_t mask = 0xffffffff;
     GPIO_TypeDef *port;
 
-    /* enable GPIO clock and save GPIO clock configuration */
+    /* Enable GPIO clock and save GPIO clock configuration */
     ahb_gpio_clocks = RCC->AHBENR & 0xFF;
     periph_clk_en(AHB, 0xFF);
 
-    /* switch all GPIOs to AIN*/
+    /* Switch all GPIOs to AIN*/
     for (uint8_t i = 0; i < 8; i++) {
         port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
-        if (cpu_check_address((char *)port)) {
-            port->MODER = 0xffffffff;
+        if (cpu_check_adress((char *)port)) {
+            for (uint8_t j = 0; j < 16; j++) {
+                if(gpio_pm_ex_mask[i] & (1 << j)) {
+                    mask &= ~((uint32_t)0x03 << (j*2));
+                }
+            }
+            /* Disable Gpio*/
+            port->MODER |= mask;
         } else {
             break;
         }
     }
-
-    /* restore GPIO clock */
+    /* Restore GPIO clock */
     tmpreg = RCC->AHBENR;
     tmpreg &= ~((uint32_t)0xFF);
     tmpreg |= ahb_gpio_clocks;
     periph_clk_en(AHB, tmpreg);
+}
+
+void gpio_pm_save(void)
+{
+    GPIO_TypeDef *port_addr;
+
+	for (uint32_t i = 0; i < 8; i++) {
+        port_addr = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
+
+        if (cpu_check_address((char *)port_addr)) {
+            /* save GPIO registers values */
+           gpio_pm_moder[i] = port_addr->MODER;
+           gpio_pm_pupdr[i] = port_addr->PUPDR;
+           gpio_pm_otyper[i] = (uint16_t)(port_addr->OTYPER & 0xFFFF);
+            #if defined (STM32L1XX_HD) || defined (STM32L1XX_XL)
+               gpio_pm_brr[i] = (uint16_t)(port_addr->BRR & 0xFFFF);
+            #endif
+        } else {
+            break;
+        }
+	}
+}
+
+void gpio_pm_restore(void)
+{
+    GPIO_TypeDef *port_addr;
+
+	for (uint32_t i = 0; i < 8; i++) {
+        port_addr = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
+
+        if (cpu_check_address((char *)port_addr)) {
+            /* save GPIO registers values */
+            port_addr->MODER = gpio_pm_moder[i];
+            port_addr->PUPDR = gpio_pm_pupdr[i];
+            port_addr->OTYPER = gpio_pm_otyper[i]
+            #if defined (STM32L1XX_HD) || defined (STM32L1XX_XL)
+                port_addr->BRR = gpio_pm_brr;
+            #endif
+        } else {
+            break;
+        }
+	}
 }
 #endif
 #else
