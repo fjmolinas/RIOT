@@ -1,8 +1,5 @@
 #
-SUIT_COAP_BASEPATH ?= fw/$(BOARD)
-SUIT_COAP_SERVER ?= localhost
-SUIT_COAP_ROOT ?= coap://$(SUIT_COAP_SERVER)/$(SUIT_COAP_BASEPATH)
-SUIT_COAP_FSROOT ?= $(RIOTBASE)/coaproot
+SUIT_MODE ?= local
 
 #
 SUIT_MANIFEST ?= $(BINDIR_APP)-riot.suitv4.$(APP_VER).bin
@@ -19,6 +16,17 @@ SUIT_PUB_HDR ?= public_key.h
 
 $(SUIT_PUB_HDR):
 	xxd -i $(SUIT_PUB) > $@
+
+#
+SUIT_MANIFEST ?= $(BINDIR_APP)-riot.suitv4.$(APP_VER).bin
+
+ifeq (local,$(SUIT_MODE))
+  include $(RIOTMAKE)/suit.v4.local.inc.mk
+else ifeq (http,$(SUIT_MODE))
+  include $(RIOTMAKE)/suit.v4.http.inc.mk
+else
+  $(error unsupported suit mode '$(SUIT_MODE)')
+endif
 
 $(SUIT_MANIFEST): $(SLOT0_RIOT_BIN) $(SLOT1_RIOT_BIN)
 	$(RIOTBASE)/dist/tools/suit_v4/gen_manifest.py \
