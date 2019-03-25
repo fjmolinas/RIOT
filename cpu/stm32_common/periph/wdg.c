@@ -15,7 +15,7 @@
  * @{
  *
  * @file        wdg.c
- * @brief       Independent Watchdog timer for STM3L
+ * @brief       Independent Watchdog timer for STM32L platforms
  *
  * @author      Francisco Molina <francois-xavier.molina@inria.fr>
  */
@@ -32,22 +32,14 @@
 extern "C" {
 #endif
 
-/*
- * To calculate the time for a wdg triggered reset:
- * wdg_time (us) = LSI(us) x 4 x 2^PRE x RELOAD
- */
-
 #define MAX_RELOAD                (4096U)
 #define MAX_PRESCALER             (6U)
 
 #define LSI_CLOCK_US              (US_PER_SEC / CLOCK_LSI)
-
 #define IWDG_MIN_US               ((4U)*(LSI_CLOCK_US))
 #define IWDG_STEP_US              ((4U)*(LSI_CLOCK_US)*(MAX_RELOAD))
 #define IWDG_MAX_US               ((4U)*(LSI_CLOCK_US)*(MAX_RELOAD) * \
                                   (1 << MAX_PRESCALER))
-
-#define IWDG_REMANENT             ( RESET_TIME_US / IWDG_STEP_US )
 
 #define IWDG_KR_KEY_RELOAD        ((uint16_t)0xAAAA)
 #define IWDG_KR_KEY_ENABLE        ((uint16_t)0xCCCC)
@@ -56,10 +48,13 @@ extern "C" {
 #define IWDG_LOCK                 ((uint16_t)0x0000)
 
 /**
- * @brief   Macro for calculating WDT timings in us from enum values
+ * @brief   Calculate the time for a wdg triggered reset:
+ *
+ * wdg_time (us) = LSI(us) x 4 x 2^PRE x RELOAD
  */
-#define WDG_TIMING(pre, rel) \
-    ((rel * (1 << pre) * LSI_CLOCK_US * 4))
+static inline uint32_t _wdg_time(uint8_t pre, uint16_t rel){
+    return ((rel * (1 << pre) * LSI_CLOCK_US * 4));
+}
 
 static inline void _iwdg_unlock(void)
 {
@@ -89,12 +84,12 @@ static void _set_reload(uint16_t reload)
     _iwdg_lock();
 }
 
-static uint8_t _find_prescaler(uint32_t rst_time){
+static uint8_t _find_prescaler(uint32_t rst_time)
+{
     /* Divide by the range to get power of 2 of the prescaler*/
-    uint16_t r = ( rst_time / IWDG_STEP_US );
+    uint16_t r = rst_time / IWDG_STEP_US;
     uint8_t pre = 0;
     DEBUG("[wdg]: range value %d\n", (int) r);
-
     /* Calculate prescaler */
     while(r > 0) {
         r = r >> 1;
@@ -104,7 +99,8 @@ static uint8_t _find_prescaler(uint32_t rst_time){
     return pre;
 }
 
-static uint16_t _find_reload_value(uint8_t pre, uint32_t rst_time){
+static uint16_t _find_reload_value(uint8_t pre, uint32_t rst_time)
+{
     /* Calculate best reload value*/
     uint16_t rel = (uint16_t) (rst_time / \
                    ((uint32_t) ( LSI_CLOCK_US * 4 * (1 << pre))));
@@ -148,7 +144,7 @@ uint32_t wdg_init(uint32_t rst_time)
     _set_reload(rel);
 
     /* Calculate the actual reset time in us */
-    uint32_t time_set = WDG_TIMING(pre, rel);
+    uint32_t time_set = _wdg_time(pre, rel);
     DEBUG("[wdg]: reset time %lu [us]\n", time_set);
 
     /* Wait for register to be updated */

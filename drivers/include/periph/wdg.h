@@ -7,7 +7,7 @@
  */
 
 /**
- * @defgroup    drivers_periph
+ * @defgroup    drivers_periph_wdg
  * @ingroup     drivers_periph
  * @brief       Common watchdog interface
  *
