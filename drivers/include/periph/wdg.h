@@ -22,9 +22,16 @@
 #ifndef PERIPH_WDG_H_
 #define PERIPH_WDG_H_
 
-
 #include <stdint.h>
 #include "timex.h"
+
+/**
+ * @brief   Possible WDG return values
+ */
+enum {
+    WDG_OK         =  0,
+    WDG_ERROR      = -1,
+};
 
 /**
  * @brief    Enable watchdog timer
@@ -42,13 +49,24 @@ void wdg_disable(void);
 void wdg_reset(void);
 
 /**
+ * @brief    Reset the watchdog timer
+ */
+uint32_t wdg_max_timeout(void);
+
+/**
+ * @brief    Reset the watchdog timer
+ */
+uint32_t wdg_min_timeout(void);
+
+
+/**
  * @brief    Sets the time before a wdg reset, best effort approximate value
  *
  * @param[out] time_set     actual time in us for wdg reset , time_set~time
  *
  * @return                  0 When out of bounds
- * @return                  uint32_t with the setted reset time
+ * @return                  uint32_t with the set reset time
  */
-uint32_t wdg_init(uint32_t rst_time);
+int wdg_init(uint32_t rst_time);
 
 #endif /* PERIPH_WDG_H_ */

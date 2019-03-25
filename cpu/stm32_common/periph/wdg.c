@@ -47,14 +47,12 @@ extern "C" {
 #define IWDG_UNLOCK               ((uint16_t)0x5555)
 #define IWDG_LOCK                 ((uint16_t)0x0000)
 
-/**
- * @brief   Calculate the time for a wdg triggered reset:
- *
- * wdg_time (us) = LSI(us) x 4 x 2^PRE x RELOAD
- */
+#if ENABLE_DEBUG
+/* wdg_time (us) = LSI(us) x 4 x 2^PRE x RELOAD */
 static inline uint32_t _wdg_time(uint8_t pre, uint16_t rel){
     return ((rel * (1 << pre) * LSI_CLOCK_US * 4));
 }
+#endif
 
 static inline void _iwdg_unlock(void)
 {
@@ -129,11 +127,12 @@ void wdg_reset(void)
     IWDG->KR = IWDG_KR_KEY_RELOAD;
 }
 
-uint32_t wdg_init(uint32_t rst_time)
+int wdg_init(uint32_t rst_time)
 {
     /* Check reset time limit */
     if ((rst_time < IWDG_MIN_US) || (rst_time > IWDG_MAX_US)){
-        return 0;
+        DEBUG("[wdg]: out of bounds values [us]\n");
+        return WDG_ERROR;
     }
 
     uint8_t pre = _find_prescaler(rst_time);
@@ -143,20 +142,24 @@ uint32_t wdg_init(uint32_t rst_time)
     _set_prescaler(pre);
     _set_reload(rel);
 
-    /* Calculate the actual reset time in us */
-    uint32_t time_set = _wdg_time(pre, rel);
-    DEBUG("[wdg]: reset time %lu [us]\n", time_set);
-
-    /* Wait for register to be updated */
-    volatile int timeout = 10000;
-    while(IWDG->SR && timeout){
-        timeout--;
-    }
+#if ENABLE_DEBUG
+    DEBUG("[wdg]: reset time %lu [us]\n", _wdg_time(pre, rel));
+#endif
 
     /* Refresh wdg counter*/
     wdg_reset();
 
-    return time_set;
+    return WDG_OK;
+}
+
+uint32_t wdg_min_timeout(void)
+{
+    return IWDG_MIN_US;
+}
+
+uint32_t wdg_max_timeout(void)
+{
+    return IWDG_MAX_US;
 }
 
 #ifdef __cplusplus

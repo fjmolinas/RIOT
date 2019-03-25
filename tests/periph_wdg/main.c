@@ -22,42 +22,55 @@
  */
 
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
 
 #include "periph/wdg.h"
-#include "timex.h"
 #include "shell.h"
 
-int setup_wdg(int argc, char **argv){
+int init_wdg(int argc, char **argv){
     if (argc < 2){
         printf("usage: %s <time[us]>\n", argv[0]);
-        return 1;
+        return -1;
     }
-
-    uint32_t rst_time = wdg_init((uint32_t) atoi(argv[1]));
-    printf("[wdg]: configured with reset time %lu [us]\n", rst_time);
-    return 0;
+    uint32_t rst_time = (uint32_t) atoi(argv[1]);
+    int result = wdg_init(rst_time);
+    if(!result)
+    {
+        puts("[wdg]: wdg configured");
+    }
+    else
+    {
+        puts("[wdg]: invalid configuration time");
+    }
+    return result;
 }
 
 int start_wdg(int argc, char **argv){
     (void) argc;
     (void) argv;
-    printf("[wdg]: started wdg timer\n");
+    puts("[wdg]: started wdg timer");
     wdg_enable();
-
     return 0;
 }
 
+int range_wdg(int argc, char **argv){
+    (void) argc;
+    (void) argv;
+    printf("{\"max\":\"%lu\", \"min\":\"%lu\"}\n", wdg_get_max(), wdg_get_min());
+    return 0;
+}
+
+
 static const shell_command_t shell_commands[] = {
-    { "init", "Setup Wdg Timer", setup_wdg },
+    { "range", "Get wdg range for reset time", range_wdg },
+    { "init", "Setup Wdg Timer", init_wdg },
     { "start", "Start wdg timer", start_wdg },
     { NULL, NULL, NULL }
 };
 
 int main(void)
 {
-    printf("RIOT wdg test application\n");
+    puts("RIOT wdg test application");
 
     /* run the shell */
     char line_buf[SHELL_DEFAULT_BUFSIZE];
