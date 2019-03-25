@@ -19,6 +19,28 @@ SUIT_MANIFESTS := $(SLOT0_SUIT_MANIFEST) \
 			      $(SLOT0_SUIT_MANIFEST_LATEST) \
                   $(SLOT1_SUIT_MANIFEST_LATEST)
 
+define manifest-recipe
+  $(RIOTBASE)/dist/tools/suit_v1/gen_manifest.py \
+	  --raw -k $(SUIT_KEY) \
+	  -u $(SUIT_COAP_ROOT)/$(notdir $<) \
+	  -d $(SUIT_DEVICE_ID) \
+	  -V $(SUIT_VERSION) \
+	  -e $(SUIT_VENDOR) \
+	  --no-sign \
+	  -o $@ \
+	  $<
+endef
+
+$(SLOT0_SUIT_MANIFEST): $(SLOT0_RIOT_BIN) $(SUIT_KEY)
+	$(Q)$(manifest-recipe)
+
+$(SLOT1_SUIT_MANIFEST): $(SLOT1_RIOT_BIN) $(SUIT_KEY)
+	$(Q)$(manifest-recipe)
+
+$(info $(SUIT_MANIFESTS))
+
+suit/manifest: $(SUIT_MANIFESTS)
+
 suit/publish: $(SUIT_MANIFESTS) $(SLOT0_RIOT_BIN) $(SLOT1_RIOT_BIN)
 	@mkdir -p $(SUIT_COAP_FSROOT)/$(SUIT_COAP_BASEPATH)
 	@cp -t $(SUIT_COAP_FSROOT)/$(SUIT_COAP_BASEPATH) $^
