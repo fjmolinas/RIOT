@@ -17,6 +17,7 @@ ifneq (,$(filter nrf52840xxaa,$(CPU_MODEL)))
   RAM_LEN ?= 0x40000
 endif
 
+RIOTBOOT_LEN = 0x2000
 ROM_START_ADDR ?= 0x00000000
 RAM_START_ADDR ?= 0x20000000
 
