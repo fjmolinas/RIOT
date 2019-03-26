@@ -27,36 +27,37 @@
 #include "periph/wdg.h"
 #include "shell.h"
 
-int init_wdg(int argc, char **argv){
-    if (argc < 2){
+int init_wdg(int argc, char **argv)
+{
+    if (argc < 2) {
         printf("usage: %s <time[us]>\n", argv[0]);
         return -1;
     }
-    uint32_t rst_time = (uint32_t) atoi(argv[1]);
+    uint32_t rst_time = (uint32_t)atoi(argv[1]);
     int result = wdg_init(rst_time);
 
-    if(!result)
-    {
+    if (!result) {
         puts("[wdg]: wdg configured");
     }
-    else
-    {
+    else {
         puts("[wdg]: invalid configuration time");
     }
     return result;
 }
 
-int start_wdg(int argc, char **argv){
-    (void) argc;
-    (void) argv;
+int start_wdg(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
     puts("[wdg]: started wdg timer");
     wdg_enable();
     return 0;
 }
 
-int range_wdg(int argc, char **argv){
-    (void) argc;
-    (void) argv;
+int range_wdg(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
     printf("[wdg] range - { \"max\":\"%lu\", \"min\":\"%lu\"} - [wdg] range\n", \
            wdg_max_timeout(), wdg_min_timeout());
     return 0;

@@ -36,10 +36,10 @@ extern "C" {
 #define MAX_PRESCALER             (6U)
 
 #define LSI_CLOCK_US              (US_PER_SEC / CLOCK_LSI)
-#define IWDG_MIN_US               ((4U)*(LSI_CLOCK_US))
-#define IWDG_STEP_US              ((4U)*(LSI_CLOCK_US)*(MAX_RELOAD))
-#define IWDG_MAX_US               ((4U)*(LSI_CLOCK_US)*(MAX_RELOAD) * \
-                                  (1 << MAX_PRESCALER))
+#define IWDG_MIN_US               ((4U) * (LSI_CLOCK_US))
+#define IWDG_STEP_US              ((4U) * (LSI_CLOCK_US)*(MAX_RELOAD))
+#define IWDG_MAX_US               ((4U) * (LSI_CLOCK_US)*(MAX_RELOAD) * \
+                                   (1 << MAX_PRESCALER))
 
 #define IWDG_KR_KEY_RELOAD        ((uint16_t)0xAAAA)
 #define IWDG_KR_KEY_ENABLE        ((uint16_t)0xCCCC)
@@ -49,7 +49,8 @@ extern "C" {
 
 #if ENABLE_DEBUG
 /* wdg_time (us) = LSI(us) x 4 x 2^PRE x RELOAD */
-static inline uint32_t _wdg_time(uint8_t pre, uint16_t rel){
+static inline uint32_t _wdg_time(uint8_t pre, uint16_t rel)
+{
     return ((rel * (1 << pre) * LSI_CLOCK_US * 4));
 }
 #endif
@@ -87,9 +88,10 @@ static uint8_t _find_prescaler(uint32_t rst_time)
     /* Divide by the range to get power of 2 of the prescaler*/
     uint16_t r = rst_time / IWDG_STEP_US;
     uint8_t pre = 0;
-    DEBUG("[wdg]: range value %d\n", (int) r);
+
+    DEBUG("[wdg]: range value %d\n", (int)r);
     /* Calculate prescaler */
-    while(r > 0) {
+    while (r > 0) {
         r = r >> 1;
         pre++;
     }
@@ -100,8 +102,9 @@ static uint8_t _find_prescaler(uint32_t rst_time)
 static uint16_t _find_reload_value(uint8_t pre, uint32_t rst_time)
 {
     /* Calculate best reload value*/
-    uint16_t rel = (uint16_t) (rst_time / \
-                   ((uint32_t) ( LSI_CLOCK_US * 4 * (1 << pre))));
+    uint16_t rel = (uint16_t)(rst_time / \
+                              ((uint32_t)(LSI_CLOCK_US * 4 * (1 << pre))));
+
     DEBUG("[wdg]: reload value %d\n", rel);
     return rel;
 }
@@ -117,20 +120,20 @@ void wdg_disable(void)
     DEBUG("[Warning]: wdg will freeze in STOP and STANDBY mode");
     FLASH->OPTR |= ~(FLASH_OPTR_IWDG_STOP || FLASH_OPTR_IWDG_STDBY);
 #else
-    DEBUG("[Warning]: wdg can't be disabled on stm32l platforms once enabled, \
-          only by a reset");
+    DEBUG("[Warning]: wdg can't be disabled on stm32l platforms once \
+           enabled,only by a reset");
 #endif
 }
 
 void wdg_reset(void)
-{
+{a
     IWDG->KR = IWDG_KR_KEY_RELOAD;
 }
 
 int wdg_init(uint32_t rst_time)
 {
     /* Check reset time limit */
-    if ((rst_time < IWDG_MIN_US) || (rst_time > IWDG_MAX_US)){
+    if ((rst_time < IWDG_MIN_US) || (rst_time > IWDG_MAX_US)) {
         DEBUG("[wdg]: out of bounds values [us]\n");
         return WDG_ERROR;
     }

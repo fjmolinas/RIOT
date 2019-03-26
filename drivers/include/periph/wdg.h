@@ -13,7 +13,7 @@
  *
  * @{
  *
- * @file		wdg.h
+ * @file        wdg.h
  * @brief       watchdog peripheral interface
  *
  * @author      Francisco Molina <francois-xavier.molina@inria.fr>
@@ -29,8 +29,8 @@
  * @brief   Possible WDG return values
  */
 enum {
-    WDG_OK         =  0,
-    WDG_ERROR      = -1,
+    WDG_OK      =  0,
+    WDG_ERROR   = -1,
 };
 
 /**
@@ -49,12 +49,18 @@ void wdg_disable(void);
 void wdg_reset(void);
 
 /**
- * @brief    Reset the watchdog timer
+ * @brief    Return max timeout
+ *
+ * @param[out] timeout       maximum value for a wdg reset timeout
+ *
  */
 uint32_t wdg_max_timeout(void);
 
 /**
- * @brief    Reset the watchdog timer
+ * @brief    Return min timeout
+ *
+ * @param[out] timeout       minimum value for a wdg reset timeout
+ *
  */
 uint32_t wdg_min_timeout(void);
 
