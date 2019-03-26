@@ -34,6 +34,7 @@ int init_wdg(int argc, char **argv){
     }
     uint32_t rst_time = (uint32_t) atoi(argv[1]);
     int result = wdg_init(rst_time);
+
     if(!result)
     {
         puts("[wdg]: wdg configured");
@@ -56,7 +57,8 @@ int start_wdg(int argc, char **argv){
 int range_wdg(int argc, char **argv){
     (void) argc;
     (void) argv;
-    printf("{\"max\":\"%lu\", \"min\":\"%lu\"}\n", wdg_get_max(), wdg_get_min());
+    printf("[wdg] range - { \"max\":\"%lu\", \"min\":\"%lu\"} - [wdg] range\n", \
+           wdg_max_timeout(), wdg_min_timeout());
     return 0;
 }
 

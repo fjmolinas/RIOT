@@ -11,11 +11,14 @@ import json
 from testrunner import run
 
 def testfunc(child):
-    
-    child.sendline("range")
+
+    child.sendline('range')
+    child.expect_exact("[wdg] range -")
+    child.expect_exact("- [wdg] range")
+
     rst_range = json.loads(child.before)
-    rst_max = rst_range["max"]
-    rst_min = rst_range["min"]
+    rst_max = int(rst_range["max"])
+    rst_min = int(rst_range["min"])
 
     child.sendline("init {}".format(2*rst_max))
     child.expect_exact("[wdg]: invalid configuration time")
