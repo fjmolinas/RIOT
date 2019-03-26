@@ -59,12 +59,12 @@ QUIET ?= 1
 
 ifeq (,$(filter native,$(BOARD)))
   GNRC_NETIF_NUMOF := 2
-  USEMODULE += ethos
-  USEMODULE += gnrc_uhcpc
+  # USEMODULE += ethos
+  # USEMODULE += gnrc_uhcpc
 
   # ethos baudrate can be configured from make command
-  ETHOS_BAUDRATE ?= 115200
-  CFLAGS += -DETHOS_BAUDRATE=$(ETHOS_BAUDRATE) -DUSE_ETHOS_FOR_STDIO
+  # ETHOS_BAUDRATE ?= 115200
+  # CFLAGS += -DETHOS_BAUDRATE=$(ETHOS_BAUDRATE) -DUSE_ETHOS_FOR_STDIO
 endif
 
 # Use different settings when compiling for one of the following (low-memory)
