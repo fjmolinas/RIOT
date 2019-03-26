@@ -104,7 +104,7 @@ bool sock_udp_ep_equal(const sock_udp_ep_t *a, const sock_udp_ep_t *b);
                                              limit on the string iterator */
 #define SOCK_HOSTPORT_MAXLEN    (64U)   /**< maximum length of host:port part for
                                              sock_urlsplit() */
-#define SOCK_URLPATH_MAXLEN     (96U)   /**< maximum length path for
+#define SOCK_URLPATH_MAXLEN     (128U)  /**< maximum length path for
                                              sock_urlsplit() */
 /** @} */
 
