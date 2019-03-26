@@ -169,9 +169,13 @@ static inline void cortexm_sleep(int deep)
     /* ensure that all memory accesses have completed and trigger sleeping */
     unsigned state = irq_disable();
     __DSB();
+#if defined(CPU_MODEL_STM32L152RE)
+    FLASH->ACR |= FLASH_ACR_RUN_PD;
+#endif
     __WFI();
 #if defined(CPU_MODEL_STM32L152RE)
     /* STM32L152RE crashes without this __NOP(). See #8518. */
+    /* Flash memory wakeup issue when waking up from Stop or Sleep */
     __NOP();
 #endif
     irq_restore(state);
