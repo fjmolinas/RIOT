@@ -40,8 +40,13 @@ suit/manifest: $(SUIT_MANIFESTS)
 OTA_CLIENT_CMD = python3 $(RIOTBASE)/dist/tools/suit_v1/otaclient.py
 
 suit/publish: $(SUIT_MANIFESTS) $(SLOT0_RIOT_BIN) $(SLOT1_RIOT_BIN)
-	$(info ##### $^)
-	$(Q)$(OTA_CLIENT_CMD) --publish-id $(SUIT_PUBLISH_ID) --files $^
+	$(Q)$(OTA_CLIENT_CMD) \
+					--ota-host-url $(SUIT_OTA_SERVER_URL) \
+					--publish-id $(SUIT_PUBLISH_ID) \
+					--files $^
 
 suit/notify:
-	$(Q)$(OTA_CLIENT_CMD) --publish-id $(SUIT_PUBLISH_ID) --notify $(SUIT_CLIENT)
+	$(Q)$(OTA_CLIENT_CMD) \
+					--ota-host-url $(SUIT_OTA_SERVER_URL) \
+					--publish-id $(SUIT_PUBLISH_ID) \
+					--publish-id $(SUIT_PUBLISH_ID) --notify $(SUIT_CLIENT)
