@@ -37,7 +37,7 @@ static ssize_t _nanocoap_request(sock_udp_t *sock, coap_pkt_t *pkt, size_t len)
 
     /* TODO: timeout random between between ACK_TIMEOUT and (ACK_TIMEOUT *
      * ACK_RANDOM_FACTOR) */
-    uint32_t timeout = COAP_ACK_TIMEOUT * US_PER_SEC;
+    uint32_t timeout = 2 * COAP_ACK_TIMEOUT * US_PER_SEC;
     unsigned tries_left = COAP_MAX_RETRANSMIT + 1;  /* add 1 for initial transmit */
     while (tries_left) {
 
@@ -166,6 +166,7 @@ int nanocoap_get_blockwise(sock_udp_ep_t *remote, const char *path,
     sock_udp_t sock;
     int res = sock_udp_create(&sock, &local, remote, 0);
     if (res < 0) {
+        DEBUG("Cannot create UDP socket\n");
         return res;
     }
 
@@ -278,6 +279,7 @@ int nanocoap_server(sock_udp_ep_t *local, uint8_t *buf, size_t bufsize)
 
     ssize_t res = sock_udp_create(&sock, local, NULL, 0);
     if (res != 0) {
+        DEBUG("Cannot create UDP socket %d\n", (int)res);
         return -1;
     }
 
