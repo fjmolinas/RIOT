@@ -17,7 +17,7 @@ SUIT_COAP_ROOT := $(shell curl -X GET \
       $(SUIT_OTA_SERVER_URL)/$(SUIT_OTA_SERVER_COAP_URL_EP)/$(SUIT_PUBLISH_ID))
 
 define manifest-recipe
-  $(info Manifest contains CoAP root path: $(SUIT_COAP_ROOT))
+  $(info Manifest contains CoAP root path: $(SUIT_COAP_ROOT)/$(notdir $<))
   $(RIOTBASE)/dist/tools/suit_v1/gen_manifest.py \
 	  --raw -k $(SUIT_KEY) \
 	  -u $(SUIT_COAP_ROOT)/$(notdir $<) \
