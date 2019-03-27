@@ -67,6 +67,8 @@ ifeq (,$(filter native,$(BOARD)))
   # CFLAGS += -DETHOS_BAUDRATE=$(ETHOS_BAUDRATE) -DUSE_ETHOS_FOR_STDIO
 endif
 
+CFLAGS += -DGCOAP_PDU_BUFSIZE=256
+
 # Use different settings when compiling for one of the following (low-memory)
 # boards
 LOW_MEMORY_BOARDS := nucleo-f334r8
