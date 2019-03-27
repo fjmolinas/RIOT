@@ -32,7 +32,7 @@
 #include "suit/v4/suit.h"
 #endif
 
-#define ENABLE_DEBUG (0)
+#define ENABLE_DEBUG (1)
 #include "debug.h"
 
 #ifndef SUIT_COAP_STACKSIZE
