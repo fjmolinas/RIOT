@@ -37,16 +37,16 @@ $(SLOT1_SUIT_MANIFEST): $(SLOT1_RIOT_BIN) $(SUIT_KEY)
 
 suit/manifest: $(SUIT_MANIFESTS)
 
-OTA_CLIENT_CMD = python3 $(RIOTBASE)/dist/tools/suit_v1/otaclient.py
-
 suit/publish: $(SUIT_MANIFESTS) $(SLOT0_RIOT_BIN) $(SLOT1_RIOT_BIN)
-	$(Q)$(OTA_CLIENT_CMD) \
-					--ota-host-url $(SUIT_OTA_SERVER_URL) \
-					--publish-id $(SUIT_PUBLISH_ID) \
-					--files $^
+	@for file in $^; do \
+		$(Q)curl -X POST \
+			-F publish_id=$(SUIT_PUBLISH_ID) \
+			-F $$file=@$$file \
+			$(SUIT_OTA_SERVER_URL)/publish; \
+	done
 
 suit/notify:
-	$(Q)$(OTA_CLIENT_CMD) \
-					--ota-host-url $(SUIT_OTA_SERVER_URL) \
-					--publish-id $(SUIT_PUBLISH_ID) \
-					--publish-id $(SUIT_PUBLISH_ID) --notify $(SUIT_CLIENT)
+	$(Q)curl -X POST \
+		-F 'publish_id=$(SUIT_PUBLISH_ID)' \
+		-F 'urls=$(SUIT_CLIENT)' \
+		$(SUIT_OTA_SERVER_URL)/notify
