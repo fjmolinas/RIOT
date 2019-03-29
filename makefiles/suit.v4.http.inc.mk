@@ -12,16 +12,16 @@ SUIT_COAP_ROOT := $(shell curl -X GET \
 
 suit/manifest: $(SUIT_MANIFEST)
 
-OTA_CLIENT_CMD = python3 $(RIOTBASE)/dist/tools/suit_v4/otaclient.py
-
 suit/publish: $(SUIT_MANIFEST) $(SLOT0_RIOT_BIN) $(SLOT1_RIOT_BIN)
-	$(Q)$(OTA_CLIENT_CMD) \
-					--ota-host-url $(SUIT_OTA_SERVER_URL) \
-					--publish-id $(SUIT_PUBLISH_ID) \
-					--files $^
+	$(Q)curl -X POST \
+		-F publish_id=$(SUIT_PUBLISH_ID) \
+		-F $(SUIT_MANIFEST)=@$(SUIT_MANIFEST) \
+		-F $(SLOT0_RIOT_BIN)=@$(SLOT0_RIOT_BIN) \
+		-F $(SLOT1_RIOT_BIN)=@$(SLOT1_RIOT_BIN) \
+		$(SUIT_OTA_SERVER_URL)/publish
 
 suit/notify:
-	$(Q)$(OTA_CLIENT_CMD) \
-					--ota-host-url $(SUIT_OTA_SERVER_URL) \
-					--publish-id $(SUIT_PUBLISH_ID) \
-					--publish-id $(SUIT_PUBLISH_ID) --notifyv4 $(SUIT_CLIENT)
+	$(Q)curl -X POST \
+		-F 'publish_id=$(SUIT_PUBLISH_ID)' \
+		-F 'urls=$(SUIT_CLIENT)' \
+		$(SUIT_OTA_SERVER_URL)/notifyv4
