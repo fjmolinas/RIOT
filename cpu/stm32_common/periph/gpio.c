@@ -260,29 +260,31 @@ void isr_exti(void)
 #ifdef CPU_FAM_STM32L1
 void gpio_pm_init(void)
 {
-    uint32_t ahb_gpio_clocks;
-    uint32_t tmpreg;
     GPIO_TypeDef *port;
 
-    /* enable GPIO clock and save GPIO clock configuration */
-    ahb_gpio_clocks = RCC->AHBENR & 0xFF;
-    periph_clk_en(AHB, 0xFF);
-
-    /* switch all GPIOs to AIN*/
+    /* switch all GPIOs to AIN, A..H for smt32l1xxxx*/
     for (uint8_t i = 0; i < 8; i++) {
         port = (GPIO_TypeDef *)(GPIOA_BASE + i*(GPIOB_BASE - GPIOA_BASE));
         if (cpu_check_address((char *)port)) {
+#if !defined (DISABLE_JTAG)
+	            switch (i) {
+	                /* preserve JTAG pins on PORTA and PORTB */
+	                case 0:
+	                    port->MODER = 0xABFFFFFF;
+	                    break;
+	                case 1:
+	                    port->MODER = 0xFFFFFEBF;
+	                    break;
+	                default:
+	                    port->MODER = 0xFFFFFFFF;
+	                    break;
+	            }
+#else
             port->MODER = 0xffffffff;
         } else {
             break;
         }
     }
-
-    /* restore GPIO clock */
-    tmpreg = RCC->AHBENR;
-    tmpreg &= ~((uint32_t)0xFF);
-    tmpreg |= ahb_gpio_clocks;
-    periph_clk_en(AHB, tmpreg);
 }
 #endif
 #else
