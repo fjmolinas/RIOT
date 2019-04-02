@@ -7,26 +7,26 @@
  */
 
 /**
- * @defgroup    drivers_periph_wdg
+ * @defgroup    drivers_periph_wdg WDG
  * @ingroup     drivers_periph
- * @brief       Common watchdog interface
+ * @brief       watchdog timer peripheral driver
  *
  * @{
  *
  * @file        wdg.h
- * @brief       watchdog peripheral interface
+ * @brief       watchdog peripheral interface definitions
  *
  * @author      Francisco Molina <francois-xavier.molina@inria.fr>
  */
 
-#ifndef PERIPH_WDG_H_
-#define PERIPH_WDG_H_
+#ifndef PERIPH_WDG_H
+#define PERIPH_WDG_H
 
 #include <stdint.h>
 #include "timex.h"
 
 /**
- * @brief   Possible WDG return values
+ * @brief    WDG return values
  */
 enum {
     WDG_OK      =  0,
@@ -34,45 +34,31 @@ enum {
 };
 
 /**
- * @brief    Enable watchdog timer
+ * @brief    Start watchdog timer
  */
-void wdg_enable(void);
+void wdg_start(void);
 
 /**
- * @brief    Disable watchdog timer
+ * @brief    Stop watchdog timer
  */
-void wdg_disable(void);
+void wdg_stop(void);
 
 /**
- * @brief    Reset the watchdog timer
+ * @brief    Reset the watchdog timer counter, delay system reset
  */
-void wdg_reset(void);
+void wdg_kick(void);
 
 /**
- * @brief    Return max timeout
+ * @brief    Set up the wdg timer, only use max_time if normal operation
+ *           set min_time and max_time for windowed timer.
  *
- * @param[out] timeout       maximum value for a wdg reset timeout
+ * @param[in] min_time       lower bound for windowed watchdog
+ * @param[in] max_time       upper bound for windowed watchdog, time before
+ *                           reset for normal watchdog
  *
+ * @return                  -1 WDG_ERROR on configuration error
+ * @return                   0 WDG_OK when configured correctly
  */
-uint32_t wdg_max_timeout(void);
+int wdg_setup(uint32_t min_time, uint32_t max_time);
 
-/**
- * @brief    Return min timeout
- *
- * @param[out] timeout       minimum value for a wdg reset timeout
- *
- */
-uint32_t wdg_min_timeout(void);
-
-
-/**
- * @brief    Sets the time before a wdg reset, best effort approximate value
- *
- * @param[out] time_set     actual time in us for wdg reset , time_set~time
- *
- * @return                  0 When out of bounds
- * @return                  uint32_t with the set reset time
- */
-int wdg_init(uint32_t rst_time);
-
-#endif /* PERIPH_WDG_H_ */
+#endif /* PERIPH_WDG_H */

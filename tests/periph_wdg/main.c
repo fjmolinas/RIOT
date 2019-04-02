@@ -26,21 +26,31 @@
 
 #include "periph/wdg.h"
 #include "shell.h"
+#include "xtimer.h"
 
-int init_wdg(int argc, char **argv)
+int setup_wdg(int argc, char **argv)
 {
-    if (argc < 2) {
-        printf("usage: %s <time[us]>\n", argv[0]);
+    if (argc < 3) {
+        printf("usage: %s <min_time[us]> <max_time[us]>\n", argv[0]);
         return -1;
     }
-    uint32_t rst_time = (uint32_t)atoi(argv[1]);
-    int result = wdg_init(rst_time);
+    
+    uint32_t min_time = (uint32_t)atoi(argv[1]);
+    uint32_t max_time = (uint32_t)atoi(argv[2]);
+
+    if (min_time > max_time)
+    {
+        puts("[wdg]: invalid configuration boundaries");
+        return -1;
+    }
+
+    int result = wdg_setup(min_time, max_time);
 
     if (!result) {
-        puts("[wdg]: wdg configured");
+        puts("[wdg]: - wdg configured -");
     }
     else {
-        puts("[wdg]: invalid configuration time");
+        puts("[wdg]: - invalid configuration time -");
     }
     return result;
 }
@@ -49,32 +59,54 @@ int start_wdg(int argc, char **argv)
 {
     (void)argc;
     (void)argv;
-    puts("[wdg]: started wdg timer");
-    wdg_enable();
+    puts("[wdg]: starting wdg timer");
+    wdg_start();
     return 0;
 }
 
-int range_wdg(int argc, char **argv)
+int start_loop_wdg(int argc, char **argv)
 {
     (void)argc;
     (void)argv;
-    printf("[wdg] range - { \"max\":\"%lu\", \"min\":\"%lu\"} - [wdg] range\n", \
-           wdg_max_timeout(), wdg_min_timeout());
+    printf("json:{\"starttime\":%lu}\n", xtimer_now_usec());
+    wdg_start();
+    while(1)
+    {
+        printf("json:{\"time\":%lu}\n", xtimer_now_usec());
+    }
     return 0;
 }
 
+int stop_wdg(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
+    puts("[wdg]: stoping wdg timer");
+    wdg_stop();
+    return 0;
+}
+
+int kick_wdg(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
+    puts("[wdg]: delaying wdg timer");
+    wdg_kick();
+    return 0;
+}
 
 static const shell_command_t shell_commands[] = {
-    { "range", "Get wdg range for reset time", range_wdg },
-    { "init", "Setup Wdg Timer", init_wdg },
+    { "setup", "Setup Wdg Timer", setup_wdg },
+    { "kick", "Delay wdg timer", kick_wdg },
     { "start", "Start wdg timer", start_wdg },
+    { "startloop", "Start wdg timer", start_loop_wdg },
+    { "stop", "Start wdg timer", stop_wdg },
     { NULL, NULL, NULL }
 };
 
 int main(void)
 {
     puts("RIOT wdg test application");
-
     /* run the shell */
     char line_buf[SHELL_DEFAULT_BUFSIZE];
     shell_run(shell_commands, line_buf, SHELL_DEFAULT_BUFSIZE);

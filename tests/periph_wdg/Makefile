@@ -5,6 +5,7 @@ TEST_ON_CI_WHITELIST += all
 
 FEATURES_REQUIRED += periph_wdg
 
+USEMODULE += xtimer
 USEMODULE += shell
 USEMODULE += shell_commands
 

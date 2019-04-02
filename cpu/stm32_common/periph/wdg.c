@@ -36,9 +36,9 @@ extern "C" {
 #define MAX_PRESCALER             (6U)
 
 #define LSI_CLOCK_US              (US_PER_SEC / CLOCK_LSI)
-#define IWDG_MIN_US               ((4U) * (LSI_CLOCK_US))
+#define IWDG_MIN_TIME_US          ((4U) * (LSI_CLOCK_US))
 #define IWDG_STEP_US              ((4U) * (LSI_CLOCK_US)*(MAX_RELOAD))
-#define IWDG_MAX_US               ((4U) * (LSI_CLOCK_US)*(MAX_RELOAD) * \
+#define IWDG_MAX_TIME_US          ((4U) * (LSI_CLOCK_US)*(MAX_RELOAD) * \
                                    (1 << MAX_PRESCALER))
 
 #define IWDG_KR_KEY_RELOAD        ((uint16_t)0xAAAA)
@@ -109,12 +109,12 @@ static uint16_t _find_reload_value(uint8_t pre, uint32_t rst_time)
     return rel;
 }
 
-void wdg_enable(void)
+void wdg_start(void)
 {
     IWDG->KR = IWDG_KR_KEY_ENABLE;
 }
 
-void wdg_disable(void)
+void wdg_stop(void)
 {
 #ifdef CPU_FAM_STM32L4
     DEBUG("[Warning]: wdg will freeze in STOP and STANDBY mode");
@@ -125,21 +125,26 @@ void wdg_disable(void)
 #endif
 }
 
-void wdg_reset(void)
-{a
+void wdg_kick(void)
+{
     IWDG->KR = IWDG_KR_KEY_RELOAD;
 }
 
-int wdg_init(uint32_t rst_time)
+int wdg_setup(uint32_t min_time, uint32_t max_time)
 {
+
+    DEBUG("[Warning]: windowed wdg not supported");
+    (void) min_time;
+
     /* Check reset time limit */
-    if ((rst_time < IWDG_MIN_US) || (rst_time > IWDG_MAX_US)) {
-        DEBUG("[wdg]: out of bounds values [us]\n");
+    if ((max_time < IWDG_MIN_TIME_US) || (max_time > IWDG_MAX_TIME_US)) {
+        DEBUG("[wdg]: out of bounds values [%lu, %lu] [us], \n",
+              (uint32_t) IWDG_MIN_TIME_US, (uint32_t) IWDG_MAX_TIME_US);
         return WDG_ERROR;
     }
 
-    uint8_t pre = _find_prescaler(rst_time);
-    uint16_t rel = _find_reload_value(pre, rst_time);
+    uint8_t pre = _find_prescaler(max_time);
+    uint16_t rel = _find_reload_value(pre, max_time);
 
     /* Set watchdog prescaler and reload value */
     _set_prescaler(pre);
@@ -150,19 +155,9 @@ int wdg_init(uint32_t rst_time)
 #endif
 
     /* Refresh wdg counter*/
-    wdg_reset();
+    wdg_kick();
 
     return WDG_OK;
-}
-
-uint32_t wdg_min_timeout(void)
-{
-    return IWDG_MIN_US;
-}
-
-uint32_t wdg_max_timeout(void)
-{
-    return IWDG_MAX_US;
 }
 
 #ifdef __cplusplus
