@@ -1,0 +1,78 @@
+From f2eb1fc56bf58c75f8f6e7972fb3ff49a31dcadb Mon Sep 17 00:00:00 2001
+From: francisco <femolina@uc.cl>
+Date: Sun, 7 Apr 2019 19:55:58 +0200
+Subject: fix unaligned st7735R display
+
+---
+ csrc/ucg.h             | 2 +-
+ csrc/ucg_com_msg_api.c | 5 ++---
+ csrc/ucg_init.c        | 4 ++--
+ csrc/ucg_rotate.c      | 2 +-
+ 4 files changed, 6 insertions(+), 7 deletions(-)
+
+diff --git a/csrc/ucg.h b/csrc/ucg.h
+index 553562c..f92a8b5 100644
+--- a/csrc/ucg.h
++++ b/csrc/ucg.h
+@@ -384,7 +384,7 @@ struct _ucg_t
+   
+   /* offset, that is additionally added to UCG_VARX/UCG_VARY */
+   /* seems to be required for the Nokia display */
+-  // ucg_xy_t display_offset;
++  ucg_xy_t display_offset;
+   
+   /* data which is passed to the cb procedures */
+   /* can be modified by the cb procedures (rotation, clipping, etc) */
+diff --git a/csrc/ucg_com_msg_api.c b/csrc/ucg_com_msg_api.c
+index 6a2d2fd..7d53616 100644
+--- a/csrc/ucg_com_msg_api.c
++++ b/csrc/ucg_com_msg_api.c
+@@ -366,8 +366,7 @@ void ucg_com_SendCmdSeq(ucg_t *ucg, const ucg_pgm_uint8_t *data)
+ 	//b = data[0];
+ 	//bb = data[1];
+ 	ucg_com_SetCDLineStatus(ucg, (ucg->com_cfg_cd)&1 );
+-	ucg_com_SendByte(ucg, (((uint8_t)(((ucg->arg.pixel.pos.x)>>lo)))&b)|bb );
+-	//data+=2;
++  ucg_com_SendByte(ucg, (((uint8_t)(((ucg->arg.pixel.pos.x+ucg->display_offset.x)>>lo)))&b)|bb );
+ 	break;
+       case 11:
+ 	data++;
+@@ -378,7 +377,7 @@ void ucg_com_SendCmdSeq(ucg_t *ucg, const ucg_pgm_uint8_t *data)
+ 	//b = data[0];
+ 	//bb = data[1];
+ 	ucg_com_SetCDLineStatus(ucg, (ucg->com_cfg_cd)&1 );
+-	ucg_com_SendByte(ucg, (((uint8_t)(((ucg->arg.pixel.pos.y)>>lo)))&b)|bb );
++	ucg_com_SendByte(ucg, (((uint8_t)(((ucg->arg.pixel.pos.y+ucg->display_offset.y)>>lo)))&b)|bb );
+ 	//data+=2;
+ 	break;
+       case 15:
+diff --git a/csrc/ucg_init.c b/csrc/ucg_init.c
+index da24014..8bcd2fe 100644
+--- a/csrc/ucg_init.c
++++ b/csrc/ucg_init.c
+@@ -48,8 +48,8 @@ void ucg_init_struct(ucg_t *ucg)
+   ucg->is_power_up = 0;
+   ucg->rotate_chain_device_cb = 0;
+   ucg->arg.scale = 1;
+-  //ucg->display_offset.x = 0;
+-  //ucg->display_offset.y = 0;
++  ucg->display_offset.x = 0;
++  ucg->display_offset.y = 0;
+   ucg->font = 0;
+   //ucg->font_mode = UCG_FONT_MODE_NONE;   Old font procedures
+   ucg->font_decode.is_transparent = 1;  // new font procedures
+diff --git a/csrc/ucg_rotate.c b/csrc/ucg_rotate.c
+index 47c195b..71c3603 100644
+--- a/csrc/ucg_rotate.c
++++ b/csrc/ucg_rotate.c
+@@ -251,6 +251,6 @@ void ucg_SetRotate270(ucg_t *ucg)
+   ucg->rotate_chain_device_cb = ucg->device_cb;
+   ucg->device_cb = ucg_dev_rotate270;
+   ucg_GetDimension(ucg);
+-  ucg_SetMaxClipRange(ucg);
++  // ucg_SetMaxClipRange(ucg);
+ }
+ 
+-- 
+2.21.0
+
