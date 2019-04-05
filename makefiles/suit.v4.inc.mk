@@ -35,7 +35,7 @@ $(SUIT_MANIFEST): $(SLOT0_RIOT_BIN) $(SLOT1_RIOT_BIN)
 	  $^
 
 $(SUIT_MANIFEST_SIGNED): $(SUIT_MANIFEST)
-	python $(RIOTBASE)/dist/tools/suit_v4/sign-04.py \
+	$(RIOTBASE)/dist/tools/suit_v4/sign-04.py \
 	  $(SUIT_KEY) $(SUIT_PUB) $< $@
 
 suit/genkey:
