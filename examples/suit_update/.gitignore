@@ -1,1 +1,2 @@
-secret.key
+*.key
+public_key.h
