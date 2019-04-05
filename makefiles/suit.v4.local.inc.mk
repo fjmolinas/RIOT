@@ -6,12 +6,18 @@ SUIT_COAP_FSROOT ?= $(RIOTBASE)/coaproot
 
 #
 SUIT_MANIFEST_LATEST ?= $(BINDIR_APP)-riot.suitv4.latest.bin
+SUIT_MANIFEST_SIGNED_LATEST ?= $(BINDIR_APP)-riot.suitv4_signed.latest.bin
 
 $(SUIT_MANIFEST_LATEST): $(SUIT_MANIFEST)
 	@ln -f -s $< $@
 
+$(SUIT_MANIFEST_SIGNED_LATEST): $(SUIT_MANIFEST_SIGNED)
+	@ln -f -s $< $@
+
 SUIT_MANIFESTS := $(SUIT_MANIFEST) \
                   $(SUIT_MANIFEST_LATEST) \
+                  $(SUIT_MANIFEST_SIGNED) \
+                  $(SUIT_MANIFEST_SIGNED_LATEST)
 
 suit/manifest: $(SUIT_MANIFESTS)
 
@@ -26,7 +32,7 @@ suit/publish: $(SUIT_MANIFESTS) $(SLOT0_RIOT_BIN) $(SLOT1_RIOT_BIN)
 suit/notify: | $(filter suit/publish, $(MAKECMDGOALS))
 	@test -n "$(SUIT_CLIENT)"
 	aiocoap-client -m POST "coap://$(SUIT_CLIENT)/suit/trigger" \
-		--payload "$(SUIT_COAP_ROOT)/$$(basename $(SUIT_MANIFEST_LATEST))" && \
+		--payload "$(SUIT_COAP_ROOT)/$$(basename $(SUIT_MANIFEST_SIGNED_LATEST))" && \
 		echo "Triggered $(SUIT_CLIENT) to update."
 
 suit/genkey:
