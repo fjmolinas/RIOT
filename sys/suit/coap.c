@@ -53,6 +53,11 @@ static uint8_t _manifest_buf[SUIT_MANIFEST_BUFSIZE];
 
 static kernel_pid_t _suit_coap_pid;
 
+#ifdef SUIT_STATUS_SUBS
+#define SUIT_FW_PROGRESS_CYCLE  (16U)
+static volatile uint32_t _count;
+#endif
+
 static void _suit_handle_url(const char *url)
 {
     LOG_INFO("suit_coap: downloading \"%s\"\n", url);
@@ -112,7 +117,11 @@ static void _suit_handle_url(const char *url)
         if (res == 0) {
             LOG_INFO("suit_coap: finalizing image flash\n");
             riotboot_flashwrite_finish(&writer);
-
+#ifdef SUIT_STATUS_SUBS
+            msg_t m;
+            m.type = SUIT_UPDATE_COMPLETE;
+            msg_try_send(&m, suit_get_status_subs());
+#endif
             const riotboot_hdr_t *hdr = riotboot_slot_get_hdr(riotboot_slot_other());
             riotboot_hdr_print(hdr);
             xtimer_sleep(1);
@@ -152,6 +161,18 @@ int suit_flashwrite_helper(void *arg, size_t offset, uint8_t *buf, size_t len,
         return -1;
     }
 
+#ifdef SUIT_STATUS_SUBS
+    if (_count == 0)
+    {    
+        msg_t m;
+        m.type = SUIT_FW_PROGRESS;
+        m.content.value = offset;
+        msg_try_send(&m, suit_get_status_subs());
+    }
+    _count++;
+    _count = _count % SUIT_FW_PROGRESS_CYCLE;
+#endif
+
     DEBUG("_suit_flashwrite(): writing %u bytes at pos %u\n", len, offset);
 
     return riotboot_flashwrite_putbytes(writer, buf, len, more);
@@ -159,7 +180,14 @@ int suit_flashwrite_helper(void *arg, size_t offset, uint8_t *buf, size_t len,
 
 static void *_suit_coap_thread(void *arg)
 {
-    (void)arg;
+    if(arg != NULL)
+    {
+        suit_set_status_subs(*((int*) arg));
+    }
+    else
+    {
+        (void) arg;
+    }
 
     LOG_INFO("suit_coap: started.\n");
     msg_t msg_queue[4];
@@ -174,6 +202,10 @@ static void *_suit_coap_thread(void *arg)
         switch (m.content.value) {
             case SUIT_MSG_TRIGGER:
                 LOG_INFO("suit_coap: trigger received\n");
+#ifdef SUIT_STATUS_SUBS
+                m.type = SUIT_TRIGGER;
+                msg_try_send(&m, suit_get_status_subs());
+#endif
                 _suit_handle_url(_url);
                 break;
             default:
@@ -183,11 +215,11 @@ static void *_suit_coap_thread(void *arg)
     return NULL;
 }
 
-void suit_coap_run(void)
+void suit_coap_run(void *arg)
 {
     thread_create(_stack, SUIT_COAP_STACKSIZE, SUIT_COAP_PRIO,
                   THREAD_CREATE_STACKTEST,
-                  _suit_coap_thread, NULL, "suit_coap");
+                  _suit_coap_thread, arg, "suit_coap");
 }
 
 static ssize_t _version_handler(coap_pkt_t *pkt, uint8_t *buf, size_t len,

@@ -240,8 +240,13 @@ static int _manifest_handler(suit_v4_manifest_t *manifest, int key, CborValue *i
     cose_key_init(&pkey);
     cose_key_set_keys(&pkey, COSE_EC_CURVE_ED25519, COSE_ALGO_EDDSA,
                       public_key, NULL, NULL);
-
     LOG_INFO("suit: verifying manifest signature...\n");
+#ifdef SUIT_STATUS_SUBS
+    msg_t m;
+    m.type = SUIT_SIGNATURE_VALIDATION;
+    msg_send(&m, suit_get_status_subs());
+    thread_yield();
+#endif
     int verification = cose_sign_verify(&manifest->cose, &signature,
             &pkey, manifest->validation_buf, SUIT_COSE_BUF_SIZE);
     if (verification != 0) {

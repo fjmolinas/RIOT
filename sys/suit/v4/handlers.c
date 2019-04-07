@@ -24,7 +24,6 @@
 #include "suit/v4/suit.h"
 #include "suit/v4/handlers.h"
 #include "suit/v4/policy.h"
-#include "suit/v4/suit.h"
 #include "riotboot/hdr.h"
 #include "riotboot/slot.h"
 #include "cbor.h"
@@ -269,8 +268,15 @@ static int _dtv_fetch(suit_v4_manifest_t *manifest, int key, CborValue *_it)
 
     LOG_INFO("_dtv_fetch() fetching \"%s\" (url_len=%u)\n", manifest->urlbuf, (unsigned)url_len);
 
+#ifdef SUIT_STATUS_SUBS
+        msg_t m;
+        m.type = SUIT_FW_SIZE;
+        m.content.value = manifest->components[0].size;
+        msg_send(&m, suit_get_status_subs());
+#endif
     int target_slot = riotboot_slot_other();
     riotboot_flashwrite_init(manifest->writer, target_slot);
+
     int res = nanocoap_get_blockwise_url(manifest->urlbuf, COAP_BLOCKSIZE_64, suit_flashwrite_helper,
             manifest->writer);
 

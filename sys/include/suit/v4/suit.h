@@ -46,6 +46,17 @@ extern "C" {
 #define SUIT_VERSION        1
 
 /**
+ * @brief SUIT status messages
+ */
+enum {
+    SUIT_TRIGGER = 0x00,
+    SUIT_SIGNATURE_VALIDATION = 0x01,
+    SUIT_UPDATE_COMPLETE = 0x02,
+    SUIT_FW_PROGRESS = 0x03,
+    SUIT_FW_SIZE = 0x04,
+};
+
+/**
  * @brief SUIT error codes
  */
 typedef enum {
@@ -158,6 +169,9 @@ int suit_cbor_subparse(CborParser *parser, CborValue *bseq, CborValue *it);
 
 int suit_flashwrite_helper(void *arg, size_t offset, uint8_t *buf, size_t len,
                     int more);
+
+int suit_get_status_subs(void);
+void suit_set_status_subs(int pid);
 
 #ifdef __cplusplus
 }

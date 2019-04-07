@@ -3,7 +3,7 @@
 
 #include "net/nanocoap.h"
 
-void suit_coap_run(void);
+void suit_coap_run(void *arg);
 
 extern const coap_resource_subtree_t coap_resource_subtree_suit;
 
