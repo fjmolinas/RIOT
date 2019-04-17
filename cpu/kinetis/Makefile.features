@@ -8,4 +8,9 @@ else
 FEATURES_PROVIDED += periph_mcg
 endif
 
+ifneq (,$(filter W K,$(KINETIS_SERIES)))
+FEATURES_PROVIDED += periph_flashpage
+FEATURES_PROVIDED += periph_flashpage_raw
+endif
+
 include $(RIOTCPU)/cortexm_common/Makefile.features

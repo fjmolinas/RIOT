@@ -77,6 +77,23 @@
 #endif
 #endif /* KINETIS_CORE_x */
 
+/**
+ * @name   Flash page configuration
+ * @{
+ */
+#define FLASHPAGE_SIZE      (2048U)
+#define FLASHPAGE_NUMOF     ((KINETIS_ROMSIZE * 1024) / FLASHPAGE_SIZE)
+
+/* The minimum block size which can be written is 4B. However, the erase
+ * block is always FLASHPAGE_SIZE witch.
+ */
+#define FLASHPAGE_RAW_BLOCKSIZE           (4U)
+/* Writing should be always 4 bytes aligned */
+#define FLASHPAGE_RAW_ALIGNMENT           (4U)
+/* Section erase and programing must be 8 bytes aligned */
+#define FLASHPAGE_RAW_SECTION_ALIGNMENT   (8U)
+/** @} */
+
 #ifdef __cplusplus
 extern "C"
 {
