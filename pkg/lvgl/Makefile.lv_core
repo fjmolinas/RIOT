@@ -1,0 +1,3 @@
+MODULE = lv_core
+
+include $(RIOTBASE)/Makefile.base

@@ -1,0 +1,12 @@
+INCLUDES += -I$(PKGDIRBASE)/lvgl
+INCLUDES += -I$(PKGDIRBASE)/lvgl/lv_core
+INCLUDES += -I$(PKGDIRBASE)/lvgl/lv_draw
+INCLUDES += -I$(PKGDIRBASE)/lvgl/lv_fonts
+INCLUDES += -I$(PKGDIRBASE)/lvgl/lv_hal
+INCLUDES += -I$(PKGDIRBASE)/lvgl/lv_misc
+INCLUDES += -I$(PKGDIRBASE)/lvgl/lv_objx
+INCLUDES += -I$(PKGDIRBASE)/lvgl/lv_themes
+
+CFLAGS += -Wno-cast-function-type 
+
+PSEUDOMODULES += lvgl

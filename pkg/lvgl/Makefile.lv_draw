@@ -1,0 +1,3 @@
+MODULE = lv_draw
+
+include $(RIOTBASE)/Makefile.base

@@ -1,0 +1,3 @@
+MODULE = lv_hal
+
+include $(RIOTBASE)/Makefile.base

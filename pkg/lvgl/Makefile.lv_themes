@@ -1,0 +1,3 @@
+MODULE = lv_themes
+
+include $(RIOTBASE)/Makefile.base

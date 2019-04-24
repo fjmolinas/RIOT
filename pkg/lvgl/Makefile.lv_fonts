@@ -1,0 +1,3 @@
+MODULE = lv_fonts
+
+include $(RIOTBASE)/Makefile.base

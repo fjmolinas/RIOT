@@ -1,0 +1,7 @@
+USEMODULE += lv_core
+USEMODULE += lv_draw
+USEMODULE += lv_fonts
+USEMODULE += lv_hal
+USEMODULE += lv_misc
+USEMODULE += lv_objx
+USEMODULE += lv_themes
