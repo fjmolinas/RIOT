@@ -19,6 +19,12 @@ RAM_START_ADDR = $$(($(RAM_BASE_ADDR)-($(KINETIS_SRAM_L_SIZE) * 1024)))
 ROM_LEN = $(KINETIS_ROMSIZE)K
 RAM_LEN = $$(($(KINETIS_RAMSIZE) * 1024))
 
+# Export internal flash offsets for flashing tools usage
+export VTOR_OFFSET = 0x400
+
+# Export internal flash offsets for flashing tools usage
+export FCFIELD_OFFSET = 0x10
+
 CFLAGS += \
   -DKINETIS_CORE_$(KINETIS_CORE) \
   -DKINETIS_SERIES_$(KINETIS_SERIES) \
