@@ -4,7 +4,7 @@ export CPU = kinetis
 # the pba-d-01-kw2x board can embed either a kw21d256, kw21d512 or kw22d512 cpu.
 # The default set up is kw21d256, the variable is overrideable to use the other
 # cpu if needed.
-export CPU_MODEL ?= mkw21d256vha5
+export CPU_MODEL ?= mkw21d512vha5
 
 # set default port depending on operating system
 PORT_LINUX ?= /dev/ttyACM0
@@ -20,7 +20,12 @@ export OPENOCD_PRE_VERIFY_CMDS += \
   -c 'load_image $(RIOTCPU)/$(CPU)/dist/wdog-disable.bin 0x20000000 bin' \
   -c 'resume 0x20000000'
 export OPENOCD_EXTRA_INIT
+
+ifneq (,$(filter riotboot/%, $(MAKECMDGOALS)))
+export PRE_FLASH_CHECK_SCRIPT = $(RIOTCPU)/$(CPU)/dist/check-fcfield-bin.sh
+else
 export PRE_FLASH_CHECK_SCRIPT = $(RIOTCPU)/$(CPU)/dist/check-fcfield-elf.sh
+endif
 
 export DEBUG_ADAPTER ?= dap
 
