@@ -242,6 +242,10 @@ ifneq (,$(filter si114x,$(USEMODULE)))
   USEMODULE_INCLUDES += $(RIOTBASE)/drivers/si114x/include
 endif
 
+ifneq (,$(filter stmpe811,$(USEMODULE)))
+  USEMODULE_INCLUDES += $(RIOTBASE)/drivers/stmpe811/include
+endif
+
 ifneq (,$(filter ds18,$(USEMODULE)))
     USEMODULE_INCLUDES += $(RIOTBASE)/drivers/ds18/include
 endif
