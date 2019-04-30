@@ -25,8 +25,8 @@ OUTPUT_ARCH(arm)
 _vectors_length = 0x400;
 _flashsec_length = 0x10;
 
-_rom_offset = DEFINED( _rom_offset ) ? _rom_offset : 0x0;
-_fw_rom_length = DEFINED( _fw_rom_length ) ? _fw_rom_length : _rom_length - _rom_offset - (_vectors_length + _flashsec_length);
+_rom_offset = DEFINED( _rom_offset ) ? _rom_offset : 0x00;
+_fw_rom_length = DEFINED( _fw_rom_length) ? _fw_rom_length : _rom_length - _rom_offset;
 
 ASSERT((_fw_rom_length <= _rom_length - _rom_offset), "Specified firmware size does not fit in ROM");
 
@@ -34,25 +34,19 @@ MEMORY
 {
     vectors    : ORIGIN = _rom_start_addr + _rom_offset, LENGTH = _vectors_length
     flashsec   : ORIGIN = _rom_start_addr + _vectors_length + _rom_offset, LENGTH = _flashsec_length
-    rom (rx)   : ORIGIN = _rom_start_addr + _vectors_length + _flashsec_length + _rom_offset, LENGTH = _fw_rom_length
+    rom (rx)   : ORIGIN = _rom_start_addr + _vectors_length + _flashsec_length + _rom_offset, LENGTH = _fw_rom_length - (_vectors_length + _flashsec_length)
     ram (!rx)  : ORIGIN = _ram_start_addr, LENGTH = _ram_length
 }
 
 SECTIONS
 {
-    /* Image headers for MCUBoot */
-    .imghdr (NOLOAD):
-    {
-      . = .;
-    } > vectors = 0x00
-
     /* Interrupt vectors 0x00-0x3ff. */
     .vector :
     {
         _isr_vectors = .;
         KEEP(*(SORT(.vector*)))
     } > vectors
-    ASSERT (SIZEOF(.vector) == 0x400, "Interrupt vector table of invalid size.")
+    ASSERT (SIZEOF(.vector) == _vectors_length, "Interrupt vector table of invalid size.")
     ASSERT (ADDR(.vector) == _rom_offset, "Interrupt vector table at invalid location (linker-script error?)")
     ASSERT (LOADADDR(.vector) == _rom_offset, "Interrupt vector table at invalid location (linker-script error?)")
 
@@ -64,9 +58,9 @@ SECTIONS
         KEEP(*(.fcfield))
         . = ALIGN(4);
     } > flashsec
-    ASSERT (SIZEOF(.fcfield) == 0x10, "Flash configuration field of invalid size (linker-script error?)")
-    ASSERT (ADDR(.fcfield) == 0x400 + _rom_offset, "Flash configuration field at invalid position (linker-script error?)")
-    ASSERT (LOADADDR(.fcfield) == 0x400 + _rom_offset, "Flash configuration field at invalid position (linker-script error?)")
+    ASSERT (SIZEOF(.fcfield) == _flashsec_length, "Flash configuration field of invalid size (linker-script error?)")
+    ASSERT (ADDR(.fcfield) == _vectors_length + _rom_offset, "Flash configuration field at invalid position (linker-script error?)")
+    ASSERT (LOADADDR(.fcfield) == _vectors_length + _rom_offset, "Flash configuration field at invalid position (linker-script error?)")
 }
 
 INCLUDE cortexm_base.ld
