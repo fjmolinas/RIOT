@@ -160,6 +160,9 @@ endif
 ifneq (,$(filter credman,$(USEMODULE)))
   DIRS += net/credman
 endif
+ifneq (,$(filter suitreg,$(USEMODULE)))
+  DIRS += suitreg
+endif
 
 DIRS += $(dir $(wildcard $(addsuffix /Makefile, $(USEMODULE))))
 
