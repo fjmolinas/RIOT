@@ -47,6 +47,10 @@
 #include "suit/storage.h"
 #endif
 
+#ifdef MODULE_SUITREG
+#include "suitreg.h"
+#endif
+
 #if defined(MODULE_PROGRESS_BAR)
 #include "progress_bar.h"
 #endif
@@ -85,6 +89,7 @@ static inline void _print_download_progress(suit_manifest_t *manifest,
     (void)manifest;
     (void)offset;
     (void)len;
+    (void) image_size;
     DEBUG("_suit_flashwrite(): writing %u bytes at pos %u\n", len, offset);
 #if defined(MODULE_PROGRESS_BAR)
     if (image_size != 0) {
@@ -375,6 +380,9 @@ static void _suit_handle_url(const char *url)
 
             if (riotboot_hdr_validate(hdr) == 0) {
                 LOG_INFO("suit_coap: rebooting...\n");
+#ifdef MODULE_SUITREG
+            suitreg_notify(SUITREG_TYPE_BLOCK | SUITREG_TYPE_STATUS, SUIT_REBOOT, 0);
+#endif
                 pm_reboot();
             }
             else {
@@ -421,6 +429,10 @@ int suit_storage_helper(void *arg, size_t offset, uint8_t *buf, size_t len,
 
     _print_download_progress(manifest, offset, len, image_size);
 
+#ifdef MODULE_SUITREG
+    suitreg_notify(SUITREG_TYPE_STATUS, SUIT_DOWNLOAD_PROGRESS, offset);
+#endif
+
     int res = suit_storage_write(comp->storage_backend, manifest, buf, offset, len);
     if (!more) {
         LOG_INFO("Finalizing payload store\n");
@@ -447,6 +459,9 @@ static void *_suit_coap_thread(void *arg)
         switch (m.content.value) {
             case SUIT_MSG_TRIGGER:
                 LOG_INFO("suit_coap: trigger received\n");
+#ifdef MODULE_SUITREG
+                suitreg_notify(SUITREG_TYPE_STATUS, SUIT_TRIGGER, 0);
+#endif
                 _suit_handle_url(_url);
                 break;
             default:
