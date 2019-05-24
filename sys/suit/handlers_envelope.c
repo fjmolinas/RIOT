@@ -32,6 +32,10 @@
 #include "suit/handlers.h"
 #include "suit.h"
 
+#ifdef MODULE_SUITREG
+#include "suitreg.h"
+#endif
+
 static int _auth_handler(suit_manifest_t *manifest, int key,
                          nanocbor_value_t *it)
 {
@@ -85,16 +89,25 @@ static int _auth_handler(suit_manifest_t *manifest, int key,
                 return SUIT_ERR_INVALID_MANIFEST;
             }
             LOG_INFO("suit: verifying manifest signature\n");
+#ifdef MODULE_SUITREG
+            suitreg_notify(SUITREG_TYPE_BLOCK | SUITREG_TYPE_STATUS, SUIT_SIGNATURE_START, 0);
+#endif
             int verification = cose_sign_verify(&verify, &signature,
                                                 &pkey, manifest->validation_buf,
                                                 SUIT_COSE_BUF_SIZE);
             if (verification == 0) {
+#ifdef MODULE_SUITREG
+                suitreg_notify(SUITREG_TYPE_STATUS, SUIT_SIGNATURE_END, 0);
+#endif
                 manifest->state |= SUIT_STATE_COSE_AUTHENTICATED;
                 res = SUIT_OK;
                 manifest->cose_payload = verify.payload;
                 manifest->cose_payload_len = verify.payload_len;
             }
             else {
+#ifdef MODULE_SUITREG
+                suitreg_notify(SUITREG_TYPE_ERROR, SUIT_SIGNATURE_ERROR, 0);
+#endif
                 LOG_INFO("Unable to validate signature: %d\n", verification);
             }
         }
@@ -124,6 +137,9 @@ static int _manifest_handler(suit_manifest_t *manifest, int key,
          * length
          */
     { 0x82, 0x02, 0x58, SHA256_DIGEST_LENGTH };
+#ifdef MODULE_SUITREG
+    suitreg_notify(SUITREG_TYPE_BLOCK, SUIT_DIGEST_START, 0);
+#endif
     sha256(manifest_buf, manifest_len, digest_struct + 4);
 
     /* The COSE payload and the sha256 of the manifest itself is public info and
@@ -131,6 +147,9 @@ static int _manifest_handler(suit_manifest_t *manifest, int key,
      * memcmp here */
     if (memcmp(digest_struct, manifest->cose_payload,
                sizeof(digest_struct)) != 0) {
+#ifdef MODULE_SUITREG
+        suitreg_notify(SUITREG_TYPE_ERROR, SUIT_DIGEST_ERROR, 0);
+#endif
         LOG_ERROR("SUIT manifest digest and COSE digest mismatch\n");
         return SUIT_ERR_DIGEST_MISMATCH;
     }

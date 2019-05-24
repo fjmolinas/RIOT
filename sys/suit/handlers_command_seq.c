@@ -42,6 +42,10 @@
 
 #include "log.h"
 
+#ifdef MODULE_SUITREG
+#include "suitreg.h"
+#endif
+
 static int _get_component_size(suit_manifest_t *manifest,
                                suit_component_t *comp,
                                uint32_t *img_size)
@@ -352,6 +356,10 @@ static int _dtv_fetch(suit_manifest_t *manifest, int key,
     LOG_DEBUG("_dtv_fetch() fetching \"%s\" (url_len=%u)\n", manifest->urlbuf,
               (unsigned)url_len);
 
+#ifdef MODULE_SUITREG
+    suitreg_notify(SUITREG_TYPE_STATUS | SUITREG_TYPE_BLOCK, SUIT_DOWNLOAD_START, manifest->components[0].size);
+#endif
+
     if (_start_storage(manifest, comp) < 0) {
         LOG_ERROR("Unable to start storage backend\n");
         return SUIT_ERR_STORAGE;
@@ -384,6 +392,9 @@ static int _dtv_fetch(suit_manifest_t *manifest, int key,
         /* TODO: The leftover data from a failed fetch should be purged. It
          * could contain potential malicious data from an attacker */
         LOG_INFO("image download failed with code %i\n", res);
+#ifdef MODULE_SUITREG
+        suitreg_notify(SUITREG_TYPE_ERROR, SUIT_DOWNLOAD_ERROR, 0);
+#endif
         return res;
     }
 
