@@ -31,6 +31,10 @@
 #include "suit.h"
 #include "suit/storage.h"
 
+#ifdef MODULE_SUITREG
+#include "suitreg.h"
+#endif
+
 extern int _common_sequence_handler(suit_manifest_t *manifest, int key,
                                     nanocbor_value_t *it);
 
@@ -71,6 +75,9 @@ static int _seq_no_handler(suit_manifest_t *manifest, int key,
              seq_nr, stored_seq_no);
 
     if (seq_nr <= stored_seq_no) {
+#ifdef MODULE_SUITREG
+        suitreg_notify(SUITREG_TYPE_ERROR, SUIT_SEQ_NR_ERROR, 0);
+#endif
         LOG_ERROR("seq_nr <= running image\n)");
         return SUIT_ERR_SEQUENCE_NUMBER;
     }

@@ -29,6 +29,10 @@
 #include "riotboot/flashwrite.h"
 #include "riotboot/slot.h"
 
+#ifdef MODULE_SUITREG
+#include "suitreg.h"
+#endif
+
 static inline suit_storage_flashwrite_t *_get_fw(suit_storage_t *storage)
 {
     return container_of(storage, suit_storage_flashwrite_t, storage);
@@ -77,6 +81,10 @@ static int _flashwrite_write(suit_storage_t *storage,
                   (unsigned)fw->writer.offset);
         return SUIT_ERR_STORAGE;
     }
+
+#ifdef MODULE_SUITREG
+    suitreg_notify(SUITREG_TYPE_STATUS, SUIT_DOWNLOAD_PROGRESS, offset);
+#endif
 
     return riotboot_flashwrite_putbytes(&fw->writer, buf, len, 1);
 }
