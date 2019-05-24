@@ -308,6 +308,10 @@ static int _start_storage(suit_manifest_t *manifest, suit_component_t *comp)
 
     suit_storage_set_active_location(comp->storage_backend, name);
 
+#ifdef MODULE_SUITREG
+    suitreg_notify(SUITREG_TYPE_STATUS | SUITREG_TYPE_BLOCK, SUIT_DOWNLOAD_START, img_size);
+#endif
+
     return suit_storage_start(comp->storage_backend, manifest, img_size);
 }
 
