@@ -160,6 +160,9 @@ endif
 ifneq (,$(filter netif,$(USEMODULE)))
     DIRS += net/netif
 endif
+ifneq (,$(filter suitreg,$(USEMODULE)))
+  DIRS += suitreg
+endif
 
 DIRS += $(dir $(wildcard $(addsuffix /Makefile, $(USEMODULE))))
 
