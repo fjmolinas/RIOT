@@ -9,6 +9,7 @@ include ../Makefile.tests_common
 USEMODULE += xtimer
 USEPKG += lvgl
 
+USEMODULE += stmpe811
 USEMODULE += ili9341
 CFLAGS += -DILI9341_LE_MODE
 

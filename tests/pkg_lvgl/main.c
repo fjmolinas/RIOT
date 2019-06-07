@@ -30,6 +30,11 @@
 #include "ili9341_params.h"
 #endif
 
+#if defined(MODULE_STMPE811)
+#include "stmpe811.h"
+#include "stmpe811_params.h"
+#endif
+
 #include "lv_conf.h"
 #include "lv_port_indev.h"
 
@@ -37,6 +42,10 @@
 static st7735_t dev;
 #elif defined(MODULE_ILI9341)
 static ili9341_t dev;
+#endif
+
+#if defined(MODULE_STMPE811)
+stmpe811_t dev_touch;
 #endif
 
 /* Flush the content of the internal buffer the specific area on the display
@@ -84,8 +93,14 @@ static void ex_disp_fill(int32_t x1, int32_t y1, int32_t x2, int32_t y2,  lv_col
 #endif
 }
 
-
-
+#if defined(MODULE_STMPE811)
+bool my_input_read(lv_indev_data_t*data)
+{
+    stmpe811_read_xy(&dev_touch, &data->point.x, &data->point.x);
+    data->state = stmpe811_read_touch(&dev_touch);
+    return false; /*No buffering so no more data read*/
+}
+#endif
 
 lv_style_t btn3_style;
 
@@ -335,6 +350,16 @@ int main(void)
 
     }
 
+#ifdef MODULE_STMPE811
+    if (stmpe811_init(&dev_touch, &stmpe811_params[0]) == 0) {
+        puts("[OK]");
+    }
+    else {
+        puts("[Failed]");
+        return 1;
+    }
+#endif
+
 
     lv_init();
 
@@ -347,14 +372,22 @@ int main(void)
     disp_drv.disp_fill = ex_disp_fill;              /*Used in unbuffered mode (LV_VDB_SIZE == 0  in lv_conf.h)*/
     disp_drv.disp_map = ex_disp_map;                /*Used in unbuffered mode (LV_VDB_SIZE == 0  in lv_conf.h)*/
 
+#if defined(MODULE_STMPE811)
+    lv_indev_drv_t indev_drv;
+    lv_indev_drv_init(&indev_drv);  /*Basic initialization*/
+    indev_drv.type = LV_INDEV_TYPE_POINTER;
+    indev_drv.read = my_input_read;
+    lv_indev_drv_register(&indev_drv);  /*Register the driver in LittlevGL*/
+#endif
+
     /*Finally register the driver*/
     lv_disp_drv_register(&disp_drv);
 
     // lv_tutorial_hello_world();
 
-    // lv_tutorial_themes();
+    lv_tutorial_themes();
 
-    lv_tutorial_animations();
+    // lv_tutorial_animations();
 
     while (1) {
         lv_task_handler();
