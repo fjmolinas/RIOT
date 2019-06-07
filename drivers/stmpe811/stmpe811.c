@@ -247,7 +247,7 @@ void stmpe811_enable_interrupts(const stmpe811_t *dev)
     i2c_write_reg(DEV_I2C, DEV_ADDR, STMPE811_INT_CTRL, mode, 0);
 }
 
-void stmpe811_read_xy(const stmpe811_t *dev, uint16_t *x, uint16_t *y)
+void stmpe811_read_xy(const stmpe811_t *dev, int16_t *x, int16_t *y)
 {
     /* Acquire I2C device */
     i2c_acquire(DEV_I2C);

@@ -117,7 +117,7 @@ void stmpe811_set_tsc_fraction_z(const stmpe811_t *dev, uint8_t z);
 void stmpe811_set_tsc_i_drive(const stmpe811_t *dev, uint8_t limit);
 void stmpe811_set_int_sta(const stmpe811_t *dev, uint8_t status);
 void stmpe811_enable_interrupts(const stmpe811_t *dev);
-void stmpe811_read_xy(const stmpe811_t *dev, uint16_t *x, uint16_t *y);
+void stmpe811_read_xy(const stmpe811_t *dev, int16_t *x, int16_t *y);
 stmpe811_state_t stmpe811_read_touch(const stmpe811_t *dev);
 
 #ifdef __cplusplus

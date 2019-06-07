@@ -42,7 +42,7 @@ int main(void)
 
     uint8_t current_pressed = stmpe811_read_touch(&dev);
     uint8_t last_pressed = current_pressed;
-    uint16_t x, y;
+    int16_t x, y;
 
     while (1) {
         current_pressed = stmpe811_read_touch(&dev);
