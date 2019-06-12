@@ -38,6 +38,26 @@ extern "C" {
 #define CPU_FLASH_BASE                  FLASH_BASE
 /** @} */
 
+/**
+ * @brief   Flash page configuration
+ *
+ *          NOTE: STM32F2 flash is organized in sectors instead of pages
+ *
+ * @{
+ */
+#define FLASH_DUAL_BANK           (0)
+#define FLASHSECTOR_SIZE_MIN      (16*1024U)
+/* An erase byte in flash is set to 0xff */
+#define FLASH_ERASE_STATE         (0xff)
+#define FLASHSECTOR_NUMOF         (4 + (STM32_FLASHSIZE / (8 * FLASHSECTOR_SIZE_MIN)))
+/* The minimum block size which can be written is 4B. However, the erase
+ * depends on the specific sector.
+ */
+#define FLASHPAGE_RAW_BLOCKSIZE    (4U)
+/* Writing should be always 4 bytes aligned */
+#define FLASHPAGE_RAW_ALIGNMENT    (4U)
+/** @} */
+
 #ifdef __cplusplus
 }
 #endif
