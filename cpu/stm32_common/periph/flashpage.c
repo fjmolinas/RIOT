@@ -38,12 +38,16 @@
 #define CNTRL_REG              (FLASH->PECR)
 #define CNTRL_REG_LOCK         (FLASH_PECR_PELOCK)
 #define FLASH_CR_PER           (FLASH_PECR_ERASE | FLASH_PECR_PROG)
-#define FLASHPAGE_DIV          (4U) /* write 4 bytes in one go */
+#define FLASHWRITE_DIV         (4U) /* write 4 bytes in one go */
 #else
 #if defined(CPU_FAM_STM32L4)
-#define FLASHPAGE_DIV          (8U)
+#define FLASHWRITE_DIV         (8U)
+#elif defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F4) || \
+      defined(CPU_FAM_STM32F7)
+#define FLASHSECTORS_BANK      (12)
+#define FLASHWRITE_DIV         (4U)
 #else
-#define FLASHPAGE_DIV          (2U)
+#define FLASHWRITE_DIV         (2U)
 #endif
 #define CNTRL_REG              (FLASH->CR)
 #define CNTRL_REG_LOCK         (FLASH_CR_LOCK)
@@ -69,8 +73,140 @@ static void _unlock_flash(void)
 #endif
 }
 
-static void _erase_page(void *page_addr)
+#if defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F4) || \
+    defined(CPU_FAM_STM32F7)
+static inline int _flashbank_sector(void *addr)
 {
+    /* When flash is in single bank there is a max of 12 sectors. The first 4
+       sectors are equally sized, the 5th amount to the sum of the first 4
+       sectors and the 6th to 12th amount to the sum of the first 5 sectos.
+       e.g.: if FLASHSECTOR_SIZE_MIN is 16k there are 4 sectors of 16kB,
+       1 of 64kB and 7 of 128kB. */
+    /* We use this pattern to find in what sector and address falls */
+    uint8_t sn =
+        (uint8_t)(((uint32_t)addr - CPU_FLASH_BASE) / FLASHSECTOR_SIZE_MIN);
+
+    if (sn > 3 && sn < 8) {
+        sn = 4;
+    }
+    else if (sn >= 8) {
+        sn = (sn / 8) + 4;
+    }
+    return sn;
+}
+
+uint32_t flashsector_size(uint8_t sn) {
+#if (FLASH_DUAL_BANK == 1)
+    if (sn == FLASHSECTOR_NUMOF) {
+        return FLASHSECTOR_SIZE_MIN;
+    }
+    else {
+        return (((uint32_t) flashsector_addr(sn + 1)) - ((uint32_t) flashsector_addr(sn)));
+    }
+#else
+    return (((uint32_t) flashsector_addr(sn + 1)) - ((uint32_t) flashsector_addr(sn)));
+#endif
+}
+
+void* flashsector_addr(uint8_t sn)
+{
+/* Assert on Invalid Sector */
+#if (FLASH_DUAL_BANK == 1)
+    assert((sn <= (int) FLASHSECTOR_NUMOF) || \
+           ((sn >= (int) FLASHSECTORS_BANK)) && \
+            (sn <= (int) (FLASHSECTOR_NUMOF + FLASHSECTORS_BANK)));
+#else
+    assert(sn <= (int) FLASHSECTOR_NUMOF);
+#endif
+
+    uint32_t addr = CPU_FLASH_BASE;
+#if (FLASH_DUAL_BANK == 1)
+    if (sn >= FLASHSECTORS_BANK) {
+       sn %= FLASHSECTORS_BANK;
+       addr += (STM32_FLASHSIZE / 2);
+    }
+#endif
+    if (sn <= 4) {
+        addr += (FLASHSECTOR_SIZE_MIN * sn);
+    }
+    else {
+        addr += (8*FLASHSECTOR_SIZE_MIN * (sn - 4));
+    }
+    return (void *) addr;
+}
+
+int flashsector_sector(void *addr)
+{
+    /* When in dual bank there can be up to 24 sectors, where sectors 12-23
+       follow the same layout as sectors 0-11 */
+#if (FLASH_DUAL_BANK == 1)
+    if ((uint32_t)addr >= (STM32_FLASHSIZE / 2) + CPU_FLASH_BASE) {
+        DEBUG("[flashsector]: dual bank sector\n");
+        addr = (void *)((uint32_t)addr - (STM32_FLASHSIZE / 2));
+        return FLASHSECTORS_BANK + _flashbank_sector(addr);
+    }
+    else {
+        DEBUG("[flashsector]: single bank sector\n");
+        return _flashbank_sector(addr);
+    }
+#else
+    return _flashbank_sector(addr);
+#endif
+}
+
+void flashpage_erase_raw(void *page_addr)
+{
+    /* Erases must be sector aligned */
+    assert((unsigned) page_addr == flashsector_addr(sn));
+    /* Make addres is contained in flash */
+    assert((unsigned) page_addr < (CPU_FLASH_BASE + STM32_FLASHSIZE);
+
+    uint8_t sn = flashsector_sector(page_addr);
+
+    /* make sure no flash operation is ongoing */
+    _wait_for_pending_operations();
+
+    /* unlock the flash module */
+    _unlock_flash();
+
+    /* set parallelism to 32bits */
+    CNTRL_REG &= FLASH_CR_PSIZE_Msk;
+    CNTRL_REG |= (0x2 << FLASH_CR_PSIZE_Pos);
+
+    /* make sure no flash operation is ongoing */
+    _wait_for_pending_operations();
+
+    DEBUG("[flashsector] erase: setting the sector erase code\n");
+    CNTRL_REG |= ((sn % FLASHSECTORS_BANK) << FLASH_CR_SNB_Pos);
+#if (FLASH_DUAL_BANK == 1)
+    CNTRL_REG |= (sn / FLASHSECTORS_BANK) * FLASH_CR_SNB_4;
+#endif
+    DEBUG("[flashsector] erase: setting the erase bit\n");
+    CNTRL_REG |= FLASH_CR_SER;
+
+    DEBUG("[flashsector] erase: trigger the page erase\n");
+    CNTRL_REG |= FLASH_CR_STRT;
+
+    /* wait as long as device is busy */
+    _wait_for_pending_operations();
+
+    /* reset PER bit */
+    DEBUG("[flashsector] erase: resetting the sector erase bit\n");
+    CNTRL_REG &= ~FLASH_CR_SER;
+
+    /* lock the flash module again */
+    _lock();
+}
+#endif
+
+#if defined(CPU_FAM_STM32F0) || defined(CPU_FAM_STM32F1) || \
+    defined(CPU_FAM_STM32L0) || defined(CPU_FAM_STM32L1) || \
+    defined(CPU_FAM_STM32L4)
+void flashpage_erase_raw(void *page_addr)
+{
+    /* Erases must be flash page aligned */
+    assert((unsigned) page_addr % FLASHPAGE_SIZE);
+
 #if defined(CPU_FAM_STM32L0) || defined(CPU_FAM_STM32L1) || \
     defined(CPU_FAM_STM32L4)
     uint32_t *dst = page_addr;
@@ -140,6 +276,7 @@ static void _erase_page(void *page_addr)
     }
 #endif
 }
+#endif
 
 void flashpage_write_raw(void *target_addr, const void *data, size_t len)
 {
@@ -155,7 +292,9 @@ void flashpage_write_raw(void *target_addr, const void *data, size_t len)
     assert(((unsigned)target_addr + len) <
            (CPU_FLASH_BASE + (FLASHPAGE_SIZE * FLASHPAGE_NUMOF)) + 1);
 
-#if defined(CPU_FAM_STM32L0) || defined(CPU_FAM_STM32L1)
+#if defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F4) || \
+    defined(CPU_FAM_STM32F7) || defined(CPU_FAM_STM32L0) || \
+    defined(CPU_FAM_STM32L1)
     uint32_t *dst = target_addr;
     const uint32_t *data_addr = data;
 #elif defined(CPU_FAM_STM32L4)
@@ -179,22 +318,36 @@ void flashpage_write_raw(void *target_addr, const void *data, size_t len)
     /* make sure no flash operation is ongoing */
     _wait_for_pending_operations();
 
+#if defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F4) || \
+    defined(CPU_FAM_STM32F7)
+    /* set parallelism to 32bits */
+    CNTRL_REG &= FLASH_CR_PSIZE_Msk;
+    CNTRL_REG |= (0x2 << FLASH_CR_PSIZE_Pos);
+#endif
+
     DEBUG("[flashpage_raw] write: now writing the data\n");
 #if defined(CPU_FAM_STM32F0) || defined(CPU_FAM_STM32F1) || \
-    defined(CPU_FAM_STM32F3) || defined(CPU_FAM_STM32L4)
+    defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F3) || \
+    defined(CPU_FAM_STM32F4) || defined(CPU_FAM_STM32F7) || \
+    defined(CPU_FAM_STM32L4)
     /* set PG bit and program page to flash */
     CNTRL_REG |= FLASH_CR_PG;
 #endif
-    for (size_t i = 0; i < (len / FLASHPAGE_DIV); i++) {
+    for (size_t i = 0; i < (len / FLASHWRITE_DIV); i++) {
         DEBUG("[flashpage_raw] writing %c to %p\n", (char)data_addr[i], dst);
         *dst++ = data_addr[i];
+#if defined(CPU_FAM_STM32F7)
+        __DSB();
+#endif
         /* wait as long as device is busy */
         _wait_for_pending_operations();
     }
 
     /* clear program bit again */
 #if defined(CPU_FAM_STM32F0) || defined(CPU_FAM_STM32F1) || \
-    defined(CPU_FAM_STM32F3) || defined(CPU_FAM_STM32L4)
+    defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F3) || \
+    defined(CPU_FAM_STM32F4) || defined(CPU_FAM_STM32F7) || \
+    defined(CPU_FAM_STM32L4)
     CNTRL_REG &= ~(FLASH_CR_PG);
 #endif
     DEBUG("[flashpage_raw] write: done writing data\n");
@@ -202,8 +355,9 @@ void flashpage_write_raw(void *target_addr, const void *data, size_t len)
     /* lock the flash module again */
     _lock();
 
-#if defined(CPU_FAM_STM32F0) || defined(CPU_FAM_STM32F1) || \
-    defined(CPU_FAM_STM32F3)
+#if !(defined(CPU_FAM_STM32L0) || defined(CPU_FAM_STM32L1) || \
+      defined(CPU_FAM_STM32L4) || defined(CPU_FAM_STM32F2) || \
+      defined(CPU_FAM_STM32F4))
     /* restore the HSI state */
     if (!hsi_state) {
         stmclk_disable_hsi();
@@ -211,6 +365,9 @@ void flashpage_write_raw(void *target_addr, const void *data, size_t len)
 #endif
 }
 
+#if defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F4) || \
+    defined(CPU_FAM_STM32F7) || defined(CPU_FAM_STM32L0) || \
+    defined(CPU_FAM_STM32L1)
 void flashpage_write(int page, const void *data)
 {
     assert(page < (int)FLASHPAGE_NUMOF);
@@ -226,10 +383,11 @@ void flashpage_write(int page, const void *data)
 #endif
 
     /* ERASE sequence */
-    _erase_page(page_addr);
+    flashpage_erase_raw(page_addr);
 
     /* WRITE sequence */
     if (data != NULL) {
         flashpage_write_raw(page_addr, data, FLASHPAGE_SIZE);
     }
 }
+#endif
