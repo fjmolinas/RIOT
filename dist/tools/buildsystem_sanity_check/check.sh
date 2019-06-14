@@ -127,7 +127,7 @@ check_deprecated_vars_patterns() {
 }
 
 error_on_input() {
-    grep '' && return 1
+    ! grep ''
 }
 
 all_checks() {
