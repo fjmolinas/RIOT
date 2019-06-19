@@ -51,8 +51,9 @@ import traceback
 
 try:
     import magic
+    magic.from_file
     have_magic = True
-except ImportError:
+except (ImportError, AttributeError):
     have_magic = False
 
 try:
@@ -62,7 +63,7 @@ except ImportError:
     have_hex_support = False
 
 # version
-VERSION_STRING = "2.1"
+__version__ = "2.1"
 
 # Verbose level
 QUIET = 5
@@ -74,14 +75,12 @@ try:
     import serial
 except ImportError:
     print('{} requires the Python serial library'.format(sys.argv[0]))
-    print('Please install it with one of the following:')
+    print('Please install it with:')
     print('')
     if PY3:
-        print('   Ubuntu:  sudo apt-get install python3-serial')
-        print('   Mac:     sudo port install py34-serial')
+        print('   pip3 install pyserial')
     else:
-        print('   Ubuntu:  sudo apt-get install python-serial')
-        print('   Mac:     sudo port install py-serial')
+        print('   pip2 install pyserial')
     sys.exit(1)
 
 
@@ -198,18 +197,33 @@ class CommandInterface(object):
     ACK_BYTE = 0xCC
     NACK_BYTE = 0x33
 
-    def open(self, aport='/dev/tty.usbserial-000013FAB', abaudrate=500000):
-        self.sp = serial.Serial(
-            port=aport,
-            baudrate=abaudrate,     # baudrate
-            bytesize=8,             # number of databits
-            parity=serial.PARITY_NONE,
-            stopbits=1,
-            xonxoff=0,              # enable software flow control
-            rtscts=0,               # disable RTS/CTS flow control
-            timeout=0.5             # set a timeout value, None for waiting
-                                    # forever
-        )
+    def open(self, aport=None, abaudrate=500000):
+        # Try to create the object using serial_for_url(), or fall back to the
+        # old serial.Serial() where serial_for_url() is not supported.
+        # serial_for_url() is a factory class and will return a different
+        # object based on the URL. For example serial_for_url("/dev/tty.<xyz>")
+        # will return a serialposix.Serial object for Ubuntu or Mac OS;
+        # serial_for_url("COMx") will return a serialwin32.Serial oject for Windows OS.
+        # For that reason, we need to make sure the port doesn't get opened at
+        # this stage: We need to set its attributes up depending on what object
+        # we get.
+        try:
+            self.sp = serial.serial_for_url(aport, do_not_open=True, timeout=10)
+        except AttributeError:
+            self.sp = serial.Serial(port=None, timeout=10)
+            self.sp.port = aport
+
+        if ((os.name == 'nt' and isinstance(self.sp, serial.serialwin32.Serial)) or \
+           (os.name == 'posix' and isinstance(self.sp, serial.serialposix.Serial))):
+            self.sp.baudrate=abaudrate        # baudrate
+            self.sp.bytesize=8                # number of databits
+            self.sp.parity=serial.PARITY_NONE # parity
+            self.sp.stopbits=1                # stop bits
+            self.sp.xonxoff=0                 # s/w (XON/XOFF) flow control
+            self.sp.rtscts=0                  # h/w (RTS/CTS) flow control
+            self.sp.timeout=0.5               # set the timeout value
+
+        self.sp.open()
 
     def invoke_bootloader(self, dtr_active_high=False, inverted=False):
         # Use the DTR and RTS lines to control bootloader and the !RESET pin.
@@ -803,7 +817,12 @@ class CC26xx(Chip):
         user_id = self.command_interface.cmdMemReadCC26xx(FCFG_USER_ID)
         package = {0x00: '4x4mm',
                    0x01: '5x5mm',
-                   0x02: '7x7mm'}.get(user_id[2] & 0x03, "Unknown")
+                   0x02: '7x7mm',
+                   0x03: 'Wafer',
+                   0x04: '2.7x2.7',
+                   0x05: '7x7mm Q1',
+                   }.get(user_id[2] & 0x03, "Unknown")
+
         protocols = user_id[1] >> 4
 
         # We can now detect the exact device
@@ -856,12 +875,20 @@ class CC26xx(Chip):
             pg_str = "PG2.0"
         elif pg == 7:
             pg_str = "PG2.1"
-        elif pg == 8:
+        elif pg == 8 or pg == 0x0B:
+            # CC26x0 PG2.2+ or CC26x0R2
             rev_minor = self.command_interface.cmdMemReadCC26xx(
                                                 CC26xx.MISC_CONF_1)[0]
             if rev_minor == 0xFF:
                 rev_minor = 0x00
-            pg_str = "PG2.%d" % (2 + rev_minor,)
+
+            if pg == 8:
+                # CC26x0
+                pg_str = "PG2.%d" % (2 + rev_minor,)
+            elif pg == 0x0B:
+                # HW revision R2, update Chip name
+                chip_str += 'R2'
+                pg_str = "PG%d.%d" % (1 + (rev_minor // 10), rev_minor % 10)
 
         return "%s %s" % (chip_str, pg_str)
 
@@ -949,10 +976,10 @@ def print_version():
                   stdout=PIPE, stderr=PIPE)
         p.stderr.close()
         line = p.stdout.readlines()[0]
-        version = line.strip()
+        version = line.decode('utf-8').strip()
     except:
         # We're not in a git repo, or git failed, use fixed version string.
-        version = VERSION_STRING
+        version = __version__
     print('%s %s' % (sys.argv[0], version))
 
 
@@ -965,6 +992,7 @@ def usage():
     -f                       Force operation(s) without asking any questions
     -e                       Erase (full)
     -w                       Write
+    -W                       Write and erase (Only section to write)
     -v                       Verify (CRC32 check)
     -r                       Read
     -l length                Length of read
@@ -993,6 +1021,7 @@ if __name__ == "__main__":
             'force': 0,
             'erase': 0,
             'write': 0,
+            'write_erase': 0,
             'verify': 0,
             'read': 0,
             'len': 0x80000,
@@ -1007,7 +1036,7 @@ if __name__ == "__main__":
 
     try:
         opts, args = getopt.getopt(sys.argv[1:],
-                                   "DhqVfewvrp:b:a:l:i:",
+                                   "DhqVfewWvrp:b:a:l:i:",
                                    ['help', 'ieee-address=',
                                     'disable-bootloader',
                                     'bootloader-active-high',
@@ -1032,6 +1061,8 @@ if __name__ == "__main__":
             conf['erase'] = 1
         elif o == '-w':
             conf['write'] = 1
+        elif o == '-W':
+            conf['write_erase'] = 1
         elif o == '-v':
             conf['verify'] = 1
         elif o == '-r':
@@ -1062,25 +1093,25 @@ if __name__ == "__main__":
     try:
         # Sanity checks
         # check for input/output file
-        if conf['write'] or conf['read'] or conf['verify']:
+        if conf['write'] or conf['write_erase'] or conf['read'] or conf['verify']:
             try:
                 args[0]
             except:
                 raise Exception('No file path given.')
 
-        if conf['write'] and conf['read']:
+        if (conf['write'] and conf['read']) or (conf['write_erase'] and conf['read']):
             if not (conf['force'] or
                     query_yes_no("You are reading and writing to the same "
                                  "file. This will overwrite your input file. "
                                  "Do you want to continue?", "no")):
                 raise Exception('Aborted by user.')
-        if conf['erase'] and conf['read'] and not conf['write']:
+        if conf['erase'] and conf['read'] and not (conf['write'] or conf['write_erase']):
             if not (conf['force'] or
                     query_yes_no("You are about to erase your target before "
                                  "reading. Do you want to continue?", "no")):
                 raise Exception('Aborted by user.')
 
-        if conf['read'] and not conf['write'] and conf['verify']:
+        if conf['read'] and not (conf['write']  or conf['write_erase']) and conf['verify']:
             raise Exception('Verify after read not implemented.')
 
         if conf['len'] < 0:
@@ -1092,7 +1123,8 @@ if __name__ == "__main__":
             ports = []
 
             # Get a list of all USB-like names in /dev
-            for name in ['tty.usbserial',
+            for name in ['ttyACM',
+                         'tty.usbserial',
                          'ttyUSB',
                          'tty.usbmodem',
                          'tty.SLAB_USBtoUART']:
@@ -1112,7 +1144,7 @@ if __name__ == "__main__":
                               conf['bootloader_invert_lines'])
         mdebug(5, "Opening port %(port)s, baud %(baud)d"
                % {'port': conf['port'], 'baud': conf['baud']})
-        if conf['write'] or conf['verify']:
+        if conf['write'] or conf['write_erase'] or conf['verify']:
             mdebug(5, "Reading data from %s" % args[0])
             firmware = FirmwareFile(args[0])
 
@@ -1166,6 +1198,16 @@ if __name__ == "__main__":
         if conf['write']:
             # TODO: check if boot loader back-door is open, need to read
             #       flash size first to get address
+            if cmd.writeMemory(conf['address'], firmware.bytes):
+                mdebug(5, "    Write done                                ")
+            else:
+                raise CmdException("Write failed                       ")
+
+        if conf['write_erase']:
+            # TODO: check if boot loader back-door is open, need to read
+            #       flash size first to get address
+            if cmd.cmdEraseMemory(conf['address'], len(firmware.bytes)):
+                mdebug(5, "    Erase before write done                 ")
             if cmd.writeMemory(conf['address'], firmware.bytes):
                 mdebug(5, "    Write done                                ")
             else:
