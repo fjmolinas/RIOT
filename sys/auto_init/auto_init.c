@@ -546,4 +546,12 @@ void auto_init(void)
     auto_init_candev();
 
 #endif /* MODULE_AUTO_INIT_CAN */
+
+#ifdef MODULE_SCHED_STATISTICS
+    DEBUG("auto_init schedstatistics\n");
+
+    extern void auto_init_sched_statistics(void);
+    auto_init_sched_statistics();
+
+#endif /* MODULE_SCHED_STATISTICS */
 }

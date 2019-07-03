@@ -600,6 +600,11 @@ ifneq (,$(filter schedstatistics,$(USEMODULE)))
   USEMODULE += xtimer
 endif
 
+ifneq (,$(filter sched_statistics,$(USEMODULE)))
+  USEMODULE += xtimer
+  USEMODULE += sched_cb
+endif
+
 ifneq (,$(filter arduino,$(USEMODULE)))
   FEATURES_REQUIRED += arduino
   FEATURES_REQUIRED += periph_adc
