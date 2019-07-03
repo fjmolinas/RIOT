@@ -74,8 +74,10 @@ FORCE_USED_SECTION
 const uint8_t _tcb_name_offset = offsetof(thread_t, name);
 #endif
 
+#ifdef MODULE_SCHED_CB
+static void (*sched_cb) (uint32_t value_1, uint32_t value_2) = NULL;
+#endif
 #ifdef MODULE_SCHEDSTATISTICS
-static void (*sched_cb) (uint32_t timestamp, uint32_t value) = NULL;
 schedstat_t sched_pidlist[KERNEL_PID_LAST + 1];
 #endif
 
@@ -127,6 +129,8 @@ int __attribute__((used)) sched_run(void)
     schedstat_t *next_stat = &sched_pidlist[next_thread->pid];
     next_stat->laststart = now;
     next_stat->schedules++;
+#endif
+#ifdef MODULE_SCHED_CB
     if (sched_cb) {
         sched_cb(now, next_thread->pid);
     }
@@ -151,7 +155,7 @@ int __attribute__((used)) sched_run(void)
     return 1;
 }
 
-#ifdef MODULE_SCHEDSTATISTICS
+#ifdef MODULE_SCHED_CB
 void sched_register_cb(void (*callback)(uint32_t, uint32_t))
 {
     sched_cb = callback;
