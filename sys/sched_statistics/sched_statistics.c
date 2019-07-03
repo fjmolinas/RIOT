@@ -43,5 +43,8 @@ void sched_statistics_cb(uint32_t active_thread, uint32_t next_thread) {
 }
 
 void auto_init_sched_statistics(void) {
+    schedstat_t *ss = &sched_pidlist[thread_getpid()];
+    ss->laststart = 0;
+
     sched_register_cb(sched_statistics_cb);
 }
