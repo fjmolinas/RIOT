@@ -27,6 +27,10 @@
 #include "tlsf-malloc.h"
 #endif
 
+#ifdef MODULE_SCHED_STATISTICS
+#include "sched_statistics.h"
+#endif
+
 /* list of states copied from tcb.h */
 static const char *state_names[] = {
     [STATUS_RUNNING] = "running",
@@ -61,7 +65,7 @@ void ps(void)
 #ifdef DEVELHELP
            "| stack  ( used) | base addr  | current     "
 #endif
-#ifdef MODULE_SCHEDSTATISTICS
+#ifdef MODULE_SCHED_STATISTICS
            "| runtime  | switches"
 #endif
            "\n",
@@ -82,7 +86,7 @@ void ps(void)
     }
 #endif
 
-#ifdef MODULE_SCHEDSTATISTICS
+#ifdef MODULE_SCHED_STATISTICS
     uint64_t rt_sum = 0;
     for (kernel_pid_t i = KERNEL_PID_FIRST; i <= KERNEL_PID_LAST; i++) {
         thread_t *p = (thread_t *)sched_threads[i];
@@ -90,7 +94,7 @@ void ps(void)
             rt_sum += sched_pidlist[i].runtime_ticks;
         }
     }
-#endif /* MODULE_SCHEDSTATISTICS */
+#endif /* MODULE_SCHED_STATISTICS */
 
     for (kernel_pid_t i = KERNEL_PID_FIRST; i <= KERNEL_PID_LAST; i++) {
         thread_t *p = (thread_t *)sched_threads[i];
@@ -105,7 +109,7 @@ void ps(void)
             stacksz -= thread_measure_stack_free(p->stack_start);
             overall_used += stacksz;
 #endif
-#ifdef MODULE_SCHEDSTATISTICS
+#ifdef MODULE_SCHED_STATISTICS
             /* multiply with 100 for percentage and to avoid floats/doubles */
             uint64_t runtime_ticks = sched_pidlist[i].runtime_ticks * 100;
             unsigned runtime_major = runtime_ticks / rt_sum;
@@ -120,7 +124,7 @@ void ps(void)
 #ifdef DEVELHELP
                    " | %6i (%5i) | %10p | %10p "
 #endif
-#ifdef MODULE_SCHEDSTATISTICS
+#ifdef MODULE_SCHED_STATISTICS
                    " | %2d.%03d%% |  %8u"
 #endif
                    "\n",
@@ -132,7 +136,7 @@ void ps(void)
 #ifdef DEVELHELP
                    , p->stack_size, stacksz, (void *)p->stack_start, (void *)p->sp
 #endif
-#ifdef MODULE_SCHEDSTATISTICS
+#ifdef MODULE_SCHED_STATISTICS
                    , runtime_major, runtime_minor, switches
 #endif
                   );

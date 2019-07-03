@@ -16,7 +16,7 @@ BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-leonardo arduino-nano \
 #RIOTBOARD ?= $(CURDIR)/../../RIOT/thirdparty_boards
 
 # Uncomment this to enable scheduler statistics for ps:
-#USEMODULE += schedstatistics
+#USEMODULE += sched_statistics
 
 # If you want to use native with valgrind, you should recompile native
 # with the target all-valgrind instead of all:

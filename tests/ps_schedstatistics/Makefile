@@ -10,7 +10,7 @@ BOARD_INSUFFICIENT_MEMORY := arduino-duemilanove arduino-leonardo arduino-nano \
 USEMODULE += shell
 USEMODULE += shell_commands
 USEMODULE += ps
-USEMODULE += schedstatistics
+USEMODULE += sched_statistics
 USEMODULE += printf_float
 
 TEST_ON_CI_WHITELIST += all

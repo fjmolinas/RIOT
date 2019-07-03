@@ -29,8 +29,8 @@
 
 #include "periph/pm.h"
 
-#ifdef MODULE_SCHEDSTATISTICS
-#include "sched.h"
+#ifdef MODULE_SCHED_STATISTICS
+#include "sched_statistics.h"
 #endif
 
 #define ENABLE_DEBUG (0)
@@ -49,7 +49,7 @@ static void *main_trampoline(void *arg)
     auto_init();
 #endif
 
-#ifdef MODULE_SCHEDSTATISTICS
+#ifdef MODULE_SCHED_STATISTICS
     schedstat_t *ss = &sched_pidlist[thread_getpid()];
     ss->laststart = 0;
 #endif

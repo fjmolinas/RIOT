@@ -596,10 +596,6 @@ ifneq (,$(filter pthread,$(USEMODULE)))
   USEMODULE += timex
 endif
 
-ifneq (,$(filter schedstatistics,$(USEMODULE)))
-  USEMODULE += xtimer
-endif
-
 ifneq (,$(filter sched_statistics,$(USEMODULE)))
   USEMODULE += xtimer
   USEMODULE += sched_cb

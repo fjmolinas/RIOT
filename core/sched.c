@@ -34,7 +34,7 @@
 #endif
 
 #ifdef MODULE_SCHEDSTATISTICS
-#include "xtimer.h"
+#include "sched_statistics.h"
 #endif
 
 #define ENABLE_DEBUG (0)
@@ -77,9 +77,6 @@ const uint8_t _tcb_name_offset = offsetof(thread_t, name);
 #ifdef MODULE_SCHED_CB
 static void (*sched_cb) (uint32_t value_1, uint32_t value_2) = NULL;
 #endif
-#ifdef MODULE_SCHEDSTATISTICS
-schedstat_t sched_pidlist[KERNEL_PID_LAST + 1];
-#endif
 
 int __attribute__((used)) sched_run(void)
 {
@@ -102,10 +99,6 @@ int __attribute__((used)) sched_run(void)
         return 0;
     }
 
-#ifdef MODULE_SCHEDSTATISTICS
-    uint32_t now = xtimer_now().ticks32;
-#endif
-
     if (active_thread) {
         if (active_thread->status == STATUS_RUNNING) {
             active_thread->status = STATUS_PENDING;
@@ -116,23 +109,11 @@ int __attribute__((used)) sched_run(void)
             LOG_WARNING("scheduler(): stack overflow detected, pid=%" PRIkernel_pid "\n", active_thread->pid);
         }
 #endif
-
-#ifdef MODULE_SCHEDSTATISTICS
-        schedstat_t *active_stat = &sched_pidlist[active_thread->pid];
-        if (active_stat->laststart) {
-            active_stat->runtime_ticks += now - active_stat->laststart;
-        }
-#endif
     }
 
-#ifdef MODULE_SCHEDSTATISTICS
-    schedstat_t *next_stat = &sched_pidlist[next_thread->pid];
-    next_stat->laststart = now;
-    next_stat->schedules++;
-#endif
 #ifdef MODULE_SCHED_CB
     if (sched_cb) {
-        sched_cb(now, next_thread->pid);
+        sched_cb(active_thread->pid, next_thread->pid);
     }
 #endif
 

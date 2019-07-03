@@ -12,7 +12,7 @@
  * @{
  *
  * @file
- * @brief ps schedstatistics test app
+ * @brief ps sched_statistics test app
  *
  * @author Vincent Dupont <vincent@otakeys.com>
  * @author Sebastian Meiling <s@mlng.net>
