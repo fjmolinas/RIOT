@@ -26,23 +26,27 @@
 
 /* this driver is only valid for STM CPUs that provide LPTIMERs */
 #if defined(LPTIM1)
-
 /* figure out the used pre-scaler */
-#if (RTT_FREQUENCY == 32768)
+#if CLOCK_LSE
+#define RTT_CLOCK_FREQ       (32768U)
+#else
+#define RTT_CLOCK_FREQ       (CLOCK_LSI)
+#endif
+#if (RTT_FREQUENCY == RTT_CLOCK_FREQ)
 #define PRE                 (0)
-#elif (RTT_FREQUENCY == 16384)
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 2U))
 #define PRE                 (LPTIM_CFGR_PRESC_0)
-#elif (RTT_FREQUENCY == 8192)
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 4U))
 #define PRE                 (LPTIM_CFGR_PRESC_1)
-#elif (RTT_FREQUENCY == 4096)
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 8U))
 #define PRE                 (LPTIM_CFGR_PRESC_1 | LPTIM_CFGR_PRESC_0)
-#elif (RTT_FREQUENCY == 2048)
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 16U))
 #define PRE                 (LPTIM_CFGR_PRESC_2)
-#elif (RTT_FREQUENCY == 1024)
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 32U))
 #define PRE                 (LPTIM_CFGR_PRESC_2 | LPTIM_CFGR_PRESC_0)
-#elif (RTT_FREQUENCY == 512)
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 64U))
 #define PRE                 (LPTIM_CFGR_PRESC_2 | LPTIM_CFGR_PRESC_1)
-#elif (RTT_FREQUENCY == 256)
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 128U))
 #define PRE                 (LPTIM_CFGR_PRESC)
 #else
 #error "RTT config: RTT_FREQUENCY not configured or invalid for your board"
