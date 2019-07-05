@@ -107,8 +107,8 @@ riotboot/combined-slot0: $(RIOTBOOT_COMBINED_BIN)
 $(RIOTBOOT_COMBINED_BIN): $(BOOTLOADER_BIN)/riotboot.extended.bin $(SLOT0_RIOT_BIN)
 	$(Q)cat $^ > $@
 
-RIOTBOOT_EXTENDED_BIN = $(BINDIR_APP)-slot0-extended.bin
 
+RIOTBOOT_EXTENDED_BIN = $(BINDIR_APP)-slot0-extended.bin
 # Generate a binary file from slot 0 which covers slot 1 riot_hdr
 # in order to invalidate slot 1
 $(RIOTBOOT_EXTENDED_BIN): $(RIOTBOOT_COMBINED_BIN)
@@ -149,6 +149,11 @@ riotboot/flash: riotboot/flash-slot0 riotboot/flash-bootloader
 # Target 'all' will generate the combined file directly.
 # It also makes 'flash' and 'flash-only' work without specific command.
 FLASHFILE = $(RIOTBOOT_EXTENDED_BIN)
+
+# include suit targets
+ifneq (,$(filter suit_v4, $(USEMODULE)))
+include $(RIOTMAKE)/suit.v4.inc.mk
+endif
 
 else
 riotboot:
