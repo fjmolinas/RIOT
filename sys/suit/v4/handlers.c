@@ -284,7 +284,11 @@ static int _dtv_fetch(suit_v4_manifest_t *manifest, int key, CborValue *_it)
         return res;
     }
 
-    res = riotboot_flashwrite_verify_sha256(digest, manifest->components[0].size, target_slot);
+    /* "digest" points to a 36 byte string that includes the digest type.
+     * riotboot_flashwrite_verify_sha256() is only interested in the 32b digest,
+     * so shift the pointer accordingly.
+     */
+    res = riotboot_flashwrite_verify_sha256(digest + 4, manifest->components[0].size, target_slot);
     if (res) {
         LOG_INFO("image verification failed\n");
         return res;
