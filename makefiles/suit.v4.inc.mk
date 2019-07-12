@@ -43,7 +43,7 @@ SUIT_PUB_HDR_DIR = $(dir $(SUIT_PUB_HDR))
 CFLAGS += -I$(SUIT_PUB_HDR_DIR)
 BUILDDEPS += $(SUIT_PUB_HDR)
 
-$(SUIT_SEC) $(SUIT_PUB):
+$(SUIT_SEC) $(SUIT_PUB): | $(CLEAN)
 	@echo suit: generating key pair in $(SUIT_KEY_DIR)
 	@mkdir -p $(SUIT_KEY_DIR)
 	@$(RIOTBASE)/dist/tools/suit_v4/gen_key.py $(SUIT_SEC) $(SUIT_PUB)
@@ -51,7 +51,7 @@ $(SUIT_SEC) $(SUIT_PUB):
 # set FORCE so switching between keys using "SUIT_KEY=foo make ..."
 # triggers a rebuild even if the new key would otherwise not (because the other
 # key's mtime is too far back).
-$(SUIT_PUB_HDR): $(SUIT_PUB) FORCE
+$(SUIT_PUB_HDR): $(SUIT_PUB) FORCE | $(CLEAN)
 	@mkdir -p $(SUIT_PUB_HDR_DIR)
 	@cp $(SUIT_PUB) $(SUIT_PUB_HDR_DIR)/public.key
 	@cd $(SUIT_PUB_HDR_DIR) && xxd -i public.key \
