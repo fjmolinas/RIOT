@@ -85,11 +85,11 @@ extern "C" {
 #define FLASHPAGE_RAW_ALIGNMENT
 #endif
 /**
- * @def FLASHPAGE_SIZE
+ * @def FLASHPAGE_SIZE(n)
  *
  * @brief   Make sure the page size and the number of pages is defined
  */
-#ifndef FLASHPAGE_SIZE
+#ifndef FLASHPAGE_SIZE(n)
 #error "periph/flashpage: FLASHPAGE_SIZE not defined"
 #endif
 #ifndef FLASHPAGE_NUMOF
@@ -114,10 +114,7 @@ enum {
  *
  * @return              starting memory address of the given page
  */
-static inline void *flashpage_addr(int page)
-{
-    return (void *)(CPU_FLASH_BASE + (page * FLASHPAGE_SIZE));
-}
+void *flashpage_addr(int page);
 
 /**
  * @brief   Translate the given address into the corresponding page number
@@ -130,10 +127,7 @@ static inline void *flashpage_addr(int page)
  *
  * @return              page containing the given address
  */
-static inline int flashpage_page(void *addr)
-{
-    return (int)(((int)addr - CPU_FLASH_BASE) / FLASHPAGE_SIZE);
-}
+int flashpage_page(void *addr);
 
 /**
  * @brief   Write the given page with the given data

@@ -28,6 +28,28 @@
 
 #include "periph/flashpage.h"
 
+void __attribute__((weak)) *flashpage_addr(int page)
+{
+    return (void *)(CPU_FLASH_BASE + (page * FLASHPAGE_SIZE));
+}
+
+/**
+ * @brief   Translate the given address into the corresponding page number
+ *
+ * The given address can be any address inside a page.
+ *
+ * @note    The given address MUST be a valid flash address!
+ *
+ * @param[in] addr      address inside the targeted page
+ *
+ * @return              page containing the given address
+ */
+int __attribute__((weak)) flashpage_page(void *addr)
+{
+    return (int)(((int)addr - CPU_FLASH_BASE) / FLASHPAGE_SIZE);
+}
+
+
 void flashpage_read(int page, void *data)
 {
     assert(page < (int)FLASHPAGE_NUMOF);

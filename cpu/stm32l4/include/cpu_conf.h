@@ -66,9 +66,8 @@ extern "C" {
  * @name   Flash page configuration
  * @{
  */
-#define FLASHPAGE_SIZE      (2048U)
-
-#define FLASHPAGE_NUMOF     (STM32_FLASHSIZE / FLASHPAGE_SIZE)
+#define FLASHPAGE_SIZE(n)      (2048U)
+#define FLASHPAGE_NUMOF        (STM32_FLASHSIZE / FLASHPAGE_SIZE(0))
 
 /* The minimum block size which can be written is 8B. However, the erase
  * block is always FLASHPAGE_SIZE.

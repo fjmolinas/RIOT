@@ -61,19 +61,14 @@ extern "C" {
 
 /**
  * @brief   Flash page configuration
- *
- *          NOTE: STM32F7 flash is organized in sectors, FLASHPAGE_* is
- *                defined as a wrapper over sectors.
- *
  * @{
  */
-/* To keep the same flashpage functionality an arbitrary 1K < FLASHSECTOR_SIZE_MIN
- * (size of smaller sector) is defined
- */
 /* An erase byte in flash is set to 0xff */
-#define FLASH_ERASE_STATE         (0xff)
-#define FLASHPAGE_SIZE            (1024U)
-#define FLASHPAGE_NUMOF           (STM32_FLASHSIZE / FLASHPAGE_SIZE)
+#define FLASH_ERASE_STATE          (0xff)
+#define FLASHPAGE_SIZE(n)          (FLASHSECTOR_SIZE_MIN) + \
+                                   ((n >> 1) * 3 * FLASHSECTOR_SIZE_MIN) + \
+                                   ((n >> 2) * 4 * FLASHSECTOR_SIZE_MIN)
+#define FLASHPAGE_NUMOF            (STM32_FLASHSIZE / FLASHPAGE_SIZE(0))
 /* The minimum block size which can be written is 4B. However, the erase
  * depends on the specific sector.
  */

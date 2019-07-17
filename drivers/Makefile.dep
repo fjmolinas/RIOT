@@ -393,6 +393,7 @@ ifneq (,$(filter mtd_%,$(USEMODULE)))
   ifneq (,$(filter mtd_flashpage,$(USEMODULE)))
     FEATURES_REQUIRED += periph_flashpage
     FEATURES_REQUIRED += periph_flashpage_raw
+    FEATURES_REQUIRED += periph_flashpage_page
   endif
 endif
 
