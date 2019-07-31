@@ -17,8 +17,8 @@
  *
  */
 
-#ifndef CFG_I2C_DEFAULT_H
-#define CFG_I2C_DEFAULT_H
+#ifndef CFG_SPI_DEFAULT_H
+#define CFG_SPI_DEFAULT_H
 
 #include "periph_cpu.h"
 
@@ -45,5 +45,5 @@ static const i2c_conf_t i2c_config[] = {
 }
 #endif
 
-#endif /* CFG_I2C_DEFAULT_H */
+#endif /* CFG_SPI_DEFAULT_H */
 /** @} */
