@@ -879,6 +879,43 @@ int32_t stm32_eth_phy_read(uint16_t addr, uint8_t reg);
 int32_t stm32_eth_phy_write(uint16_t addr, uint8_t reg, uint16_t value);
 #endif /* MODULE_STM32_ETH */
 
+#if defined(CPU_FAM_STM32F2) || defined(CPU_FAM_STM32F4) || \
+    defined(CPU_FAM_STM32F7)
+/**
+ * @brief   Returns the given sectot number size
+ *
+ * @param[in] sn        sector number to get address off
+ *
+ * @return              size in bytes of the given sector
+ */
+uint32_t flashsector_size(uint8_t sn);
+
+/**
+ * @brief   Translate the given sectot number into the sector's starting address
+ *
+ * @note    The given sector number MUST be valid, otherwise the returned address
+ *          points to an undefined memory location!
+ *
+ * @param[in] sn        sector number to get address off
+ *
+ * @return              starting memory address of the given sector
+ */
+void* flashsector_addr(uint8_t sn);
+
+/**
+ * @brief   Translate the given address into the corresponding sector number
+ *
+ * The given address can be any address inside a sector.
+ *
+ * @note    The given address MUST be a valid flash address!
+ *
+ * @param[in] addr      address inside the targeted sector
+ *
+ * @return              sector containing the given address
+ */
+int flashsector_sector(void *addr);
+#endif
+
 #ifdef __cplusplus
 }
 #endif
