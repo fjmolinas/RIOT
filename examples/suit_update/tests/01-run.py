@@ -49,7 +49,7 @@ def notify(coap_server, client_url, version=None):
     assert not subprocess.call(cmd)
 
 
-def publish(server_dir, server_url, app_ver, latest_name=None):
+def publish(server_dir, server_url, app_ver, keys='default', latest_name=None):
     cmd = [
         "make",
         "suit/publish",
@@ -57,6 +57,7 @@ def publish(server_dir, server_url, app_ver, latest_name=None):
         "SUIT_COAP_SERVER={}".format(server_url),
         "APP_VER={}".format(app_ver),
         "RIOTBOOT_SKIP_COMPILE=1",
+        "SUIT_KEY={}".format(keys),
     ]
     if latest_name is not None:
         cmd.append("SUIT_MANIFEST_SIGNED_LATEST={}".format(latest_name))
@@ -71,32 +72,52 @@ def wait_for_update(child):
                              timeout=UPDATING_TIMEOUT)
 
 
-def testfunc(child):
-    """For one board test if specified application is updatable"""
-
-    # Initial Setup and wait for address configuration
-    child.expect_exact("main(): This is RIOT!")
-
+def app_version(child):
     # get version of currently running image
     # "Image Version: 0x00000000"
     child.expect(r"Image Version: (?P<app_ver>0x[0-9a-fA-F:]+)")
-    current_app_ver = int(child.match.group("app_ver"), 16)
-    print("CURRENT APP_VER={}".format(current_app_ver))
+    app_ver = int(child.match.group("app_ver"), 16)
+    return app_ver
 
+
+def get_ipv6_addr(child):
     if USE_ETHOS == 0:
         # Get device global address
         child.expect(
             r"inet6 addr: (?P<gladdr>[0-9a-fA-F:]+:[A-Fa-f:0-9]+)"
             "  scope: global  VAL"
         )
-        client = "[{}]".format(child.match.group("gladdr").lower())
+        addr = "{}".format(child.match.group("gladdr").lower())
     else:
         # Get device local address
-        client = "[fe80::2%{}]".format(TAP)
+        addr = "fe80::2%{}".format(TAP)
+    return addr
 
-    for version in [current_app_ver + 1, current_app_ver + 2]:
-        # Wait for suit_coap thread to start
-        child.expect_exact("suit_coap: started.")
+
+def ping6(client):
+    # HACK first ping/tx after reset allways fails
+    cmd = ["ping", "-6", client, "-c", "1", "-W", "1"]
+    subprocess.call(cmd)
+
+
+def test_invalid_version(child, client, app_ver):
+    publish(TMPDIR.name, COAP_HOST, app_ver - 1)
+    notify(COAP_HOST, client, app_ver - 1)
+    child.expect_exact("suit_coap: trigger received")
+    child.expect_exact("suit: verifying manifest signature...")
+    child.expect_exact("seq_nr <= running image")
+
+
+def test_invalid_signature(child, client, app_ver):
+    publish(TMPDIR.name, COAP_HOST, app_ver + 1, 'invalid_keys')
+    notify(COAP_HOST, client, app_ver + 1)
+    child.expect_exact("suit_coap: trigger received")
+    child.expect_exact("suit: verifying manifest signature...")
+    child.expect_exact("Unable to validate signature")
+
+
+def test_successful_update(child, client, app_ver):
+    for version in [app_ver + 1, app_ver + 2]:
         # Trigger update process, verify it validates manifest correctly
         publish(TMPDIR.name, COAP_HOST, version)
         notify(COAP_HOST, client, version)
@@ -114,6 +135,34 @@ def testfunc(child):
         # Verify running slot
         child.expect(r"running from slot (\d+)")
         assert target_slot == int(child.match.group(1)), "BOOTED FROM SAME SLOT"
+        # HACK: ping after reset so ethos answers all subsequent messages
+        ping6(client)
+
+
+def testfunc(child):
+    # Initial Setup, get client address and current app_ver
+    child.expect_exact("main(): This is RIOT!")
+    current_app_ver = app_version(child)
+    client = get_ipv6_addr(child)
+    # Wait for suit_coap thread to start
+    child.expect_exact("suit_coap: started.")
+    # HACK: ping after reset so ethos answers all subsequent messages
+    ping6(client)
+
+    def run(func):
+        if child.logfile == sys.stdout:
+            func(child, "[{}]".format(client), current_app_ver)
+        else:
+            try:
+                func(child, "[{}]".format(client), current_app_ver)
+                print(".", end="", flush=True)
+            except Exception as e:
+                print("FAILED")
+                raise e
+
+    run(test_invalid_signature)
+    run(test_invalid_version)
+    run(test_successful_update)
 
     print("TEST PASSED")
 
