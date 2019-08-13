@@ -26,96 +26,89 @@
 #include "suit/v4/handlers.h"
 #include "suit/v4/suit.h"
 #include "suit/v4/policy.h"
-#include "cbor.h"
+#include <nanocbor/nanocbor.h>
 #include "cose/sign.h"
 
 #include "public_key.h"
 
 #include "log.h"
 
-#define ENABLE_DEBUG (0)
+#define ENABLE_DEBUG (1)
 #include "debug.h"
 
 
 static suit_manifest_handler_t _manifest_get_auth_wrapper_handler(int key);
 typedef suit_manifest_handler_t (*suit_manifest_handler_getter_t)(int key);
 
-int suit_cbor_map_iterate_init(CborValue *map, CborValue *it)
+int suit_cbor_map_iterate_init(nanocbor_value_t *map, nanocbor_value_t *it)
 {
-    if (!cbor_value_is_map(map)) {
+    if (nanocbor_get_type(map) != NANOCBOR_TYPE_MAP) {
         LOG_INFO("suit_v4_parse(): manifest not an map\n)");
         return SUIT_ERR_INVALID_MANIFEST;
     }
 
-    cbor_value_enter_container(map, it);
+    nanocbor_enter_map(map, it);
 
     return SUIT_OK;
 }
 
-int suit_cbor_map_iterate(CborValue *it, CborValue *key, CborValue *value)
+int suit_cbor_map_iterate(nanocbor_value_t *it, nanocbor_value_t *key, nanocbor_value_t *value)
 {
-    if (cbor_value_at_end(it)) {
+    if (nanocbor_at_end(it)) {
         return 0;
     }
 
     *key = *it;
-    cbor_value_advance(it);
+    nanocbor_skip(it);
 
     *value = *it;
-    cbor_value_advance(it);
+    nanocbor_skip(it);
 
     return 1;
 }
 
-int suit_cbor_get_int(const CborValue *it, int *out)
+int suit_cbor_get_int(nanocbor_value_t *it, int *out)
 {
-    if (!cbor_value_is_integer(it)) {
-        LOG_DEBUG("expected integer type, got %u\n", cbor_value_get_type(it));
-        return SUIT_ERR_INVALID_MANIFEST;
-    }
-
-    /* This check tests whether the integer fits into "int", thus the check
-     * is platform dependent. This is for lack of specification of actually
-     * allowed values, to be made explicit at some point. */
-    if (cbor_value_get_int_checked(it, out) == CborErrorDataTooLarge) {
-        LOG_DEBUG("integer doesn't fit into int type\n");
+    int res = nanocbor_get_int32(it, (int32_t*) out);
+    /* allowed values, to be made explicit at some point. */
+    if (res < NANOCBOR_OK) {
+        printf("Error parsing int, got error%u\n", res);
         return SUIT_ERR_INVALID_MANIFEST;
     }
 
     return SUIT_OK;
 }
 
-int suit_cbor_get_string(const CborValue *it, const uint8_t **buf, size_t *len)
+int suit_cbor_get_string(nanocbor_value_t *it, const uint8_t **buf, size_t *len)
 {
-    if (!(cbor_value_is_text_string(it) || cbor_value_is_byte_string(it) || cbor_value_is_length_known(it))) {
+    // TODO: there was a check for len before
+    if(nanocbor_get_type(it) == NANOCBOR_TYPE_TSTR) {
+        if( nanocbor_get_tstr(it, buf, len) < 0) {
+            return SUIT_ERR_INVALID_MANIFEST;
+        }
+        return SUIT_OK;
+    }
+    else if(nanocbor_get_type(it) == NANOCBOR_TYPE_BSTR) {
+        if( nanocbor_get_bstr(it, buf, len) < 0) {
+            return SUIT_ERR_INVALID_MANIFEST;
+        }
+        return SUIT_OK;
+    }
+    else {
+        printf("Not String\n");
         return SUIT_ERR_INVALID_MANIFEST;
     }
-    CborValue next = *it;
-    cbor_value_get_string_length(it, len);
-    cbor_value_advance(&next);
-    *buf = next.ptr - *len;
+}
+
+int suit_cbor_get_uint32(nanocbor_value_t *it, uint32_t *out)
+{
+    if(nanocbor_get_uint32(it, out) < 0) {
+        return SUIT_ERR_INVALID_MANIFEST;
+    }
     return SUIT_OK;
 }
 
-int suit_cbor_get_uint32(const CborValue *it, uint32_t *out)
-{
-    int res;
-    int64_t val;
-    if (!cbor_value_is_unsigned_integer(it)) {
-        return CborErrorIllegalType;
-    }
-    if ((res = cbor_value_get_int64_checked(it, &val))) {
-        return res;
-    }
-    if (val > 0xFFFFFFFF) {
-        return CborErrorDataTooLarge;
-    }
-    *out = (val & 0xFFFFFFFF);
-
-    return CborNoError;
-}
-
-int suit_cbor_get_uint(const CborValue *it, unsigned *out)
+int suit_cbor_get_uint(nanocbor_value_t *it, unsigned *out)
 {
 #if 1
     return suit_cbor_get_uint32(it, (uint32_t *)out);
@@ -124,66 +117,57 @@ int suit_cbor_get_uint(const CborValue *it, unsigned *out)
 #endif
 }
 
-int suit_cbor_subparse(CborParser *parser, CborValue *bseq, CborValue *it)
+int suit_cbor_subparse(nanocbor_value_t *bseq, nanocbor_value_t *it)
 {
     const uint8_t *bytes;
     size_t bytes_len = 0;
-
-    if (!cbor_value_is_byte_string(bseq)) {
-        LOG_DEBUG("suit_cbor_subparse(): bseq not a byte string\n");
-        return -1;
+    int res = suit_cbor_get_string(bseq, &bytes, &bytes_len);
+    printf("byteseq: ");
+    for(uint8_t i = 0; i < bytes_len; i++) {
+        printf("%02x ", *(bytes+i));
     }
-
-    suit_cbor_get_string(bseq, &bytes, &bytes_len);
-
-    return cbor_parser_init(bytes, bytes_len, SUIT_TINYCBOR_VALIDATION_MODE, parser,
-                            it);
+    printf("\n");
+    nanocbor_decoder_init(it, bytes, bytes_len);
+    return res;
 }
 
 static int _v4_parse(suit_v4_manifest_t *manifest, const uint8_t *buf,
                        size_t len, suit_manifest_handler_getter_t getter)
 {
-
-    CborParser parser;
-    CborValue it, map, key, value;
-    CborError err = cbor_parser_init(buf, len, SUIT_TINYCBOR_VALIDATION_MODE,
-                                     &parser, &it);
-
-    if (err != 0) {
-        return SUIT_ERR_INVALID_MANIFEST;
-    }
+    nanocbor_value_t it, map, key, value;
+    nanocbor_decoder_init(&it, buf, len);
 
     map = it;
 
     if (suit_cbor_map_iterate_init(&map, &it) != SUIT_OK) {
-        LOG_DEBUG("manifest not map!\n");
+        printf("manifest not map!\n");
         return SUIT_ERR_INVALID_MANIFEST;
     }
 
-    LOG_DEBUG("jumping into map\n)");
+    printf("jumping into map\n)");
 
     while (suit_cbor_map_iterate(&it, &key, &value)) {
         int integer_key;
         if (suit_cbor_get_int(&key, &integer_key) != SUIT_OK){
             return SUIT_ERR_INVALID_MANIFEST;
         }
-        LOG_DEBUG("got key val=%i\n", integer_key);
+        printf("got key val=%i\n", integer_key);
         suit_manifest_handler_t handler = getter(integer_key);
 
         if (handler) {
             int res = handler(manifest, integer_key, &value);
-            LOG_DEBUG("handler res=%i\n", res);
+            printf("handler res=%i\n", res);
             if (res < 0) {
                 LOG_INFO("handler returned <0\n)");
                 return SUIT_ERR_INVALID_MANIFEST;
             }
         }
         else {
-            LOG_DEBUG("no handler found\n");
+            printf("no handler found\n");
         }
     }
 
-    cbor_value_leave_container(&map, &it);
+    nanocbor_leave_container(&map, &it);
 
     return SUIT_OK;
 }
@@ -196,7 +180,7 @@ int suit_v4_parse(suit_v4_manifest_t *manifest, const uint8_t *buf,
     return _v4_parse(manifest, buf, len, _manifest_get_auth_wrapper_handler);
 }
 
-static int _auth_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _auth_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)key;
     const uint8_t *cose_buf;
@@ -215,7 +199,7 @@ static int _auth_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
     return 0;
 }
 
-static int _manifest_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _manifest_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)key;
     const uint8_t *manifest_buf;

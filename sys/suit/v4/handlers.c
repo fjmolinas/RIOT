@@ -27,86 +27,86 @@
 #include "suit/v4/suit.h"
 #include "riotboot/hdr.h"
 #include "riotboot/slot.h"
-#include "cbor.h"
+#include <nanocbor/nanocbor.h>
 
 #include "log.h"
 
 #define HELLO_HANDLER_MAX_STRLEN 32
 
-static int _handle_command_sequence(suit_v4_manifest_t *manifest, CborValue *it,
+static int _handle_command_sequence(suit_v4_manifest_t *manifest, nanocbor_value_t *it,
         suit_manifest_handler_t handler);
-static int _common_handler(suit_v4_manifest_t *manifest, int key, CborValue *it);
-static int _common_sequence_handler(suit_v4_manifest_t *manifest, int key, CborValue *it);
+static int _common_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it);
+static int _common_sequence_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it);
 
-static int _hello_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _hello_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)manifest;
     (void)key;
 
-    if (cbor_value_is_text_string(it)) {
+    if (nanocbor_get_type(it) == NANOCBOR_TYPE_TSTR) {
         size_t len = HELLO_HANDLER_MAX_STRLEN;
         char buf[HELLO_HANDLER_MAX_STRLEN];
-        cbor_value_copy_text_string(it, buf, &len, NULL);
+        nanocbor_get_tstr(it, ((const uint8_t **) &buf), &len);
         return SUIT_OK;
     }
     else {
-        LOG_DEBUG("_hello_handler(): unexpected value type: %u\n", cbor_value_get_type(
+        printf("_hello_handler(): unexpected value type: %u\n", nanocbor_get_type(
                    it));
         return -1;
     }
 }
 
-static int _validate_uuid(suit_v4_manifest_t *manifest, CborValue *it, uuid_t *uuid)
+static int _validate_uuid(suit_v4_manifest_t *manifest, nanocbor_value_t *it, uuid_t *uuid)
 {
     (void)manifest;
     uuid_t uuid_manifest;
     char uuid_str[UUID_STR_LEN + 1];
     char uuid_str2[UUID_STR_LEN + 1];
     size_t len = sizeof(uuid_t);
-    cbor_value_copy_byte_string(it, (uint8_t*)&uuid_manifest, &len, NULL);
+    suit_cbor_get_string(it, (const uint8_t **)&uuid_manifest, &len);
     uuid_to_string(&uuid_manifest, uuid_str);
     uuid_to_string(uuid, uuid_str2);
-    LOG_INFO("Comparing %s to %s from manifest\n", uuid_str2, uuid_str);
+    printf("Comparing %s to %s from manifest\n", uuid_str2, uuid_str);
     return uuid_equal(uuid, &uuid_manifest) ? 0 : -1;
 }
 
-static int _cond_vendor_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _cond_vendor_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)key;
-    LOG_INFO("validating vendor ID\n");
+    printf("validating vendor ID\n");
     int rc = _validate_uuid(manifest, it, suit_get_vendor_id());
     if (rc == SUIT_OK) {
-        LOG_INFO("validating vendor ID: OK\n");
+        printf("validating vendor ID: OK\n");
         manifest->validated |= SUIT_VALIDATED_VENDOR;
     }
     return rc;
 }
 
-static int _cond_device_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _cond_device_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)key;
-    LOG_INFO("validating device ID\n");
+    printf("validating device ID\n");
     int rc = _validate_uuid(manifest, it, suit_get_device_id());
     if (rc == SUIT_OK) {
-        LOG_INFO("validating device ID: OK\n");
+        printf("validating device ID: OK\n");
         manifest->validated |= SUIT_VALIDATED_DEVICE;
     }
     return rc;
 }
 
-static int _cond_class_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _cond_class_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)key;
-    LOG_INFO("validating class id\n");
+    printf("validating class id\n");
     int rc = _validate_uuid(manifest, it, suit_get_class_id());
     if (rc == SUIT_OK) {
-        LOG_INFO("validating class id: OK\n");
+        printf("validating class id: OK\n");
         manifest->validated |= SUIT_VALIDATED_CLASS;
     }
     return rc;
 }
 
-static int _cond_comp_offset(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _cond_comp_offset(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)manifest;
     (void)key;
@@ -114,71 +114,71 @@ static int _cond_comp_offset(suit_v4_manifest_t *manifest, int key, CborValue *i
     suit_cbor_get_uint32(it, &offset);
     uint32_t other_offset = (uint32_t)riotboot_slot_get_hdr(riotboot_slot_other()) \
                             - CPU_FLASH_BASE;
-    LOG_INFO("Comparing manifest offset %u with other slot offset %u\n",
+    printf("Comparing manifest offset %u with other slot offset %u\n",
            (unsigned)offset, (unsigned)other_offset);
     return other_offset == offset ? 0 : -1;
 }
 
-static int _dtv_set_comp_idx(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _dtv_set_comp_idx(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)key;
-    if (cbor_value_is_boolean(it)) {
-        LOG_DEBUG("_dtv_set_comp_idx() ignoring boolean\n)");
+    if (nanocbor_get_type(it) == NANOCBOR_TYPE_FLOAT) {
+        printf("_dtv_set_comp_idx() ignoring boolean and floats\n)");
         return 0;
     }
     int res = suit_cbor_get_int(it, &manifest->component_current);
     if (!res) {
-        LOG_DEBUG("Setting component index to %d\n", manifest->component_current);
+        printf("Setting component index to %d\n", manifest->component_current);
     }
     return res;
 }
 
-static int _dtv_run_seq_cond(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _dtv_run_seq_cond(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)key;
-    LOG_DEBUG("Starting conditional sequence handler\n");
+    printf("Starting conditional sequence handler\n");
     _handle_command_sequence(manifest, it, _common_sequence_handler);
     return 0;
 }
 
-static int _param_get_uri_list(suit_v4_manifest_t *manifest, CborValue *it)
+static int _param_get_uri_list(suit_v4_manifest_t *manifest, nanocbor_value_t *it)
 {
-    LOG_DEBUG("got url list\n");
+    printf("got url list\n");
     manifest->components[manifest->component_current].url = *it;
     return 0;
 }
-static int _param_get_digest(suit_v4_manifest_t *manifest, CborValue *it)
+static int _param_get_digest(suit_v4_manifest_t *manifest, nanocbor_value_t *it)
 {
-    LOG_DEBUG("got digest\n");
+    printf("got digest\n");
     manifest->components[manifest->component_current].digest = *it;
     return 0;
 }
 
-static int _param_get_img_size(suit_v4_manifest_t *manifest, CborValue *it)
+static int _param_get_img_size(suit_v4_manifest_t *manifest, nanocbor_value_t *it)
 {
     int res = suit_cbor_get_uint32(it, &manifest->components[0].size);
     if (res) {
-        LOG_DEBUG("error getting image size\n");
+        printf("error getting image size\n");
         return res;
     }
     return res;
 }
 
-static int _dtv_set_param(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _dtv_set_param(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)key;
     /* `it` points to the entry of the map containing the type and value */
-    CborValue map;
+    nanocbor_value_t map;
 
-    cbor_value_enter_container(it, &map);
+    nanocbor_enter_map(it, &map);
 
-    while (!cbor_value_at_end(&map)) {
+    while (!nanocbor_at_end(&map)) {
         /* map points to the key of the param */
         int param_key;
         suit_cbor_get_int(&map, &param_key);
-        cbor_value_advance(&map);
-        LOG_DEBUG("Setting component index to %d\n", manifest->component_current);
-        LOG_DEBUG("param_key=%i\n", param_key);
+        nanocbor_skip(&map);
+        printf("Setting component index to %d\n", manifest->component_current);
+        printf("param_key=%i\n", param_key);
         int res;
         switch (param_key) {
             case 6: /* SUIT URI LIST */
@@ -194,7 +194,7 @@ static int _dtv_set_param(suit_v4_manifest_t *manifest, int key, CborValue *it)
                 res = -1;
         }
 
-        cbor_value_advance(&map);
+        nanocbor_skip(&map);
 
         if (res) {
             return res;
@@ -203,10 +203,10 @@ static int _dtv_set_param(suit_v4_manifest_t *manifest, int key, CborValue *it)
     return SUIT_OK;
 }
 
-static int _dtv_fetch(suit_v4_manifest_t *manifest, int key, CborValue *_it)
+static int _dtv_fetch(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *_it)
 {
     (void)key; (void)_it; (void)manifest;
-    LOG_DEBUG("_dtv_fetch() key=%i\n", key);
+    printf("_dtv_fetch() key=%i\n", key);
 
     const uint8_t *url;
     size_t url_len;
@@ -217,54 +217,53 @@ static int _dtv_fetch(suit_v4_manifest_t *manifest, int key, CborValue *_it)
          * (priority, url) tuples (represented as array with length two)
          * */
 
-        CborParser parser;
-        CborValue it;
+        nanocbor_value_t it;
 
         /* open sequence qith cbor parser */
-        int err = suit_cbor_subparse(&parser, &manifest->components[0].url, &it);
+        int err = suit_cbor_subparse(&manifest->components[0].url, &it);
         if (err < 0) {
-            LOG_DEBUG("subparse failed\n)");
+            printf("subparse failed\n)");
             return err;
         }
 
         /* confirm the document contains an array */
-        if (!cbor_value_is_array(&it)) {
-            LOG_DEBUG("url list no array\n)");
-            LOG_DEBUG("type: %u\n", cbor_value_get_type(&it));
+        if (nanocbor_get_type(&it) != NANOCBOR_TYPE_ARR) {
+            printf("url list no array\n)");
+            printf("type: %u\n", nanocbor_get_type(&it));
         }
 
         /* enter container, confirm it is an array, too */
-        CborValue url_it;
-        cbor_value_enter_container(&it, &url_it);
-        if (!cbor_value_is_array(&url_it)) {
-            LOG_DEBUG("url entry no array\n)");
+        nanocbor_value_t url_it;
+        nanocbor_enter_array(&it, &url_it);
+        if (nanocbor_get_type(&url_it) != NANOCBOR_TYPE_ARR) {
+            printf("url entry no array\n)");
         }
 
         /* expect two entries: priority as int, url as byte string. bail out if not. */
-        CborValue url_value_it;
-        cbor_value_enter_container(&url_it, &url_value_it);
+        nanocbor_value_t url_value_it;
+        nanocbor_enter_map(&url_it, &url_value_it);
 
         /* check that first array entry is an int (the priotity of the url) */
-        if (cbor_value_get_type(&url_value_it) != CborIntegerType) {
+        if (nanocbor_get_type(&url_value_it) != NANOCBOR_TYPE_UINT) {
             return -1;
         }
 
-        cbor_value_advance(&url_value_it);
+        nanocbor_skip(&url_value_it);
 
         int res = suit_cbor_get_string(&url_value_it, &url, &url_len);
         if (res) {
-            LOG_DEBUG("error parsing URL\n)");
+            printf("error parsing URL\n)");
             return -1;
         }
         if (url_len >= manifest->urlbuf_len) {
-            LOG_INFO("url too large: %u>%u\n)", (unsigned)url_len, (unsigned)manifest->urlbuf_len);
+            printf("url too large: %u>%u\n)", (unsigned)url_len, (unsigned)manifest->urlbuf_len);
             return -1;
         }
         memcpy(manifest->urlbuf, url, url_len);
         manifest->urlbuf[url_len] = '\0';
     }
 
-    LOG_DEBUG("_dtv_fetch() fetching \"%s\" (url_len=%u)\n", manifest->urlbuf, (unsigned)url_len);
+    printf("_dtv_fetch() fetching \"%s\" (url_len=%u)\n", manifest->urlbuf, (unsigned)url_len);
 
     int target_slot = riotboot_slot_other();
     riotboot_flashwrite_init(manifest->writer, target_slot);
@@ -272,7 +271,7 @@ static int _dtv_fetch(suit_v4_manifest_t *manifest, int key, CborValue *_it)
             manifest->writer);
 
     if (res) {
-        LOG_INFO("image download failed\n)");
+        printf("image download failed\n)");
         return res;
     }
 
@@ -290,7 +289,7 @@ static int _dtv_fetch(suit_v4_manifest_t *manifest, int key, CborValue *_it)
      */
     res = riotboot_flashwrite_verify_sha256(digest + 4, manifest->components[0].size, target_slot);
     if (res) {
-        LOG_INFO("image verification failed\n");
+        printf("image verification failed\n");
         return res;
     }
 
@@ -300,14 +299,14 @@ static int _dtv_fetch(suit_v4_manifest_t *manifest, int key, CborValue *_it)
 }
 
 static int _version_handler(suit_v4_manifest_t *manifest, int key,
-                            CborValue *it)
+                            nanocbor_value_t *it)
 {
     (void)manifest;
     (void)key;
     /* Validate manifest version */
-    int version = -1;
-    if (cbor_value_is_integer(it) &&
-        (cbor_value_get_int(it, &version) == CborNoError)) {
+    int32_t version = -1;
+    if ((nanocbor_get_type(it) == NANOCBOR_TYPE_UINT) &&
+        (nanocbor_get_int32(it, &version) >= 0)) {
         if (version == SUIT_VERSION) {
             manifest->validated |= SUIT_VALIDATED_VERSION;
             LOG_INFO("suit: validated manifest version\n)");
@@ -320,32 +319,32 @@ static int _version_handler(suit_v4_manifest_t *manifest, int key,
     return -1;
 }
 
-static int _seq_no_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _seq_no_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)manifest;
     (void)key;
     (void)it;
 
-    int64_t seq_nr;
-    if (cbor_value_is_unsigned_integer(it) &&
-        (cbor_value_get_int64_checked(it, &seq_nr) == CborNoError)) {
+    int32_t seq_nr;
 
+    if ((nanocbor_get_type(it) == NANOCBOR_TYPE_UINT)) {
+        // TODO: this should be a int64
+        nanocbor_get_int32(it, &seq_nr);
         const riotboot_hdr_t *hdr = riotboot_slot_get_hdr(riotboot_slot_current());
-        if (seq_nr <= (int64_t)hdr->version) {
-            LOG_INFO("%"PRIu64" <= %"PRIu32"\n", seq_nr, hdr->version);
+        if (seq_nr <= (int32_t)hdr->version) {
+            LOG_INFO("%"PRId32" <= %"PRId32"\n", seq_nr, hdr->version);
             LOG_INFO("seq_nr <= running image\n)");
             return -1;
         }
 
         hdr = riotboot_slot_get_hdr(riotboot_slot_other());
         if (riotboot_hdr_validate(hdr) == 0) {
-            if (seq_nr <= (int64_t)hdr->version) {
-                LOG_INFO("%"PRIu64" <= %"PRIu32"\n", seq_nr, hdr->version);
+            if (seq_nr<= (int32_t)hdr->version) {
+                LOG_INFO("%"PRIu32" <= %"PRIu32"\n", seq_nr, hdr->version);
                 LOG_INFO("seq_nr <= other image\n)");
                 return -1;
             }
         }
-
         LOG_INFO("suit: validated sequence number\n)");
         manifest->validated |= SUIT_VALIDATED_SEQ_NR;
         return 0;
@@ -355,7 +354,7 @@ static int _seq_no_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
 }
 
 static int _dependencies_handler(suit_v4_manifest_t *manifest, int key,
-                                 CborValue *it)
+                                 nanocbor_value_t *it)
 {
     (void)manifest;
     (void)key;
@@ -365,23 +364,23 @@ static int _dependencies_handler(suit_v4_manifest_t *manifest, int key,
 }
 
 static int _component_handler(suit_v4_manifest_t *manifest, int key,
-                              CborValue *it)
+                              nanocbor_value_t *it)
 {
     (void)manifest;
     (void)key;
 
-    CborValue arr;
+    nanocbor_value_t arr;
 
-    LOG_DEBUG("storing components\n)");
-    if (!cbor_value_is_array(it)) {
-        LOG_DEBUG("components field not an array\n");
+    printf("storing components\n)");
+    if (nanocbor_get_type(it) != NANOCBOR_TYPE_ARR) {
+        printf("components field not an array\n");
         return -1;
     }
-    cbor_value_enter_container(it, &arr);
+    nanocbor_enter_array(it, &arr);
 
     unsigned n = 0;
-    while (!cbor_value_at_end(&arr)) {
-        CborValue map, key, value;
+    while (!nanocbor_at_end(&arr)) {
+        nanocbor_value_t map, key, value;
         if (n < SUIT_V4_COMPONENT_MAX) {
             manifest->components_len += 1;
         }
@@ -418,15 +417,15 @@ static int _component_handler(suit_v4_manifest_t *manifest, int key,
 
             LOG_DEBUG("component %u parsed\n", n);
         }
+        nanocbor_leave_container(&arr, &map);
 
-        cbor_value_advance(&arr);
+        nanocbor_skip(&arr);
         n++;
     }
 
     manifest->state |= SUIT_MANIFEST_HAVE_COMPONENTS;
-    cbor_value_enter_container(it, &arr);
-
-    LOG_DEBUG("storing components done\n)");
+    nanocbor_leave_container(it, &arr);
+    printf("storing components done\n)");
     return 0;
 }
 
@@ -483,66 +482,63 @@ suit_manifest_handler_t suit_manifest_get_manifest_handler(int key)
                                       global_handlers_len);
 }
 
-static int _common_sequence_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _common_sequence_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
 
     suit_manifest_handler_t handler = _suit_manifest_get_handler(key, _sequence_handlers, _sequence_handlers_len);
-    LOG_DEBUG("Handling handler with key %d at %p\n", key, handler);
+    printf("Handling handler with key %d at %p\n", key, handler);
     if (handler) {
         return handler(manifest, key, it);
     }
     else {
-        LOG_DEBUG("Sequence handler not implemented, ID: %d\n", key);
+        printf("Sequence handler not implemented, ID: %d\n", key);
         return -1;
     }
 }
 
-static int _common_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
+static int _common_handler(suit_v4_manifest_t *manifest, int key, nanocbor_value_t *it)
 {
     (void)key;
     return _handle_command_sequence(manifest, it, _common_sequence_handler);
 }
 
-int _handle_command_sequence(suit_v4_manifest_t *manifest, CborValue *bseq,
+int _handle_command_sequence(suit_v4_manifest_t *manifest, nanocbor_value_t *bseq,
         suit_manifest_handler_t handler)
 {
 
-    LOG_DEBUG("Handling command sequence\n");
-    CborParser parser;
-    CborValue it, arr;
+    printf("Handling command sequence\n");
+    nanocbor_value_t it, arr;
 
-    int err = suit_cbor_subparse(&parser, bseq, &it);
+    int err = suit_cbor_subparse(bseq, &it);
     if (err < 0) {
         return err;
     }
 
-    if (!cbor_value_is_array(&it)) {
-        LOG_DEBUG("Not an byte array\n");
+    if (nanocbor_get_type(&it) != NANOCBOR_TYPE_ARR) {
         return -1;
     }
-    cbor_value_enter_container(&it, &arr);
+    nanocbor_enter_array(&it, &arr);
 
-    while (!cbor_value_at_end(&arr)) {
-        CborValue map;
-        if (!cbor_value_is_map(&arr)) {
+    while (!nanocbor_at_end(&arr)) {
+        nanocbor_value_t map;
+        if (nanocbor_get_type(&arr) != NANOCBOR_TYPE_MAP) {
             return SUIT_ERR_INVALID_MANIFEST;
         }
-        cbor_value_enter_container(&arr, &map);
+        nanocbor_enter_map(&arr, &map);
         int integer_key;
         if (suit_cbor_get_int(&map, &integer_key)) {
             return SUIT_ERR_INVALID_MANIFEST;
         }
-
-        cbor_value_advance(&map);
+        nanocbor_skip(&map);
         int res = handler(manifest, integer_key, &map);
         if (res < 0) {
-            LOG_DEBUG("Sequence handler error\n");
+            printf("Sequence handler error\n");
             return res;
         }
-        cbor_value_advance(&map);
-        cbor_value_leave_container(&arr, &map);
+        nanocbor_skip(&map);
+        nanocbor_leave_container(&arr, &map);
     }
-    cbor_value_leave_container(&it, &arr);
+    nanocbor_leave_container(&it, &arr);
 
     return 0;
 }
