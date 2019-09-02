@@ -194,16 +194,24 @@ static int _fetch_block(coap_pkt_t *pkt, uint8_t *buf, sock_udp_t *sock, const c
     pkt->payload = pktpos;
     pkt->payload_len = 0;
 
-    int res = _nanocoap_request(sock, pkt, 64 + (0x1 << (blksize + 4)));
-    if (res < 0) {
-        return res;
-    }
+    uint8_t retry = 3;
+    coap_block1_t block2;
 
-    res = coap_get_code(pkt);
-    DEBUG("code=%i\n", res);
-    if (res != 205) {
-        return -res;
-    }
+    do {
+        int res = _nanocoap_request(sock, pkt, 64 + (0x1 << (blksize + 4)));
+        if (res < 0) {
+            return res;
+        }
+
+        res = coap_get_code(pkt);
+        DEBUG("code=%i\n", res);
+        if (res != 205) {
+            return -res;
+        }
+        retry--;
+        coap_get_block2(pkt, &block2);
+    } while((retry > 0) && ((unsigned) block2.blknum != (unsigned)num));
+
 
     return 0;
 }
