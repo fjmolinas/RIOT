@@ -33,9 +33,7 @@ PUF_SRAM_ATTRIBUTES uint32_t puf_sram_marker;
 void puf_sram_init(const uint8_t *ram, size_t len)
 {
     /* generates a new seed value if power cycle was detected */
-    if (!puf_sram_softreset()) {
-        puf_sram_generate(ram, len);
-    }
+    puf_sram_generate(ram, len);
 }
 void puf_sram_generate(const uint8_t *ram, size_t len)
 {
