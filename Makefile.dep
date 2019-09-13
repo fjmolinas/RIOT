@@ -43,6 +43,86 @@ ifneq (,$(filter random,$(USEMODULE)))
   ifeq (,$(filter prng_%,$(USEMODULE)))
     USEMODULE += prng_tinymt32
   endif
+<<<<<<< HEAD
+=======
+
+  ifneq (,$(filter prng_fortuna,$(USEMODULE)))
+    USEMODULE += fortuna
+    USEMODULE += hashes
+    USEMODULE += crypto
+    USEMODULE += xtimer
+  endif
+
+  ifneq (,$(filter prng_tinymt32,$(USEMODULE)))
+    USEMODULE += tinymt32
+  endif
+
+  ifneq (,$(filter prng_sha1prng,$(USEMODULE)))
+    USEMODULE += hashes
+  endif
+
+  ifeq (,$(filter puf_sram,$(USEMODULE)))
+    FEATURES_OPTIONAL += periph_hwrng
+  endif
+
+  USEMODULE += luid
+endif
+
+ifneq (,$(filter hashes,$(USEMODULE)))
+  USEMODULE += crypto
+endif
+
+ifneq (,$(filter asymcute,$(USEMODULE)))
+  USEMODULE += sock_udp
+  USEMODULE += sock_util
+  USEMODULE += random
+  USEMODULE += event_timeout
+  USEMODULE += event_callback
+endif
+
+ifneq (,$(filter emcute,$(USEMODULE)))
+  USEMODULE += core_thread_flags
+  USEMODULE += sock_udp
+  USEMODULE += xtimer
+endif
+
+ifneq (,$(filter constfs,$(USEMODULE)))
+  USEMODULE += vfs
+endif
+
+ifneq (,$(filter devfs,$(USEMODULE)))
+  USEMODULE += vfs
+endif
+
+ifneq (,$(filter vfs,$(USEMODULE)))
+  USEMODULE += posix_headers
+  ifeq (native, $(BOARD))
+    USEMODULE += native_vfs
+  endif
+endif
+
+ifneq (,$(filter sock_dns,$(USEMODULE)))
+  USEMODULE += sock_util
+  USEMODULE += posix_headers
+endif
+
+ifneq (,$(filter sock_util,$(USEMODULE)))
+  USEMODULE += posix_inet
+  USEMODULE += fmt
+  USEMODULE += sock_udp
+endif
+
+ifneq (,$(filter event_%,$(USEMODULE)))
+  USEMODULE += event
+endif
+
+ifneq (,$(filter event_timeout,$(USEMODULE)))
+  USEMODULE += xtimer
+endif
+
+ifneq (,$(filter event,$(USEMODULE)))
+  USEMODULE += core_thread_flags
+>>>>>>> 0cc7f465d6... sys/hashes/pbkdf2: wipe local variables, prevents leaks.
 endif
 
 ifneq (,$(filter spiffs,$(USEMODULE)))
