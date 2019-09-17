@@ -469,6 +469,13 @@ ifneq (,$(filter slipdev,$(USEMODULE)))
   FEATURES_REQUIRED += periph_uart
 endif
 
+ifneq (,$(filter sm_pwm_01c,$(USEMODULE)))
+  USEMODULE += xtimer
+  FEATURES_REQUIRED += periph_gpio
+  FEATURES_REQUIRED += periph_gpio_irq
+endif
+
+
 ifneq (,$(filter soft_spi,$(USEMODULE)))
   FEATURES_REQUIRED += periph_gpio
   USEMODULE += xtimer
