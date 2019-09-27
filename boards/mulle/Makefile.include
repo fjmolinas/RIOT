@@ -15,22 +15,22 @@ ifeq ($(PORT),)
   # try to find tty name by serial number, only works on Linux currently.
   ifeq ($(OS),Linux)
     ifneq ($(DEBUG_ADAPTER_ID),)
-      PORT := $(firstword $(shell $(RIOTTOOLS)/usb-serial/find-tty.sh '^$(DEBUG_ADAPTER_ID)$$'))
+      PORT = $(firstword $(shell $(RIOTTOOLS)/usb-serial/find-tty.sh '^$(DEBUG_ADAPTER_ID)$$'))
     else
       # find-tty.sh will return the first USB tty if no serial is given.
-      PORT := $(firstword $(shell $(RIOTTOOLS)/usb-serial/find-tty.sh))
+      PORT = $(firstword $(shell $(RIOTTOOLS)/usb-serial/find-tty.sh))
   endif
   else ifeq ($(OS),Darwin)
     ifneq ($(DEBUG_ADAPTER_ID),)
-      PORT := /dev/tty.usbserial-$(DEBUG_ADAPTER_ID)B
+      PORT = /dev/tty.usbserial-$(DEBUG_ADAPTER_ID)B
     else
-      PORT := $(firstword $(sort $(wildcard /dev/tty.usbserial*)))
+      PORT = $(firstword $(sort $(wildcard /dev/tty.usbserial*)))
     endif
   endif
 endif
 ifeq ($(PORT),)
   # fall back to a sensible default
-  PORT := /dev/ttyUSB0
+  PORT = /dev/ttyUSB0
 endif
 
 # We need special handling of the watchdog if we want to speed up the flash
