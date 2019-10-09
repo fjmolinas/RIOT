@@ -140,7 +140,7 @@ if __name__ == "__main__":
              if type(getattr(script, t)).__name__ == "function"
              and t.startswith("test_")]
     for test in tests:
-        res = run(test, timeout=10, echo=False)
+        res = run(test, timeout=10, echo=False, sync=False)
         if res != 0:
             sys.exit(res)
     print(os.path.basename(sys.argv[0]) + ": success\n")

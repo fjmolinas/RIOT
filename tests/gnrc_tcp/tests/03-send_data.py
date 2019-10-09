@@ -60,4 +60,4 @@ def testfunc(child):
 
 if __name__ == '__main__':
     sudo_guard()
-    sys.exit(run(testfunc, timeout=5, echo=False, traceback=True))
+    sys.exit(run(testfunc, timeout=5, echo=False, traceback=True, sync=False))

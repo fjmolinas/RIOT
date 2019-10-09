@@ -381,4 +381,4 @@ if __name__ == "__main__":
               "It's constructing and sending Ethernet frames.\x1b[0m\n",
               file=sys.stderr)
         sys.exit(1)
-    sys.exit(run(testfunc, timeout=1, echo=False))
+    sys.exit(run(testfunc, timeout=1, echo=False, sync=False))

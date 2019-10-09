@@ -315,4 +315,4 @@ def testfunc(child):
 
 
 if __name__ == "__main__":
-    sys.exit(run(testfunc, timeout=1, echo=False))
+    sys.exit(run(testfunc, timeout=1, echo=False, sync=False))

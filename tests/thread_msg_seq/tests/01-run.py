@@ -5,7 +5,6 @@ from testrunner import run
 
 
 def testfunc(child):
-    child.expect("START")
     child.expect("THREADS CREATED")
     child.expect("THREAD nr1 \(pid:3\) start")
     child.expect("THREAD nr1 \(pid:3\) end.")

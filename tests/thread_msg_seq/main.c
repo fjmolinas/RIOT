@@ -25,6 +25,8 @@
 #include "thread.h"
 #include "msg.h"
 
+#include "test_utils/interactive_sync.h"
+
 char t1_stack[THREAD_STACKSIZE_MAIN];
 char t2_stack[THREAD_STACKSIZE_MAIN];
 char t3_stack[THREAD_STACKSIZE_MAIN];
@@ -51,8 +53,9 @@ void *sub_thread(void *arg)
 
 int main(void)
 {
-    puts("START");
     msg_t msg;
+
+    test_utils_interactive_sync();
 
     p_main = sched_active_pid;
 

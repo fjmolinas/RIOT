@@ -32,7 +32,6 @@
 
 #include "kernel_defines.h"
 #include "fix16.h"
-#include "test_utils/interactive_sync.h"
 
 #ifndef M_PI
 #   define M_PI 3.14159265359
@@ -186,9 +185,6 @@ static void unary_ops(void)
 
 int main(void)
 {
-    /* Sync to prevent flooding of buffer */
-    test_utils_interactive_sync();
-
     puts("Unary.");
     unary_ops();
 

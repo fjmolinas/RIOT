@@ -1,4 +1,7 @@
 include ../Makefile.tests_common
+
+USEMODULE += test_utils_interactive_sync
+
 CFLAGS += -DSUPER_STRING='"I love sentences with spaces"'
 
 include $(RIOTBASE)/Makefile.include

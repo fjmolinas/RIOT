@@ -155,7 +155,7 @@ if __name__ == "__main__":
         aiocoap_process = start_aiocoap_fileserver()
         # TODO: wait for coap port to be available
 
-        res = run(testfunc, echo=True)
+        res = run(testfunc, echo=True, sync=False)
 
     except Exception as e:
         print(e)

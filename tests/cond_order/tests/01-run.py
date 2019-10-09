@@ -10,7 +10,7 @@
 import os
 import sys
 
-from testrunner import test_utils_interactive_sync
+from testrunner import run
 
 thread_prio = {
         3:  6,
@@ -23,7 +23,6 @@ first_group_size = 3
 
 
 def testfunc(child):
-    test_utils_interactive_sync(child)
 
     for k in thread_prio.keys():
         child.expect(u"T%i \(prio %i\): waiting on condition variable now" % (k, thread_prio[k]))
@@ -43,6 +42,4 @@ def testfunc(child):
 
 
 if __name__ == "__main__":
-    sys.path.append(os.path.join(os.environ['RIOTBASE'], 'dist/tools/testrunner'))
-    from testrunner import run
     sys.exit(run(testfunc))
