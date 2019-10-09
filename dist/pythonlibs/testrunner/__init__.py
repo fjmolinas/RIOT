@@ -22,10 +22,12 @@ from .utils import test_utils_interactive_sync # noqa, F401 expose to users
 TIMEOUT = int(os.environ.get('RIOT_TEST_TIMEOUT') or 10)
 
 
-def run(testfunc, timeout=TIMEOUT, echo=True, traceback=False):
+def run(testfunc, timeout=TIMEOUT, echo=True, traceback=False, sync=True):
     child = setup_child(timeout, env=os.environ,
                         logfile=sys.stdout if echo else None)
     try:
+        if sync:
+            test_utils_interactive_sync(child)
         testfunc(child)
     except pexpect.TIMEOUT:
         trace = find_exc_origin(sys.exc_info()[2])
