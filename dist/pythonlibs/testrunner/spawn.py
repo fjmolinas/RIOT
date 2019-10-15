@@ -35,7 +35,8 @@ def find_exc_origin(exc_info):
     return (pos[3], os.path.relpath(os.path.abspath(pos[0]), RIOTBASE), pos[1])
 
 
-def setup_child(timeout=10, spawnclass=pexpect.spawnu, env=None, logfile=None):
+def setup_child(timeout=10, spawnclass=pexpect.spawnu, env=None, logfile=None,
+                reset=True):
     child = spawnclass("make cleanterm", env=env, timeout=timeout,
                        codec_errors='replace', echo=False)
 
@@ -43,13 +44,13 @@ def setup_child(timeout=10, spawnclass=pexpect.spawnu, env=None, logfile=None):
     time.sleep(MAKE_TERM_STARTED_DELAY)
 
     child.logfile = logfile
-
-    try:
-        subprocess.check_output(('make', 'reset'), env=env,
-                                stderr=subprocess.PIPE)
-    except subprocess.CalledProcessError:
-        # make reset yields error on some boards even if successful
-        pass
+    if reset is True:
+        try:
+            subprocess.check_output(('make', 'reset'), env=env,
+                                    stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            # make reset yields error on some boards even if successful
+            pass
     return child
 
 

@@ -1,0 +1,822 @@
+acd52832
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/acd52832/hello-world.bin
+
+
+reset
+airfy-beacon
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/airfy-beacon/hello-world.elf
+
+
+reset
+arduino-due
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-due/hello-world.bin
+-F /dev/ttyACM0 raw ispeed 1200 ospeed 1200 cs8 -cstopb ignpar eol 255 eof 255
+
+
+arduino-duemilanove
+-c arduino -p m328p -P /dev/ttyUSB0 -b 57600 -F -D -U flash:w:/home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-duemilanove/hello-world.hex
+
+-p m328p -P /dev/ttyUSB0 -b 57600 -F -D
+
+arduino-leonardo
+-c avr109 -p m32u4 -P /dev/ttyACM0 -F -D -U flash:w:/home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-leonardo/hello-world.hex
+
+-p m32u4 -P /dev/ttyACM0 -F -D
+
+arduino-mega2560
+-c stk500v2 -p m2560 -P /dev/ttyACM0 -b 115200 -F -D -U flash:w:/home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-mega2560/hello-world.hex
+
+-p m2560 -P /dev/ttyACM0 -b 115200 -F -D
+
+arduino-mkr1000
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-mkr1000/hello-world.bin
+
+
+
+arduino-mkrfox1200
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-mkrfox1200/hello-world.bin
+
+
+
+arduino-mkrwan1300
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-mkrwan1300/hello-world.bin
+
+
+
+arduino-mkrzero
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-mkrzero/hello-world.bin
+
+
+
+arduino-nano
+-c arduino -p m328p -P /dev/ttyUSB0 -b 57600 -F -D -U flash:w:/home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-nano/hello-world.hex
+
+-p m328p -P /dev/ttyUSB0 -b 57600 -F -D
+
+arduino-uno
+-c arduino -p m328p -P /dev/ttyACM0 -b 115200 -F -D -U flash:w:/home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-uno/hello-world.hex
+
+-p m328p -P /dev/ttyACM0 -b 115200 -F -D
+
+arduino-zero
+--target atmel_cm0p --verbose --file /home/francisco/workspace/RIOT/examples/hello-world/bin/arduino-zero/hello-world.bin
+
+
+--target atmel_cm0p
+avsextrem
+/dev/ttyUSB0 /home/francisco/workspace/RIOT/examples/hello-world/bin/avsextrem/hello-world.hex
+
+
+
+b-l072z-lrwan1
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/b-l072z-lrwan1/hello-world.elf
+
+
+reset
+b-l475e-iot01a
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/b-l475e-iot01a/hello-world.elf
+
+
+reset
+blackpill
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/blackpill/hello-world.elf
+
+
+reset
+blackpill-128kib
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/blackpill-128kib/hello-world.elf
+
+
+reset
+bluepill
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/bluepill/hello-world.elf
+
+
+reset
+bluepill-128kib
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/bluepill-128kib/hello-world.elf
+
+
+reset
+calliope-mini
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/calliope-mini/hello-world.elf
+
+
+reset
+Warning: no PORT set!
+cc2538dk
+-p  -e -w -v /home/francisco/workspace/RIOT/examples/hello-world/bin/cc2538dk/hello-world.bin
+
+
+/home/francisco/workspace/RIOT/examples/hello-world/bin/cc2538dk
+cc2650-launchpad
+--config /home/francisco/workspace/RIOT/boards/cc2650-launchpad/dist/cc26x0f128_XDS110.ccxml /home/francisco/workspace/RIOT/examples/hello-world/bin/cc2650-launchpad/hello-world.elf
+
+
+
+cc2650stk
+--config /home/francisco/workspace/RIOT/boards/cc2650stk/dist/cc26x0f128_XDS110.ccxml /home/francisco/workspace/RIOT/examples/hello-world/bin/cc2650stk/hello-world.elf
+
+
+
+chronos
+rf2500 prog /home/francisco/workspace/RIOT/examples/hello-world/bin/chronos/hello-world.hex
+
+
+
+ek-lm4f120xl
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/ek-lm4f120xl/hello-world.elf
+
+
+reset
+ESP32_SDK_DIR should be defined as /path/to/esp-idf directory
+ESP32_SDK_DIR is set by default to /opt/esp/esp-idf
+esp32-mh-et-live-minikit
+--chip esp32 -p /dev/ttyUSB0 -b 460800 --before default_reset --after hard_reset write_flash -z -fm dout -fs detect -ff 40m 0x1000 /home/francisco/workspace/RIOT/cpu/esp32/bin/bootloader.bin 0x8000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-mh-et-live-minikit/partitions.bin 0x10000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-mh-et-live-minikit/hello-world.elf.bin
+--chip esp32 elf2image -fm dout -fs 2MB -ff 40m -o /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-mh-et-live-minikit/hello-world.elf.bin /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-mh-et-live-minikit/hello-world.elf
+/home/francisco/workspace/RIOT/makefiles/info.inc.mk:145: recipe for target 'info-debug-variable-PREFFLAGS' failed
+ESP32_SDK_DIR should be defined as /path/to/esp-idf directory
+ESP32_SDK_DIR is set by default to /opt/esp/esp-idf
+esp32-olimex-evb
+--chip esp32 -p /dev/ttyUSB0 -b 460800 --before default_reset --after hard_reset write_flash -z -fm dout -fs detect -ff 40m 0x1000 /home/francisco/workspace/RIOT/cpu/esp32/bin/bootloader.bin 0x8000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-olimex-evb/partitions.bin 0x10000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-olimex-evb/hello-world.elf.bin
+--chip esp32 elf2image -fm dout -fs 2MB -ff 40m -o /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-olimex-evb/hello-world.elf.bin /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-olimex-evb/hello-world.elf
+/home/francisco/workspace/RIOT/makefiles/info.inc.mk:145: recipe for target 'info-debug-variable-PREFFLAGS' failed
+ESP32_SDK_DIR should be defined as /path/to/esp-idf directory
+ESP32_SDK_DIR is set by default to /opt/esp/esp-idf
+esp32-wemos-lolin-d32-pro
+--chip esp32 -p /dev/ttyUSB0 -b 460800 --before default_reset --after hard_reset write_flash -z -fm qout -fs detect -ff 40m 0x1000 /home/francisco/workspace/RIOT/cpu/esp32/bin/bootloader.bin 0x8000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wemos-lolin-d32-pro/partitions.bin 0x10000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wemos-lolin-d32-pro/hello-world.elf.bin
+--chip esp32 elf2image -fm qout -fs 2MB -ff 40m -o /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wemos-lolin-d32-pro/hello-world.elf.bin /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wemos-lolin-d32-pro/hello-world.elf
+/home/francisco/workspace/RIOT/makefiles/info.inc.mk:145: recipe for target 'info-debug-variable-PREFFLAGS' failed
+ESP32_SDK_DIR should be defined as /path/to/esp-idf directory
+ESP32_SDK_DIR is set by default to /opt/esp/esp-idf
+esp32-wroom-32
+--chip esp32 -p /dev/ttyUSB0 -b 460800 --before default_reset --after hard_reset write_flash -z -fm dout -fs detect -ff 40m 0x1000 /home/francisco/workspace/RIOT/cpu/esp32/bin/bootloader.bin 0x8000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wroom-32/partitions.bin 0x10000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wroom-32/hello-world.elf.bin
+--chip esp32 elf2image -fm dout -fs 2MB -ff 40m -o /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wroom-32/hello-world.elf.bin /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wroom-32/hello-world.elf
+/home/francisco/workspace/RIOT/makefiles/info.inc.mk:145: recipe for target 'info-debug-variable-PREFFLAGS' failed
+ESP32_SDK_DIR should be defined as /path/to/esp-idf directory
+ESP32_SDK_DIR is set by default to /opt/esp/esp-idf
+esp32-wrover-kit
+--chip esp32 -p /dev/ttyUSB1 -b 460800 --before default_reset --after hard_reset write_flash -z -fm dout -fs detect -ff 40m 0x1000 /home/francisco/workspace/RIOT/cpu/esp32/bin/bootloader.bin 0x8000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wrover-kit/partitions.bin 0x10000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wrover-kit/hello-world.elf.bin
+--chip esp32 elf2image -fm dout -fs 2MB -ff 40m -o /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wrover-kit/hello-world.elf.bin /home/francisco/workspace/RIOT/examples/hello-world/bin/esp32-wrover-kit/hello-world.elf
+/home/francisco/workspace/RIOT/makefiles/info.inc.mk:145: recipe for target 'info-debug-variable-PREFFLAGS' failed
+ESP8266_NEWLIB_DIR should be defined as /path/to/newlib directory
+ESP8266_NEWLIB_DIR is set by default to /opt/esp/newlib-xtensa
+ESP8266_SDK_DIR should be defined as /path/to/sdk directory
+ESP8266_SDK_DIR is set by default to /opt/esp/esp-open-sdk/sdk
+esp8266-esp-12x
+-p /dev/ttyUSB0 -b 460800 write_flash -fm dout 0 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp8266-esp-12x/hello-world.elf-0x00000.bin 0x10000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp8266-esp-12x/hello-world.elf-0x10000.bin
+/home/francisco/workspace/RIOT/makefiles/info.inc.mk:145: recipe for target 'info-debug-variable-FFLAGS' failed
+ESP8266_NEWLIB_DIR should be defined as /path/to/newlib directory
+ESP8266_NEWLIB_DIR is set by default to /opt/esp/newlib-xtensa
+ESP8266_SDK_DIR should be defined as /path/to/sdk directory
+ESP8266_SDK_DIR is set by default to /opt/esp/esp-open-sdk/sdk
+esp8266-olimex-mod
+-p /dev/ttyUSB0 -b 460800 write_flash -fm dout 0 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp8266-olimex-mod/hello-world.elf-0x00000.bin 0x10000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp8266-olimex-mod/hello-world.elf-0x10000.bin
+/home/francisco/workspace/RIOT/makefiles/info.inc.mk:145: recipe for target 'info-debug-variable-FFLAGS' failed
+ESP8266_NEWLIB_DIR should be defined as /path/to/newlib directory
+ESP8266_NEWLIB_DIR is set by default to /opt/esp/newlib-xtensa
+ESP8266_SDK_DIR should be defined as /path/to/sdk directory
+ESP8266_SDK_DIR is set by default to /opt/esp/esp-open-sdk/sdk
+esp8266-sparkfun-thing
+-p /dev/ttyUSB0 -b 460800 write_flash -fm dout 0 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp8266-sparkfun-thing/hello-world.elf-0x00000.bin 0x10000 /home/francisco/workspace/RIOT/examples/hello-world/bin/esp8266-sparkfun-thing/hello-world.elf-0x10000.bin
+/home/francisco/workspace/RIOT/makefiles/info.inc.mk:145: recipe for target 'info-debug-variable-FFLAGS' failed
+f4vi1
+write /home/francisco/workspace/RIOT/examples/hello-world/bin/f4vi1/hello-world.bin 0x8000000
+
+
+
+feather-m0
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/feather-m0/hello-world.bin
+
+
+
+firefly
+-p /dev/ttyUSB0 -e -w -v -b 115200 /home/francisco/workspace/RIOT/examples/hello-world/bin/firefly/hello-world.bin
+
+
+
+fox
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/fox/hello-world.elf
+
+
+reset
+frdm-k22f
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/frdm-k22f/hello-world.elf
+
+
+reset
+frdm-k64f
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/frdm-k64f/hello-world.elf
+
+
+reset
+frdm-kw41z
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/frdm-kw41z/hello-world.elf
+
+
+reset
+hamilton
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/hamilton/hello-world.bin
+
+
+reset
+hifive1
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/hifive1/hello-world.elf
+
+
+reset
+hifive1b
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/hifive1b/hello-world.bin
+
+
+reset
+i-nucleo-lrwan1
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/i-nucleo-lrwan1/hello-world.elf
+
+
+reset
+ikea-tradfri
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/ikea-tradfri/hello-world.bin
+
+
+reset
+iotlab-a8-m3
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/iotlab-a8-m3/hello-world.elf
+
+
+reset
+iotlab-m3
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/iotlab-m3/hello-world.elf
+
+
+reset
+limifrog-v1
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/limifrog-v1/hello-world.elf
+
+
+reset
+lobaro-lorabox
+-p /dev/ttyUSB0 -e -u -S -l 0x1ff -w /home/francisco/workspace/RIOT/examples/hello-world/bin/lobaro-lorabox/hello-world.bin
+
+
+
+lsn50
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/lsn50/hello-world.elf
+
+
+reset
+maple-mini
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/maple-mini/hello-world.elf
+
+
+reset
+mbed_lpc1768
+/home/francisco/workspace/RIOT/examples/hello-world/bin/mbed_lpc1768/hello-world.bin
+
+
+
+mega-xplained
+-c buspirate -p m1284p -P /dev/ttyUSB0 -F -U flash:w:/home/francisco/workspace/RIOT/examples/hello-world/bin/mega-xplained/hello-world.hex
+
+-p m1284p -P /dev/ttyUSB0 -F
+
+microbit
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/microbit/hello-world.elf
+
+
+reset
+msb-430
+-j olimex prog /home/francisco/workspace/RIOT/examples/hello-world/bin/msb-430/hello-world.hex
+
+
+
+msb-430h
+-j olimex prog /home/francisco/workspace/RIOT/examples/hello-world/bin/msb-430h/hello-world.hex
+
+
+
+msba2
+/dev/ttyUSB0 /home/francisco/workspace/RIOT/examples/hello-world/bin/msba2/hello-world.hex
+
+
+reset
+msbiot
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/msbiot/hello-world.elf
+
+
+reset
+mulle
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/mulle/hello-world.elf
+
+
+reset
+native
+
+
+
+
+nrf51dk
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nrf51dk/hello-world.elf
+
+
+reset
+nrf51dongle
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nrf51dongle/hello-world.bin
+
+
+reset
+nrf52832-mdk
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nrf52832-mdk/hello-world.hex
+
+
+reset
+nrf52840-mdk
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nrf52840-mdk/hello-world.hex
+
+
+reset
+nrf52840dk
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nrf52840dk/hello-world.bin
+
+
+reset
+nrf52dk
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nrf52dk/hello-world.bin
+
+
+reset
+nrf6310
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nrf6310/hello-world.bin
+
+
+reset
+nucleo-f030r8
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f030r8/hello-world.elf
+
+
+reset
+nucleo-f031k6
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f031k6/hello-world.elf
+
+
+reset
+nucleo-f042k6
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f042k6/hello-world.elf
+
+
+reset
+nucleo-f070rb
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f070rb/hello-world.elf
+
+
+reset
+nucleo-f072rb
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f072rb/hello-world.elf
+
+
+reset
+nucleo-f091rc
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f091rc/hello-world.elf
+
+
+reset
+nucleo-f103rb
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f103rb/hello-world.elf
+
+
+reset
+nucleo-f207zg
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f207zg/hello-world.elf
+
+
+reset
+nucleo-f302r8
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f302r8/hello-world.elf
+
+
+reset
+nucleo-f303k8
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f303k8/hello-world.elf
+
+
+reset
+nucleo-f303re
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f303re/hello-world.elf
+
+
+reset
+nucleo-f303ze
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f303ze/hello-world.elf
+
+
+reset
+nucleo-f334r8
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f334r8/hello-world.elf
+
+
+reset
+nucleo-f401re
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f401re/hello-world.elf
+
+
+reset
+nucleo-f410rb
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f410rb/hello-world.elf
+
+
+reset
+nucleo-f411re
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f411re/hello-world.elf
+
+
+reset
+nucleo-f412zg
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f412zg/hello-world.elf
+
+
+reset
+nucleo-f413zh
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f413zh/hello-world.elf
+
+
+reset
+nucleo-f429zi
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f429zi/hello-world.elf
+
+
+reset
+nucleo-f446re
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f446re/hello-world.elf
+
+
+reset
+nucleo-f446ze
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f446ze/hello-world.elf
+
+
+reset
+nucleo-f722ze
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f722ze/hello-world.elf
+
+
+reset
+nucleo-f746zg
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f746zg/hello-world.elf
+
+
+reset
+nucleo-f767zi
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-f767zi/hello-world.elf
+
+
+reset
+nucleo-l031k6
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-l031k6/hello-world.elf
+
+
+reset
+nucleo-l053r8
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-l053r8/hello-world.elf
+
+
+reset
+nucleo-l073rz
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-l073rz/hello-world.elf
+
+
+reset
+nucleo-l152re
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-l152re/hello-world.elf
+
+
+reset
+nucleo-l432kc
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-l432kc/hello-world.elf
+
+
+reset
+nucleo-l433rc
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-l433rc/hello-world.elf
+
+
+reset
+nucleo-l452re
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-l452re/hello-world.elf
+
+
+reset
+nucleo-l476rg
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-l476rg/hello-world.elf
+
+
+reset
+nucleo-l496zg
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-l496zg/hello-world.elf
+
+
+reset
+nucleo-l4r5zi
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/nucleo-l4r5zi/hello-world.elf
+
+
+reset
+nz32-sc151
+-d 0483:df11 -a 0 -s 0x08000000:leave -D /home/francisco/workspace/RIOT/examples/hello-world/bin/nz32-sc151/hello-world.bin
+
+
+
+opencm904
+/dev/ttyACM0 /home/francisco/workspace/RIOT/examples/hello-world/bin/opencm904/hello-world.bin
+
+
+
+openmote-b
+-p /dev/ttyUSB1 --bootloader-invert-lines -e -w -v -b 460800 /home/francisco/workspace/RIOT/examples/hello-world/bin/openmote-b/hello-world.hex
+
+
+-p /dev/ttyUSB1 --bootloader-invert-lines
+openmote-cc2538
+-p /dev/ttyUSB0 -e -w -v -b 460800 /home/francisco/workspace/RIOT/examples/hello-world/bin/openmote-cc2538/hello-world.bin
+
+
+
+p-l496g-cell02
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/p-l496g-cell02/hello-world.elf
+
+
+reset
+particle-argon
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/particle-argon/hello-world.hex
+
+
+reset
+particle-boron
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/particle-boron/hello-world.hex
+
+
+reset
+particle-xenon
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/particle-xenon/hello-world.hex
+
+
+reset
+pba-d-01-kw2x
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/pba-d-01-kw2x/hello-world.elf
+
+
+reset
+phynode-kw41z
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/phynode-kw41z/hello-world.elf
+
+
+reset
+pic32-clicker
+
+
+
+
+pic32-wifire
+/home/francisco/workspace/RIOT/examples/hello-world/bin/pic32-wifire/hello-world.hex
+
+
+
+pyboard
+-D /home/francisco/workspace/RIOT/examples/hello-world/bin/pyboard/hello-world.bin --reset --alt 0 -s 0x8000000
+
+
+--alt 0 -s 0x8000000 -t
+reel
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/reel/hello-world.elf
+
+
+reset
+remote-pa
+-p /dev/ttyUSB1 -e -w -v -b 115200 /home/francisco/workspace/RIOT/examples/hello-world/bin/remote-pa/hello-world.bin
+
+
+
+remote-reva
+-p /dev/ttyUSB0 -e -w -v -b 115200 /home/francisco/workspace/RIOT/examples/hello-world/bin/remote-reva/hello-world.bin
+
+
+
+remote-revb
+-p /dev/ttyUSB0 -e -w -v -b 115200 /home/francisco/workspace/RIOT/examples/hello-world/bin/remote-revb/hello-world.bin
+
+
+
+ruuvitag
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/ruuvitag/hello-world.bin
+
+
+reset
+samd21-xpro
+--target atmel_cm0p --verbose --file /home/francisco/workspace/RIOT/examples/hello-world/bin/samd21-xpro/hello-world.bin
+
+
+--target atmel_cm0p
+same54-xpro
+--target atmel_cm4v2 --verbose --file /home/francisco/workspace/RIOT/examples/hello-world/bin/same54-xpro/hello-world.bin
+
+
+--target atmel_cm4v2
+saml10-xpro
+--target mchp_cm23 --verbose --file /home/francisco/workspace/RIOT/examples/hello-world/bin/saml10-xpro/hello-world.bin
+
+
+--target mchp_cm23
+saml11-xpro
+--target mchp_cm23 --verbose --file /home/francisco/workspace/RIOT/examples/hello-world/bin/saml11-xpro/hello-world.bin
+
+
+--target mchp_cm23
+saml21-xpro
+--target atmel_cm0p --verbose --file /home/francisco/workspace/RIOT/examples/hello-world/bin/saml21-xpro/hello-world.bin
+
+
+--target atmel_cm0p
+samr21-xpro
+--target atmel_cm0p --verbose --file /home/francisco/workspace/RIOT/examples/hello-world/bin/samr21-xpro/hello-world.bin
+
+
+--target atmel_cm0p
+samr30-xpro
+--target atmel_cm0p --verbose --file /home/francisco/workspace/RIOT/examples/hello-world/bin/samr30-xpro/hello-world.bin
+
+
+--target atmel_cm0p
+samr34-xpro
+--target atmel_cm0p --verbose --file /home/francisco/workspace/RIOT/examples/hello-world/bin/samr34-xpro/hello-world.bin
+
+
+--target atmel_cm0p
+seeeduino_arch-pro
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/seeeduino_arch-pro/hello-world.hex
+
+
+reset
+sensebox_samd21
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/sensebox_samd21/hello-world.bin
+
+
+
+slstk3401a
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/slstk3401a/hello-world.bin
+
+
+reset
+slstk3402a
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/slstk3402a/hello-world.bin
+
+
+reset
+sltb001a
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/sltb001a/hello-world.bin
+
+
+reset
+slwstk6000b-slwrb4150a
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/slwstk6000b-slwrb4150a/hello-world.bin
+
+
+reset
+slwstk6000b-slwrb4162a
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/slwstk6000b-slwrb4162a/hello-world.bin
+
+
+reset
+slwstk6220a
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/slwstk6220a/hello-world.bin
+
+
+reset
+sodaq-autonomo
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/sodaq-autonomo/hello-world.bin
+
+
+
+sodaq-explorer
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/sodaq-explorer/hello-world.bin
+
+
+
+sodaq-one
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/sodaq-one/hello-world.bin
+
+
+
+sodaq-sara-aff
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/sodaq-sara-aff/hello-world.bin
+
+
+
+spark-core
+-d 1d50:607f -a 0 -s 0x08005000:leave -D /home/francisco/workspace/RIOT/examples/hello-world/bin/spark-core/hello-world.bin
+
+
+reset
+stk3600
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/stk3600/hello-world.bin
+
+
+reset
+stk3700
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/stk3700/hello-world.bin
+
+
+reset
+stm32f0discovery
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/stm32f0discovery/hello-world.elf
+
+
+reset
+stm32f3discovery
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/stm32f3discovery/hello-world.elf
+
+
+reset
+stm32f429i-disc1
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/stm32f429i-disc1/hello-world.elf
+
+
+reset
+stm32f4discovery
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/stm32f4discovery/hello-world.elf
+
+
+reset
+stm32f723e-disco
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/stm32f723e-disco/hello-world.elf
+
+
+reset
+stm32f769i-disco
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/stm32f769i-disco/hello-world.elf
+
+
+reset
+stm32l0538-disco
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/stm32l0538-disco/hello-world.elf
+
+
+reset
+stm32l476g-disco
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/stm32l476g-disco/hello-world.elf
+
+
+reset
+teensy31
+--mcu=mk20dx256 /home/francisco/workspace/RIOT/examples/hello-world/bin/teensy31/hello-world.hex
+
+
+
+telosb
+--telosb -c /dev/ttyUSB0 -r -e -I -p /home/francisco/workspace/RIOT/examples/hello-world/bin/telosb/hello-world.hex
+
+
+
+thingy52
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/thingy52/hello-world.bin
+
+
+reset
+ublox-c030-u201
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/ublox-c030-u201/hello-world.elf
+
+
+reset
+udoo
+-p /dev/ttyACM0 -e -i -w -v -b -R /home/francisco/workspace/RIOT/examples/hello-world/bin/udoo/hello-world.bin
+-F /dev/ttyACM0 raw ispeed 1200 ospeed 1200 cs8 -cstopb ignpar eol 255 eof 255
+
+
+usb-kw41z
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/usb-kw41z/hello-world.elf
+
+
+reset
+waspmote-pro
+-c stk500v1 -p m1281 -P /dev/ttyACM0 -b 115200 -F -U flash:w:/home/francisco/workspace/RIOT/examples/hello-world/bin/waspmote-pro/hello-world.hex
+
+-p m1281 -P /dev/ttyACM0 -b 115200 -F
+
+wsn430-v1_3b
+-d /dev/ttyUSB0 -j uif prog /home/francisco/workspace/RIOT/examples/hello-world/bin/wsn430-v1_3b/hello-world.hex
+
+
+
+wsn430-v1_4
+-d /dev/ttyUSB0 -j uif prog /home/francisco/workspace/RIOT/examples/hello-world/bin/wsn430-v1_4/hello-world.hex
+
+
+
+yunjia-nrf51822
+flash /home/francisco/workspace/RIOT/examples/hello-world/bin/yunjia-nrf51822/hello-world.elf
+
+
+reset
+z1
+--z1 -I -c /dev/ttyUSB0 -r -e -p /home/francisco/workspace/RIOT/examples/hello-world/bin/z1/hello-world.hex
+
+
+

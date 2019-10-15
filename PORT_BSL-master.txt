@@ -1,0 +1,15 @@
+openmote-b
+/dev/ttyUSB1
+
+firefly
+/dev/ttyUSB0
+
+remote-pa
+/dev/ttyUSB1
+
+remote-revb
+/dev/ttyUSB0
+
+remote-reva
+/dev/ttyUSB0
+
