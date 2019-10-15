@@ -24,7 +24,8 @@ TIMEOUT = int(os.environ.get('RIOT_TEST_TIMEOUT') or 10)
 
 def run(testfunc, timeout=TIMEOUT, echo=True, traceback=False, sync=False):
     child = setup_child(timeout, env=os.environ,
-                        logfile=sys.stdout if echo else None)
+                        logfile=sys.stdout if echo else None,
+                        reset=(not sync))
     try:
         if sync is True:
             test_utils_interactive_sync(child)
