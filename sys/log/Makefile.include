@@ -5,3 +5,7 @@ endif
 ifneq (,$(filter log_color,$(USEMODULE)))
   USEMODULE_INCLUDES += $(RIOTBASE)/sys/log/log_color
 endif
+
+ifneq (,$(filter log_suit,$(USEMODULE)))
+  USEMODULE_INCLUDES += $(RIOTBASE)/sys/log/log_suit
+endif
