@@ -31,7 +31,7 @@
 
 #include "public_key.h"
 
-#include "log.h"
+#include "suit/suit_log.h"
 
 #define ENABLE_DEBUG (0)
 #include "debug.h"
@@ -236,13 +236,14 @@ static int _manifest_handler(suit_v4_manifest_t *manifest, int key, CborValue *i
     cose_key_set_keys(&pkey, COSE_EC_CURVE_ED25519, COSE_ALGO_EDDSA,
                       public_key, NULL, NULL);
 
-    LOG_INFO("suit: verifying manifest signature...\n");
+    LOG_INFO_SUITREG(SUITREG_TYPE_BLOCK | SUITREG_TYPE_STATUS, SUIT_SIGNATURE_START, 0, "suit: verifying manifest signature...\n");
     int verification = cose_sign_verify(&manifest->verify, &signature,
             &pkey, manifest->validation_buf, SUIT_COSE_BUF_SIZE);
     if (verification != 0) {
-        LOG_INFO("Unable to validate signature\n");
+        LOG_INFO_SUITREG(SUITREG_TYPE_ERROR, SUIT_SIGNATURE_ERROR, 0, "Unable to validate signature\n");
         return SUIT_ERR_SIGNATURE;
     }
+    LOG_INFO_SUITREG(SUITREG_TYPE_STATUS, SUIT_SIGNATURE_END, 0, "suit: signature is valid\n");
 
     return _v4_parse(manifest, manifest_buf,
                        manifest_len, suit_manifest_get_manifest_handler);

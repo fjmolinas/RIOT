@@ -955,6 +955,7 @@ endif
 
 ifneq (,$(filter suit_%,$(USEMODULE)))
   USEMODULE += suit
+  USEMODULE += log_suit
 endif
 
 # Enable periph_gpio when periph_gpio_irq is enabled

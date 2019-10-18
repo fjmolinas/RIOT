@@ -29,7 +29,7 @@
 #include "riotboot/slot.h"
 #include "cbor.h"
 
-#include "log.h"
+#include "suit/suit_log.h"
 
 #define HELLO_HANDLER_MAX_STRLEN 32
 
@@ -257,13 +257,16 @@ static int _dtv_fetch(suit_v4_manifest_t *manifest, int key, CborValue *_it)
 
     LOG_DEBUG("_dtv_fetch() fetching \"%s\" (url_len=%u)\n", manifest->urlbuf, (unsigned)url_len);
 
+    LOG_DEBUG_SUITREG(SUITREG_TYPE_STATUS | SUITREG_TYPE_BLOCK, SUIT_DOWNLOAD_START, manifest->components[0].size,
+                      "_dtv_fetch() fetching \"%s\" (url_len=%u)\n", manifest->urlbuf, (unsigned)url_len);
+
     int target_slot = riotboot_slot_other();
     riotboot_flashwrite_init(manifest->writer, target_slot);
     int res = suit_coap_get_blockwise_url(manifest->urlbuf, COAP_BLOCKSIZE_64, suit_flashwrite_helper,
             manifest->writer);
 
     if (res) {
-        LOG_INFO("image download failed\n)");
+        LOG_INFO_SUITREG(SUITREG_TYPE_ERROR, SUIT_DOWNLOAD_ERROR, 0, "image download failed\n)");
         return res;
     }
 
@@ -280,11 +283,11 @@ static int _dtv_fetch(suit_v4_manifest_t *manifest, int key, CborValue *_it)
      * so shift the pointer accordingly.
      */
     res = riotboot_flashwrite_verify_sha256(digest + 4, manifest->components[0].size, target_slot);
+    LOG_INFO_SUITREG(SUITREG_TYPE_BLOCK, SUIT_DIGEST_START, 0, "suit: validatin digest\n");
     if (res) {
-        LOG_INFO("image verification failed\n");
+        LOG_INFO_SUITREG(SUITREG_TYPE_ERROR, SUIT_DIGEST_ERROR, 0, "image verification failed\n");
         return res;
     }
-
     manifest->state |= SUIT_MANIFEST_HAVE_IMAGE;
 
     return SUIT_OK;
@@ -324,7 +327,7 @@ static int _seq_no_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
         const riotboot_hdr_t *hdr = riotboot_slot_get_hdr(riotboot_slot_current());
         if (seq_nr <= (int64_t)hdr->version) {
             LOG_INFO("%"PRIu64" <= %"PRIu32"\n", seq_nr, hdr->version);
-            LOG_INFO("seq_nr <= running image\n)");
+            LOG_INFO_SUITREG(SUITREG_TYPE_ERROR, SUIT_SEQ_NR_ERROR, 0, "seq_nr <= running image\n)");
             return -1;
         }
 
@@ -332,7 +335,7 @@ static int _seq_no_handler(suit_v4_manifest_t *manifest, int key, CborValue *it)
         if (riotboot_hdr_validate(hdr) == 0) {
             if (seq_nr <= (int64_t)hdr->version) {
                 LOG_INFO("%"PRIu64" <= %"PRIu32"\n", seq_nr, hdr->version);
-                LOG_INFO("seq_nr <= other image\n)");
+                LOG_INFO_SUITREG(SUITREG_TYPE_ERROR, SUIT_SEQ_NR_ERROR, 0, "seq_nr <= running image\n)");
                 return -1;
             }
         }

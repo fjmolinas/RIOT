@@ -24,7 +24,7 @@
 #include <string.h>
 
 #include "msg.h"
-#include "log.h"
+#include "suit/suit_log.h"
 #include "net/nanocoap.h"
 #include "net/nanocoap_sock.h"
 #include "thread.h"
@@ -364,6 +364,7 @@ static void _suit_handle_url(const char *url)
 #endif
         if (res == 0) {
             LOG_INFO("suit_coap: finalizing image flash\n");
+
             riotboot_flashwrite_finish(&writer);
 
             const riotboot_hdr_t *hdr = riotboot_slot_get_hdr(riotboot_slot_other());
@@ -371,7 +372,7 @@ static void _suit_handle_url(const char *url)
             xtimer_sleep(1);
 
             if (riotboot_hdr_validate(hdr) == 0) {
-                LOG_INFO("suit_coap: rebooting...");
+                LOG_INFO_SUITREG(SUITREG_TYPE_BLOCK | SUITREG_TYPE_STATUS, SUIT_REBOOT, 0, "suit_coap: rebooting...\n");
                 pm_reboot();
             }
             else {
@@ -405,7 +406,8 @@ int suit_flashwrite_helper(void *arg, size_t offset, uint8_t *buf, size_t len,
         return -1;
     }
 
-    DEBUG("_suit_flashwrite(): writing %u bytes at pos %u\n", len, offset);
+    LOG_DEBUG_SUITREG(SUITREG_TYPE_STATUS, SUIT_DOWNLOAD_PROGRESS, offset,
+        "_suit_flashwrite(): writing %u bytes at pos %u\n", len, offset);
 
     return riotboot_flashwrite_putbytes(writer, buf, len, more);
 }
@@ -426,7 +428,7 @@ static void *_suit_coap_thread(void *arg)
         DEBUG("suit_coap: got msg with type %" PRIu32 "\n", m.content.value);
         switch (m.content.value) {
             case SUIT_MSG_TRIGGER:
-                LOG_INFO("suit_coap: trigger received\n");
+                LOG_INFO_SUITREG(SUITREG_TYPE_STATUS, SUIT_TRIGGER, 0, "suit_coap: trigger received\n");
                 _suit_handle_url(_url);
                 break;
             default:
