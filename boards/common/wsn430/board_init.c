@@ -96,7 +96,4 @@ void board_init(void)
     unsigned state = irq_disable();
     msp430_init_cpuclk(CLOCK_MODE);
     irq_restore(state);
-
-    /* initialize STDIO over UART */
-    stdio_init();
 }
