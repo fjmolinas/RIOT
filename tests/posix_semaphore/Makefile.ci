@@ -6,7 +6,7 @@ BOARD_INSUFFICIENT_MEMORY := \
     atmega328p \
     chronos \
     i-nucleo-lrwan1 \
-    mbed_lpc1768 \
+    mbed-lpc1768 \
     msb-430 \
     msb-430h \
     nrf6310 \

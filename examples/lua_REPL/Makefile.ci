@@ -27,7 +27,7 @@ BOARD_INSUFFICIENT_MEMORY := \
     lobaro-lorabox \
     lsn50 \
     maple-mini \
-    mbed_lpc1768 \
+    mbed-lpc1768 \
     microbit \
     nrf51dk \
     nrf51dongle \

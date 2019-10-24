@@ -8,7 +8,7 @@ BOARD_INSUFFICIENT_MEMORY := \
     cc2650stk \
     chronos \
     maple-mini \
-    mbed_lpc1768 \
+    mbed-lpc1768 \
     microbit \
     msb-430 \
     msb-430h \

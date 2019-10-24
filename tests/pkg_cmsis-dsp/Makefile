@@ -10,7 +10,7 @@ BOARD_WHITELIST := \
   f4vi1 \
   fox \
   iotlab-m3 \
-  mbed_lpc1768 \
+  mbed-lpc1768 \
   msbiot \
   mulle \
   nucleo-f091rc \

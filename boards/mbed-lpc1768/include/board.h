@@ -8,11 +8,11 @@
  */
 
 /**
- * @ingroup     boards_mbed_lpc1768
+ * @ingroup     boards_mbed-lpc1768
  * @{
  *
  * @file
- * @brief       Board specific definitions for the mbed_lpc1768 board
+ * @brief       Board specific definitions for the mbed-lpc1768 board
  *
  * @author      Oliver Hahm <oliver.hahm@inria.fr>
  * @author      Hauke Petersen <hauke.petersen@fu-berlin.de>
