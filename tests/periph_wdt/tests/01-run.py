@@ -48,11 +48,14 @@ def testfunc(child):
         if rst_time < wdt_lower_bound or rst_time > wdt_upper_bound:
             child.expect_exact("invalid time, see \"range\"", timeout=1)
         else:
+            child.expect("valid configuration")
             child.sendline("startloop")
             child.expect(u"start time: (\d+) us", timeout=1)
             start_time_us = int(child.match.group(1))
             reset_time_us = get_reset_time(child)
             wdt_reset_time = (reset_time_us - start_time_us) / 1e3
+
+            child.expect("RIOT wdt test application")
 
             if wdt_reset_time < rst_time*(1 - error_margin) or \
                wdt_reset_time > rst_time*(1 + error_margin):
