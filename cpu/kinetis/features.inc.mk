@@ -1,0 +1,59 @@
+KINETIS_CPU_ARCH_mkw41z512vht4    =  cortex-m0plus
+KINETIS_CPU_ARCH_mk22fn512vlh12   =      cortex-m4
+KINETIS_CPU_ARCH_mk64fn1m0vll12   =     cortex-m4f
+KINETIS_CPU_ARCH_mkw21d256vha5    =      cortex-m4
+KINETIS_CPU_ARCH_mkw21d512vha5    =      cortex-m4
+KINETIS_CPU_ARCH_mkw22d512vha5    =      cortex-m4
+KINETIS_CPU_ARCH_mk20dx256vlh7    =      cortex-m4
+KINETIS_CPU_ARCH_mk60dn512vll10   =      cortex-m4
+KINETIS_CPU_ARCH_s9keaz128aclh48  =  cortex-m0plus
+
+KINETIS_CORE_mkw41z512vht4        = W
+KINETIS_CORE_mk22fn512vlh12       = F
+KINETIS_CORE_mk64fn1m0vll12       = F
+KINETIS_CORE_mkw21d256vha5        = D
+KINETIS_CORE_mkw21d512vha5        = D
+KINETIS_CORE_mkw22d512vha5        = D
+KINETIS_CORE_mk20dx256vlh7        = D
+KINETIS_CORE_mk60dn512vll10       = D
+KINETIS_CORE_s9keaz128aclh48      = D
+
+KINETIS_SERIES_mkw41z512vht4      =  Z
+KINETIS_SERIES_mk22fn512vlh12     =  K
+KINETIS_SERIES_mk64fn1m0vll12     =  K
+KINETIS_SERIES_mkw21d256vha5      =  D
+KINETIS_SERIES_mkw21d512vha5      =  W
+KINETIS_SERIES_mkw22d512vha5      =  W
+KINETIS_SERIES_mk20dx256vlh7      =  K
+KINETIS_SERIES_mk60dn512vll10     =  F
+KINETIS_SERIES_s9keaz128aclh48    = EA
+
+KINETIS_FAMILY_mkw41z512vht4      = 4
+KINETIS_FAMILY_mk22fn512vlh12     = 2
+KINETIS_FAMILY_mk64fn1m0vll12     = 6
+KINETIS_FAMILY_mkw21d256vha5      = 2
+KINETIS_FAMILY_mkw21d512vha5      = 2
+KINETIS_FAMILY_mkw22d512vha5      = 2
+KINETIS_FAMILY_mk20dx256vlh7      = 2
+KINETIS_FAMILY_mk60dn512vll10     = 6
+KINETIS_FAMILY_s9keaz128aclh48    = 6
+
+KINETIS_SUBFAMILY_mkw41z512vht4   = 1
+KINETIS_SUBFAMILY_mk22fn512vlh12  = 2
+KINETIS_SUBFAMILY_mk64fn1m0vll12  = 4
+KINETIS_SUBFAMILY_mkw21d256vha5   = 1
+KINETIS_SUBFAMILY_mkw21d512vha5   = 1
+KINETIS_SUBFAMILY_mkw22d512vha5   = 2
+KINETIS_SUBFAMILY_mk20dx256vlh7   = 0
+KINETIS_SUBFAMILY_mk60dn512vll10  = 0
+KINETIS_SUBFAMILY_s9keaz128aclh48 = 0
+
+KINETIS_FEATURES_mkw41z512vht4    = periph_mcg
+KINETIS_FEATURES_mk22fn512vlh12   = periph_mcg periph_hwrng
+KINETIS_FEATURES_mk64fn1m0vll12   = periph_mcg periph_hwrng
+KINETIS_FEATURES_mkw21d256vha5    = periph_mcg periph_hwrng
+KINETIS_FEATURES_mkw21d512vha5    = periph_mcg periph_hwrng
+KINETIS_FEATURES_mkw22d512vha5    = periph_mcg periph_hwrng
+KINETIS_FEATURES_mk20dx256vlh7    = periph_mcg
+KINETIS_FEATURES_mk60dn512vll10   = periph_mcg periph_hwrng
+KINETIS_FEATURES_s9keaz128aclh48  = periph_ics periph_hwrng
