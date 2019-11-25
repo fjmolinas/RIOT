@@ -1,33 +1,35 @@
+ifeq ($(KINETIS_DEBUG),1)
+.PHONY: info-kinetis
+
 # Split the part number into qualification, family, subfamily, core, memory, temperature, package, speed
 KINETIS_INFO := $(shell printf '%s' '$(CPU_MODEL)' | tr 'a-z' 'A-Z' | sed -E -e 's/^(M|K|S9)K([ELMSVW]?|EA)([0-9]?)([0-9]?)([A-Z])([NX]?)([0-9][0-9M]?[0-9]?)([ABZ]?)(.*)$$/\1 \2 \3 \4 \5 \6 \7 \8:\9/' -e 's/^([^ ]*)  /\1 K /' -e 's/^([^:]*):([CMV])(..)([0-9]*).*$$/\1 \2 \3 \4/' -e 's/  / _ /g' -e 's/  / _ /g')
 
-
-export KINETIS_QUALIFICATION := $(word 1, $(KINETIS_INFO))
-export KINETIS_SERIES := $(word 2, $(KINETIS_INFO))
-export KINETIS_FAMILY := $(word 3, $(KINETIS_INFO))
-export KINETIS_SUBFAMILY := $(word 4, $(KINETIS_INFO))
+KINETIS_QUALIFICATION := $(word 1, $(KINETIS_INFO))
+KINETIS_SERIES := $(word 2, $(KINETIS_INFO))
+KINETIS_FAMILY := $(word 3, $(KINETIS_INFO))
+KINETIS_SUBFAMILY := $(word 4, $(KINETIS_INFO))
 # Core type, D = Cortex-M4, F = Cortex-M4/M7 w/ FPU, Z = Cortex-M0
-export KINETIS_CORE := $(word 5, $(KINETIS_INFO))
+KINETIS_CORE := $(word 5, $(KINETIS_INFO))
 # FlexRAM (X) or not (N), does not apply to all families
-export KINETIS_FLEXMEM := $(word 6, $(KINETIS_INFO))
+KINETIS_FLEXMEM := $(word 6, $(KINETIS_INFO))
 # ROM size, KiB
-export KINETIS_ROMSIZE := $(word 7, $(KINETIS_INFO))
+KINETIS_ROMSIZE := $(word 7, $(KINETIS_INFO))
 # some special cases for ROM size, refactor when there are too many special cases
 ifeq ($(KINETIS_ROMSIZE), 1M0)
-  export KINETIS_ROMSIZE = 1024
+  KINETIS_ROMSIZE = 1024
 else ifeq ($(KINETIS_ROMSIZE), 1M2)
-  export KINETIS_ROMSIZE = 1280
+  KINETIS_ROMSIZE = 1280
 else ifeq ($(KINETIS_ROMSIZE), 2M0)
-  export KINETIS_ROMSIZE = 2048
+  KINETIS_ROMSIZE = 2048
 endif
 # Mask set revision, only some parts, see data sheet for details
-export KINETIS_MASKREV := $(word 8, $(KINETIS_INFO))
+KINETIS_MASKREV := $(word 8, $(KINETIS_INFO))
 # Temperature range, C = -40--+85, V = -40--+105, M = -40--+125
-export KINETIS_TEMPRANGE := $(word 9, $(KINETIS_INFO))
+KINETIS_TEMPRANGE := $(word 9, $(KINETIS_INFO))
 # Chip package code
-export KINETIS_PACKAGE := $(word 10, $(KINETIS_INFO))
+KINETIS_PACKAGE := $(word 10, $(KINETIS_INFO))
 # Maximum speed, MHz/10, max speed is usually 48 MHz if this number is missing
-export KINETIS_SPEED := $(word 11, $(KINETIS_INFO))
+KINETIS_SPEED := $(word 11, $(KINETIS_INFO))
 
 ifeq ($(KINETIS_CORE), Z)
   # Cortex-M0+
@@ -126,26 +128,23 @@ else ifeq ($(KINETIS_SERIES),EA)
   KINETIS_RAMSIZE = $(KINETIS_ROMSIZE)/8
   KINETIS_SRAM_L_SIZE = $(KINETIS_RAMSIZE)/4
 endif
-export KINETIS_RAMSIZE
-export KINETIS_SRAM_L_SIZE
 
 # Some debug output to use in case things are not being correctly detected
-ifeq ($(KINETIS_INFO_DEBUG),1)
-  $(info Kinetis CPU info: $(KINETIS_INFO))
-  $(info Qualification:     $(KINETIS_QUALIFICATION))
-  $(info Core:              $(KINETIS_CORE))
-  $(info Series:            $(KINETIS_SERIES))
-  $(info Family:            $(KINETIS_FAMILY))
-  $(info Subfamily:         $(KINETIS_SUBFAMILY))
-  $(info ROM size:          $(KINETIS_ROMSIZE))
-  $(info RAM size:          $(shell printf '%-4s (%s)' $$(($(KINETIS_RAMSIZE))) '$(KINETIS_RAMSIZE)'))
-  $(info SRAM_L:            $(shell printf '%-4s (%s)' $$(($(KINETIS_SRAM_L_SIZE))) '$(KINETIS_SRAM_L_SIZE)'))
-  $(info Max speed:         $(KINETIS_SPEED))
-  $(info Temperature range: $(KINETIS_TEMPRANGE))
-  $(info Revision:          $(KINETIS_MASKREV))
-  $(info Package code:      $(KINETIS_PACKAGE))
-endif
-
-ifeq (,$(KINETIS_RAMSIZE))
-  $(error Unknown Kinetis RAM size, update kinetis-info.mk with your CPU)
+info-kinetis:
+	@$(COLOR_ECHO) 'Kinetis CPU info: $(KINETIS_INFO)'
+	@$(COLOR_ECHO) 'Qualification:     $(KINETIS_QUALIFICATION)'
+	@$(COLOR_ECHO) 'Core:              $(KINETIS_CORE)'
+	@$(COLOR_ECHO) 'Series:            $(KINETIS_SERIES)'
+	@$(COLOR_ECHO) 'Family:            $(KINETIS_FAMILY)'
+	@$(COLOR_ECHO) 'Subfamily:         $(KINETIS_SUBFAMILY)'
+	@$(COLOR_ECHO) 'ROM size:          $(KINETIS_ROMSIZE)'
+	@$(COLOR_ECHO) 'RAM size:          $(shell printf '%-4s (%s)' $$(($(KINETIS_RAMSIZE))) '$(KINETIS_RAMSIZE)')'
+	@$(COLOR_ECHO) 'SRAM_L:            $(shell printf '%-4s (%s)' $$(($(KINETIS_SRAM_L_SIZE))) '$(KINETIS_SRAM_L_SIZE)')'
+	@$(COLOR_ECHO) 'Max speed:         $(KINETIS_SPEED)'
+	@$(COLOR_ECHO) 'Temperature range: $(KINETIS_TEMPRANGE)'
+	@$(COLOR_ECHO) 'Revision:          $(KINETIS_MASKREV)'
+	@$(COLOR_ECHO) 'Package code:      $(KINETIS_PACKAGE)'
+	@$(COLOR_ECHO) '-----------------------------------------------'
+	@$(COLOR_ECHO) 'KINETIS_INFOS_FEATURES_$(CPU_MODEL) = $(CPU_ARCH) $(KINETIS_CORE) $(KINETIS_SERIES) $(KINETIS_FAMILY) $(KINETIS_SUBFAMILY)'
+	@$(COLOR_ECHO) 'KINETIS_INFOS_INCLUDE_$(CPU_MODEL) = $(KINETIS_ROMSIZE) $(shell printf '%-4s%-4s' $$(($(KINETIS_RAMSIZE))) $$(($(KINETIS_SRAM_L_SIZE))))'
 endif

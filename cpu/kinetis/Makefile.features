@@ -1,3 +1,16 @@
+include $(RIOTCPU)/kinetis/kinetis.vars.inc.mk
+
+CPU_ARCH = $(word $(CPU_ARCH_INDEX), $(KINETIS_INFOS_FEATURES_$(CPU_MODEL)))
+KINETIS_CORE = $(word $(KINETIS_CORE_INDEX), $(KINETIS_INFOS_FEATURES_$(CPU_MODEL)))
+KINETIS_SERIES = $(word $(KINETIS_SERIES_INDEX), $(KINETIS_INFOS_FEATURES_$(CPU_MODEL)))
+KINETIS_FAMILY = $(word $(KINETIS_FAMILY_INDEX), $(KINETIS_INFOS_FEATURES_$(CPU_MODEL)))
+KINETIS_SUBFAMILY = $(word $(KINETIS_SUBFAMILY_INDEX), $(KINETIS_INFOS_FEATURES_$(CPU_MODEL)))
+
+# There is currently no floating unit support for kinetis
+ifeq (cortex-m4f, $CPU_ARCH)
+  CPU_ARCH = cortex-m4
+endif
+
 FEATURES_PROVIDED += periph_cpuid
 
 # HACK Do not define 'hwrng' if the board does not supports it

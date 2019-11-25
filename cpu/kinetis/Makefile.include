@@ -1,8 +1,6 @@
-ifeq (,$(KINETIS_SERIES))
-  # Parse parameters from CPU_MODEL using the kinetis-info.mk script in the same
-  # directory as this Makefile.
-  include $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/kinetis-info.mk
-endif
+# Parse parameters from CPU_MODEL using the kinetis-info.mk script in the same
+# directory as this Makefile.
+include $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/kinetis-info.mk
 
 # "The Vector table must be naturally aligned to a power of two whose alignment
 # value is greater than or equal to number of Exceptions supported x 4"
