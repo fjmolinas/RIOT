@@ -37,6 +37,17 @@ def find_exc_origin(exc_info):
 
 
 def setup_child(timeout=10, spawnclass=pexpect.spawnu, env=None, logfile=None):
+    # Some boards can't be reset after a terminal is open. We currently still
+    # need to reset after opening the terminal because most tests use this as a
+    # way to sync the device and the test. As long as this is still the behavior
+    # we keep both resets.
+    try:
+        subprocess.check_output(('make', 'reset'), env=env,
+                                stderr=subprocess.PIPE)
+    except subprocess.CalledProcessError:
+        # make reset yields error on some boards even if successful
+        pass
+
     child = spawnclass("make cleanterm", env=env, timeout=timeout,
                        codec_errors='replace', echo=False)
 
@@ -45,15 +56,8 @@ def setup_child(timeout=10, spawnclass=pexpect.spawnu, env=None, logfile=None):
 
     child.logfile = logfile
 
-    try:
-        subprocess.check_output(('make', 'reset'), env=env,
-                                stderr=subprocess.PIPE)
-    except subprocess.CalledProcessError:
-        # make reset yields error on some boards even if successful
-        pass
-
     # Handle synchronization if requested by the build system
-    sync_child(child)
+    sync_child(child, env)
 
     return child
 
@@ -73,14 +77,16 @@ def modules_list():
     return modules
 
 
-def sync_child(child):
+def sync_child(child, env=None):
     # Do a child synchronization if used by a module
     modules = modules_list()
-    _test_utils_interactive_sync(child, modules)
-
-
-def _test_utils_interactive_sync(child, modules, retries=5, delay=1):
     if 'test_utils_interactive_sync' not in modules:
-        return
+        try:
+            subprocess.check_output(('make', 'reset'), env=env,
+                                    stderr=subprocess.PIPE)
+        except subprocess.CalledProcessError:
+            # make reset yields error on some boards even if successful
+            pass
+    else:
+        utils.test_utils_interactive_sync(child)
 
-    utils.test_utils_interactive_sync(child, retries=retries, delay=delay)
