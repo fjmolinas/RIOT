@@ -170,6 +170,7 @@ static int cmd_read(int argc, char **argv)
     return 0;
 }
 
+#ifdef MODULE_PERIPH_FLASHPAGE_PAGE
 static int cmd_write(int argc, char **argv)
 {
     int page;
@@ -193,6 +194,7 @@ static int cmd_write(int argc, char **argv)
            page, flashpage_addr(page));
     return 0;
 }
+#endif
 
 #ifdef MODULE_PERIPH_FLASHPAGE_RAW
 static uint32_t getaddr(const char *str)
@@ -248,7 +250,7 @@ static int cmd_erase(int argc, char **argv)
     if (page < 0) {
         return 1;
     }
-    flashpage_write(page, NULL);
+    flashpage_erase(page);
 
     printf("successfully erased page %i (addr %p)\n",
            page, flashpage_addr(page));
@@ -281,6 +283,7 @@ static int cmd_edit(int argc, char **argv)
     return 0;
 }
 
+#ifdef MODULE_PERIPH_FLASHPAGE_PAGE
 static int cmd_test(int argc, char **argv)
 {
     int page;
@@ -343,6 +346,7 @@ static int cmd_test_last(int argc, char **argv)
     puts("wrote local page buffer to last flash page");
     return 0;
 }
+#endif
 
 #ifdef MODULE_PERIPH_FLASHPAGE_RAW
 /**
@@ -364,12 +368,10 @@ static int cmd_test_last_raw(int argc, char **argv)
 #endif
 
     /* erase the page first */
-    flashpage_write(TEST_LAST_AVAILABLE_PAGE, NULL);
-
-    flashpage_write_raw(flashpage_addr(TEST_LAST_AVAILABLE_PAGE), raw_buf, strlen(raw_buf));
+    flashpage_erase(TEST_LAST_AVAILABLE_PAGE);
 
     /* verify that previous write_raw effectively wrote the desired data */
-    if (memcmp(flashpage_addr(TEST_LAST_AVAILABLE_PAGE), raw_buf, strlen(raw_buf)) != 0) {
+    if (flashpage_write_and_verify_raw(flashpage_addr(TEST_LAST_AVAILABLE_PAGE), raw_buf, strlen(raw_buf)) != FLASHPAGE_OK) {
         puts("error verifying the content of last page");
         return 1;
     }
@@ -540,14 +542,18 @@ static const shell_command_t shell_commands[] = {
     { "dump", "Dump the selected page to STDOUT", cmd_dump },
     { "dump_local", "Dump the local page buffer to STDOUT", cmd_dump_local },
     { "read", "Copy the given page to the local page buffer and dump to STDOUT", cmd_read },
+#ifdef MODULE_PERIPH_FLASHPAGE_PAGE
     { "write", "Write the local page buffer to the given page", cmd_write },
+#endif
 #ifdef MODULE_PERIPH_FLASHPAGE_RAW
     { "write_raw", "Write (ASCII, max 64B) data to the given address", cmd_write_raw },
 #endif
     { "erase", "Erase the given page buffer", cmd_erase },
     { "edit", "Write bytes to the local page buffer", cmd_edit },
+#ifdef MODULE_PERIPH_FLASHPAGE_PAGE
     { "test", "Write and verify test pattern", cmd_test },
     { "test_last", "Write and verify test pattern on last page available", cmd_test_last },
+#endif
 #ifdef MODULE_PERIPH_FLASHPAGE_RAW
     { "test_last_raw", "Write and verify raw short write on last page available", cmd_test_last_raw },
 #endif

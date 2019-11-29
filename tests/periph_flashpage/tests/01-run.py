@@ -12,13 +12,14 @@ from testrunner import run
 
 def testfunc(child):
     # Make sure we are at a clean prompt before starting
-    child.sendline("")
     child.expect('>')
 
-    # writes and verifies the last page of the flash
-    child.sendline("test_last")
-    child.expect_exact('wrote local page buffer to last flash page')
-    child.expect('>')
+    # check if board has page write capability and if so test that as well
+    # capability is deduced from help contents
+    index = child.expect(['test_last', '>'])
+    if index == 0:
+        child.expect_exact('wrote local page buffer to last flash page')
+        child.expect('>')
 
     # check if board has raw write capability and if so test that as well
     # capability is deduced from help contents

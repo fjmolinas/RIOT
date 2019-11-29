@@ -3,7 +3,7 @@ include ../Makefile.tests_common
 
 FEATURES_REQUIRED += periph_flashpage
 FEATURES_OPTIONAL += periph_flashpage_raw
-FEATURES_OPTIONAL += periph_flashpage_rwee
+FEATURES_OPTIONAL += periph_flashpage_page
 
 USEMODULE += shell
 
