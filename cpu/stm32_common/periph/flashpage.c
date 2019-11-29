@@ -69,14 +69,17 @@ static void _unlock_flash(void)
 #endif
 }
 
-static void _erase_page(void *page_addr)
+void flashpage_erase(int page)
 {
+    assert(page < (int)FLASHPAGE_NUMOF);
+
 #if defined(CPU_FAM_STM32L0) || defined(CPU_FAM_STM32L1) || \
     defined(CPU_FAM_STM32L4)
-    uint32_t *dst = page_addr;
+    uint32_t *dst = flashpage_addr(page);
 #else
-    uint16_t *dst = page_addr;
+    uint16_t *dst = flashpage_addr(page);
 #endif
+
 #if defined(CPU_FAM_STM32F0) || defined(CPU_FAM_STM32F1) || \
     defined(CPU_FAM_STM32F3)
     uint32_t hsi_state = (RCC->CR & RCC_CR_HSION);
@@ -93,7 +96,7 @@ static void _erase_page(void *page_addr)
     /* set page erase bit and program page address */
     DEBUG("[flashpage] erase: setting the erase bit\n");
     CNTRL_REG |= FLASH_CR_PER;
-    DEBUG("address to erase: %p\n", page_addr);
+    DEBUG("address to erase: %p\n", dst);
 #if defined(CPU_FAM_STM32L0) || defined(CPU_FAM_STM32L1)
     DEBUG("[flashpage] erase: trigger the page erase\n");
     *dst = (uint32_t)0;
@@ -213,23 +216,11 @@ void flashpage_write_raw(void *target_addr, const void *data, size_t len)
 
 void flashpage_write(int page, const void *data)
 {
-    assert(page < (int)FLASHPAGE_NUMOF);
-
-#if defined(CPU_FAM_STM32L0) || defined(CPU_FAM_STM32L1)
-    /* STM32L0/L1 only supports word sizes */
-    uint32_t *page_addr = flashpage_addr(page);
-#elif defined(CPU_FAM_STM32L4)
-    uint64_t *page_addr = flashpage_addr(page);
-#else
-    /* Default is to support half-word sizes */
-    uint16_t *page_addr = flashpage_addr(page);
-#endif
-
     /* ERASE sequence */
-    _erase_page(page_addr);
+    flashpage_erase(page);
 
     /* WRITE sequence */
     if (data != NULL) {
-        flashpage_write_raw(page_addr, data, FLASHPAGE_SIZE);
+        flashpage_write_raw(flashpage_addr(page), data, FLASHPAGE_SIZE);
     }
 }
