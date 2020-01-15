@@ -70,7 +70,7 @@
 #define PM_STANDBY_CONFIG   (PWR_CR1_LPMS_0 | PWR_CR1_LPMS_1)
 #elif defined(CPU_FAM_STM32F7)
 #define PM_STANDBY_CONFIG   (PWR_CR1_PDDS | PWR_CR1_CSBF)
-#els
+#else
 #define PM_STANDBY_CONFIG   (PWR_CR_PDDS | PWR_CR_CWUF | PWR_CR_CSBF)
 #endif
 #endif
