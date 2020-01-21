@@ -211,7 +211,6 @@ _flash_list_raw() {
     sh -c "${OPENOCD} \
             ${OPENOCD_ADAPTER_INIT} \
             -f '${OPENOCD_CONFIG}' \
-            ${OPENOCD_EXTRA_RESET_INIT} \
             -c 'init' \
             -c 'flash probe 0' \
             -c 'flash list' \
