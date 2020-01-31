@@ -1,6 +1,4 @@
-USEMODULE += msp430_common msp430_common_periph msp430_malloc
-
-DEFAULT_MODULE += oneway_malloc
+USEMODULE += msp430_common msp430_common_periph periph_common
 
 ifneq (,$(filter newlib,$(USEMODULE)))
   USEMODULE += newlib_nano

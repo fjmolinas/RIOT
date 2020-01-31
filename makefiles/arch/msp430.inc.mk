@@ -10,14 +10,14 @@ ifeq (, $(filter -std=%, $(CFLAGS)))
   CFLAGS += -std=gnu99
 endif
 CFLAGS_LINK  = -ffunction-sections -fdata-sections
-#CFLAGS_DBG  ?= -gdwarf-2
+CFLAGS_DBG  ?= -g -gdwarf-2
 CFLAGS_OPT  ?= -Os
 
 CFLAGS += $(CFLAGS_CPU) $(CFLAGS_LINK) $(CFLAGS_DBG) $(CFLAGS_OPT)
 ASFLAGS += $(CFLAGS_CPU) --defsym $(CPU_MODEL)=1 $(CFLAGS_DBG)
 
 LINKFLAGS += $(CFLAGS_CPU) $(CFLAGS_DBG) $(CFLAGS_OPT)
-LINKFLAGS += -Wl,--gc-sections -static -lgcc -Wl,-L$(MSP430_SUPPORT_FILES)/include
+LINKFLAGS += -Wl,--gc-sections -Wl,-L$(MSP430_SUPPORT_FILES)/include
 
 OPTIONAL_CFLAGS_BLACKLIST += -fdiagnostics-color
 OPTIONAL_CFLAGS_BLACKLIST += -Wformat-overflow
