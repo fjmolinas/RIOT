@@ -387,6 +387,13 @@ int8_t at86rf2xx_get_ed_level(at86rf2xx_t *dev)
     return ed;
 }
 
+uint8_t at86rf2xx_get_crc(at86rf2xx_t *dev)
+{
+    uint8_t tmp = at86rf2xx_reg_read(dev, AT86RF2XX_REG__PHY_RSSI);
+
+    return ((tmp & AT86RF2XX_PHY_RSSI_MASK__RX_CRC_VALID) != 0);
+}
+
 void at86rf2xx_set_option(at86rf2xx_t *dev, uint16_t option, bool state)
 {
     uint8_t tmp;

@@ -526,6 +526,15 @@ void at86rf2xx_set_cca_threshold(const at86rf2xx_t *dev, int8_t value);
 int8_t at86rf2xx_get_ed_level(at86rf2xx_t *dev);
 
 /**
+ * @brief   Get the latest CRC result
+ *
+ * @param[in] dev           device to read value from
+ *
+ * @return                  1 on valid crc, 0 otherwise
+ */
+uint8_t at86rf2xx_get_crc(at86rf2xx_t *dev);
+
+/**
  * @brief   Enable or disable driver specific options
  *
  * @param[in,out] dev       device to set/clear option flag for

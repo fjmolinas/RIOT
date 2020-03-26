@@ -442,6 +442,12 @@ static int _get(netdev_t *netdev, netopt_t opt, void *val, size_t max_len)
             res = sizeof(int8_t);
             break;
 
+        case NETOPT_INTEGRITY_CHECK:
+            assert(max_len >= sizeof(uint8_t));
+            *((uint8_t *)val) = at86rf2xx_get_crc(dev);
+            res = sizeof(uint8_t);
+            break;
+
         case NETOPT_AUTOACK:
             if (!IS_ACTIVE(AT86RF2XX_BASIC_MODE)) {
                 assert(max_len >= sizeof(netopt_enable_t));
