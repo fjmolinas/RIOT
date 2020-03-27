@@ -1,0 +1,1 @@
+include $(RIOTBOARD)/nucleo-f103rb/Makefile.features

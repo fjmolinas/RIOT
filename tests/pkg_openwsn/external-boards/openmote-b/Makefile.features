@@ -1,0 +1,1 @@
+include $(RIOTBOARD)/openmote-b/Makefile.features
