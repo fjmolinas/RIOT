@@ -1,0 +1,11 @@
+CFLAGS += -Wno-implicit-fallthrough
+CFLAGS += -Wno-implicit-function-declaration
+CFLAGS += -Wno-incompatible-pointer-types
+CFLAGS += -Wno-old-style-definition
+CFLAGS += -Wno-maybe-uninitialized
+CFLAGS += -Wno-return-type
+CFLAGS += -Wno-sign-compare
+CFLAGS += -Wno-unused-parameter
+CFLAGS += -Wno-array-bounds
+
+include $(RIOTBASE)/Makefile.base

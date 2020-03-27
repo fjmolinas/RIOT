@@ -1,0 +1,117 @@
+From 6969fb520cd7ce483fb683205f355d1de50f2386 Mon Sep 17 00:00:00 2001
+From: Francisco Molina <femolina@uc.cl>
+Date: Fri, 27 Mar 2020 10:18:16 +0100
+Subject: [PATCH 7/7] REMOVEME: add debugging info
+
+Debugging info that can be also be obtained through ifconfig in
+tests/openwsn.
+---
+ openapps/cjoin/cjoin.c             | 8 +++++++-
+ openstack/02a-MAClow/IEEE802154E.c | 2 ++
+ openstack/02b-MAChigh/neighbors.c  | 2 ++
+ openstack/03b-IPv6/icmpv6rpl.c     | 2 ++
+ 4 files changed, 13 insertions(+), 1 deletion(-)
+
+diff --git a/openapps/cjoin/cjoin.c b/openapps/cjoin/cjoin.c
+index 2d87372f..b9ce52e0 100644
+--- a/openapps/cjoin/cjoin.c
++++ b/openapps/cjoin/cjoin.c
+@@ -134,14 +134,18 @@ owerror_t cjoin_receive(OpenQueueEntry_t* msg,
+     owerror_t ret;
+ 
+     if (coap_header->Code != COAP_CODE_RESP_CHANGED) {
++        puts("[cjoin]:fail,  still joined");
+         return E_FAIL;
+     }
+ 
+     ret = cojp_cbor_decode_configuration_object(msg->payload, msg->length, &configuration);
+-    if (ret == E_FAIL) { return E_FAIL; }
++    if (ret == E_FAIL) {
++        puts("[cjoin]: decode fail");
++        return E_FAIL; }
+ 
+     if (configuration.keyset.num_keys == 1 &&
+         configuration.keyset.key[0].key_usage == COJP_KEY_USAGE_6TiSCH_K1K2_ENC_MIC32) {
++            puts("[cjoin]: success");
+             // set the L2 keys as per the parsed value
+             IEEE802154_security_setBeaconKey(configuration.keyset.key[0].key_index, configuration.keyset.key[0].key_value);
+             IEEE802154_security_setDataKey(configuration.keyset.key[0].key_index, configuration.keyset.key[0].key_value);
+@@ -152,6 +156,7 @@ owerror_t cjoin_receive(OpenQueueEntry_t* msg,
+         // TODO not supported for now
+     }
+ 
++    puts("[cjoin]: failed");
+     return E_FAIL;
+ }
+ 
+@@ -300,6 +305,7 @@ owerror_t cjoin_sendJoinRequest(open_addr_t* joinProxy) {
+     packetfunctions_reserveHeaderSize(pkt, payload_len);
+     memcpy(pkt->payload, tmp, payload_len);
+     // send
++    puts("[cjoin]: send join request");
+     outcome = opencoap_send(
+         pkt,
+         COAP_TYPE_NON,
+diff --git a/openstack/02a-MAClow/IEEE802154E.c b/openstack/02a-MAClow/IEEE802154E.c
+index 07921ae3..3e94cc4e 100644
+--- a/openstack/02a-MAClow/IEEE802154E.c
++++ b/openstack/02a-MAClow/IEEE802154E.c
+@@ -806,6 +806,7 @@ port_INLINE void activity_synchronize_endOfFrame(PORT_TIMER_WIDTH capturedTime)
+       synchronizePacket(ieee154e_vars.syncCapturedTime);
+ 
+       // declare synchronized
++      puts("[IEE20154E]: synchronized");
+       changeIsSync(TRUE);
+       // log the info
+       openserial_printInfo(COMPONENT_IEEE802154E,ERR_SYNCHRONIZED,
+@@ -890,6 +891,7 @@ port_INLINE void activity_ti1ORri1(void) {
+             ieee154e_vars.numOfSleepSlots = 1;
+ 
+             // declare myself desynchronized
++            puts("[IEE20154E]: desynchronized");
+             changeIsSync(FALSE);
+ 
+             // log the error
+diff --git a/openstack/02b-MAChigh/neighbors.c b/openstack/02b-MAChigh/neighbors.c
+index 4cfcf146..d21d1a0c 100644
+--- a/openstack/02b-MAChigh/neighbors.c
++++ b/openstack/02b-MAChigh/neighbors.c
+@@ -687,6 +687,7 @@ void registerNewNeighbor(open_addr_t* address,
+         i=0;
+         while(i<MAXNUMNEIGHBORS) {
+             if (neighbors_vars.neighbors[i].used==FALSE) {
++                printf("[neighbors]: new neighbor rssi: %d\n", rssi);
+                 if (rssi < GOODNEIGHBORMINRSSI){
+                     break;
+                 }
+@@ -738,6 +739,7 @@ bool isNeighbor(open_addr_t* neighbor) {
+ 
+ void removeNeighbor(uint8_t neighborIndex) {
+ 
++    printf("[neighbors]: remove beighbour %d\n", neighborIndex);
+     neighbors_vars.neighbors[neighborIndex].used                      = FALSE;
+     neighbors_vars.neighbors[neighborIndex].parentPreference          = 0;
+     neighbors_vars.neighbors[neighborIndex].stableNeighbor            = FALSE;
+diff --git a/openstack/03b-IPv6/icmpv6rpl.c b/openstack/03b-IPv6/icmpv6rpl.c
+index 86e1c7d3..361954ec 100644
+--- a/openstack/03b-IPv6/icmpv6rpl.c
++++ b/openstack/03b-IPv6/icmpv6rpl.c
+@@ -477,6 +477,7 @@ void icmpv6rpl_updateMyDAGrankAndParentSelection(void) {
+     }
+ 
+     if (foundBetterParent) {
++        puts("[icmpv6rpl]: found better parent");
+         icmpv6rpl_vars.haveParent=TRUE;
+         if (!prevHadParent) {
+             // in case preParent is killed before calling this function, clear the preferredParent flag
+@@ -645,6 +646,7 @@ void icmpv6rpl_indicateRxDIO(OpenQueueEntry_t* msg) {
+ }
+ 
+ void icmpv6rpl_killPreferredParent(void) {
++    puts("[icmpv6rpl]: kill better parent");
+     icmpv6rpl_vars.haveParent=FALSE;
+     if (idmanager_getIsDAGroot()==TRUE) {
+        icmpv6rpl_vars.myDAGrank=MINHOPRANKINCREASE;
+-- 
+2.24.0
+

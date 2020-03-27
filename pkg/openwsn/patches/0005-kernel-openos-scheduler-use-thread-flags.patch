@@ -1,0 +1,62 @@
+From 559ef9ace4d28462fafda1edd0dc7851a7200ecc Mon Sep 17 00:00:00 2001
+From: Francisco Molina <femolina@uc.cl>
+Date: Sun, 29 Mar 2020 12:11:53 +0200
+Subject: [PATCH 5/7] kernel/openos/scheduler: use thread flags
+
+Use thread_flags_wait_any to pause the scheduler. Set flag in
+scheduler_push_task to trigger new task handling.
+---
+ kernel/openos/scheduler.c | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
+
+diff --git a/kernel/openos/scheduler.c b/kernel/openos/scheduler.c
+index 2d31208d..3cdf8d0e 100644
+--- a/kernel/openos/scheduler.c
++++ b/kernel/openos/scheduler.c
+@@ -10,11 +10,15 @@
+ #include "debugpins.h"
+ #include "leds.h"
+ 
++#define OPENWSN_SCHEDULER_FLAG    0x0678
++
+ //=========================== variables =======================================
+ 
+ scheduler_vars_t scheduler_vars;
+ scheduler_dbg_t  scheduler_dbg;
+ 
++static kernel_pid_t openwsn_sched_pid = KERNEL_PID_UNDEF;
++
+ //=========================== prototypes ======================================
+ 
+ void consumeTask(uint8_t taskId);
+@@ -33,6 +37,9 @@ void scheduler_init(void) {
+ 
+ void scheduler_start(void) {
+     taskList_item_t* pThisTask;
++
++   openwsn_sched_pid = thread_getpid();
++
+     while (1) {
+         while(scheduler_vars.task_list!=NULL) {
+          // there is still at least one task in the linked-list of tasks
+@@ -59,6 +66,7 @@ void scheduler_start(void) {
+       }
+       debugpins_task_clr();
+       board_sleep();
++      thread_flags_wait_any(OPENWSN_SCHEDULER_FLAG);
+       debugpins_task_set();                      // IAR should halt here if nothing to do
+    }
+ }
+@@ -105,6 +113,9 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio) {
+     }
+ 
+     ENABLE_INTERRUPTS();
++
++   thread_t *thread = (thread_t*) thread_get(openwsn_sched_pid);
++   thread_flags_set(thread, OPENWSN_SCHEDULER_FLAG);
+ }
+ 
+ //=========================== private =========================================
+-- 
+2.24.0
+
