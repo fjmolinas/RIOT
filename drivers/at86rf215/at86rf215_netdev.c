@@ -705,7 +705,7 @@ static void _isr(netdev_t *netdev)
 
     /* not using IRQMM because we want to know about AGCH */
     if (dev->flags & AT86RF215_OPT_TELL_RX_START) {
-        bb_irqs_enabled |= BB_IRQ_RXAM;
+        bb_irqs_enabled |= BB_IRQ_RXFS;
     }
 
     rf_irq_mask = at86rf215_reg_read(dev, dev->RF->RG_IRQS);
@@ -825,18 +825,18 @@ static void _isr(netdev_t *netdev)
     switch (dev->state) {
     case AT86RF215_STATE_IDLE:
 
-        if (!(bb_irq_mask & (BB_IRQ_RXFE | BB_IRQ_RXAM))) {
-            DEBUG("IDLE: only RXFE/RXAM expected (%x)\n", bb_irq_mask);
+        if (!(bb_irq_mask & (BB_IRQ_RXFE | BB_IRQ_RXFS))) {
+            DEBUG("IDLE: only RXFE/RXFS expected (%x)\n", bb_irq_mask);
             break;
         }
 
-        if ((bb_irq_mask & BB_IRQ_RXAM) &&
+        if ((bb_irq_mask & BB_IRQ_RXFS) &&
             (dev->flags & AT86RF215_OPT_TELL_RX_END)) {
             /* will be executed in the same thread */
             netdev->event_callback(netdev, NETDEV_EVENT_RX_STARTED);
         }
 
-        bb_irq_mask &= ~BB_IRQ_RXAM;
+        bb_irq_mask &= ~BB_IRQ_RXFS;
 
         if (!(bb_irq_mask & BB_IRQ_RXFE)) {
             break;
