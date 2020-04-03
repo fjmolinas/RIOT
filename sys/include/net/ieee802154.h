@@ -95,6 +95,7 @@ extern "C" {
 /** @} */
 
 #define IEEE802154_FRAME_LEN_MAX        (127U)  /**< maximum frame length */
+#define IEEE802154_ACK_FRAME_LEN          (5U)  /**< ACK frame length */
 
 /**
  * @brief   Special address definitions
