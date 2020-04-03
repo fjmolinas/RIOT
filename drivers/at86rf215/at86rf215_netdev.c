@@ -545,12 +545,13 @@ static void _tx_end(at86rf215_t *dev, netdev_event_t event)
 
     at86rf215_tx_done(dev);
 
+    dev->timeout = 0;
+    dev->state = AT86RF215_STATE_IDLE;
+
     if (dev->flags & AT86RF215_OPT_TELL_TX_END) {
         netdev->event_callback(netdev, event);
     }
 
-    dev->timeout = 0;
-    dev->state = AT86RF215_STATE_IDLE;
 }
 
 static void _ack_timeout_cb(void* arg) {
