@@ -26,6 +26,7 @@
 #include <stdint.h>
 #include <string.h>
 #include "cpu.h"
+#include "timex.h"
 #include "periph_conf.h"
 
 /**
@@ -59,19 +60,24 @@
 #else
 #define PORT_SIGNED_INT_WIDTH               int32_t
 #endif
-/*  */
-#ifndef PORT_TICS_PER_MS
-#if defined(BOARD_IOTLAB_M3) || defined(BOARD_IOTLAB_A8_M3) || \
-    defined(BOARD_NUCLEO_F103RB)
-#define PORT_TICS_PER_MS                    32
-#else
-#define PORT_TICS_PER_MS                    33
-#endif
-#endif
-/** @} */
 
-/* number of us per 32kHz clock tick */
-#define PORT_US_PER_TICK                    30
+/* we need at least 32 tics per ms, or we will use time divide to reach that */
+#if RTT_FREQUENCY >= 32768U
+#define SCTIMER_FREQUENCY                   (RTT_FREQUENCY)
+#else
+#define SCTIMER_TIME_DIVISION               (1)
+#define SCTIMER_FREQUENCY                   (32768)
+#if (SCTIMER_FREQUENCY % RTT_FREQUENCY) != 0
+#error "RTT_FREQUENCY not supported"
+#endif
+#endif
+
+/* 32 ticks at @32768Hz */
+#define PORT_TICS_PER_MS                    (SCTIMER_FREQUENCY / MS_PER_SEC)
+
+/* 30 us per tick at @32768Hz */
+#define PORT_US_PER_TICK                    (US_PER_SEC / SCTIMER_FREQUENCY)
+/** @} */
 
 /* Used in OpeWSN for waking up the scheduler */
 #define SCHEDULER_WAKEUP()                  /* unused by RIOT */
@@ -85,7 +91,7 @@
    supported BOARDS takes longer than 10ms, so use the default 20ms upstream
    slot */
 #ifndef SLOTDURATION
-#define SLOTDURATION                        20        /* in miliseconds */
+#define SLOTDURATION        20        /* in miliseconds */
 #endif
 
 /* These parameters are BOARD and CPU specific.
@@ -98,35 +104,30 @@
    https://openwsn.atlassian.net/wiki/spaces/OW/pages/688251/State+Machine
 */
 #if SLOTDURATION == 20
-#ifndef PORT_TsSlotDuration
-#define PORT_TsSlotDuration                 655   /* 20ms */
+#ifndef PORT_TsSlotDuration     /* 655 ticks at @32768Hz */
+#define PORT_TsSlotDuration     ((SCTIMER_FREQUENCY * SLOTDURATION) / MS_PER_SEC)
 #endif
 
 /* Execution speed related parameters */
 #ifndef PORT_maxTxDataPrepare
-#define PORT_maxTxDataPrepare               110   /* 3355us (not measured) */
+#define PORT_maxTxDataPrepare   110   /* 3355us (not measured) */
 #endif
 #ifndef PORT_maxRxAckPrepare
-#define PORT_maxRxAckPrepare                20    /*  610us (not measured) */
+#define PORT_maxRxAckPrepare    20    /*  610us (not measured) */
 #endif
 #ifndef PORT_maxRxDataPrepare
-#define PORT_maxRxDataPrepare               33    /* 1000us (not measured) */
+#define PORT_maxRxDataPrepare   33    /* 1000us (not measured) */
 #endif
 #ifndef PORT_maxTxAckPrepare
-#define PORT_maxTxAckPrepare                50    /* 1525us (not measured) */
+#define PORT_maxTxAckPrepare    50    /* 1525us (not measured) */
 #endif
 
 /* Radio speed related parameters */
 #ifndef PORT_delayTx
-#if defined(BOARD_IOTLAB_M3) || defined(BOARD_IOTLAB_A8_M3) || \
-    defined(BOARD_NUCLEO_F103RB)
-#define PORT_delayTx                         10   /*  549us (not measured) */
-#else
-#define PORT_delayTx                         18   /*  549us (not measured) */
-#endif
+#define PORT_delayTx            10   /*  549us (not measured) */
 #endif
 #ifndef PORT_delayRx
-#define PORT_delayRx                         0    /*    0us (can not measure) */
+#define PORT_delayRx            0    /*    0us (can not measure) */
 #endif
 #else
 #error "Only 20ms slot duration is currently supported"
@@ -139,12 +140,7 @@
  *          Used for synchronization in heterogenous networks (different BOARDs)
  * @{
  */
-#if defined(BOARD_IOTLAB_M3) || defined(BOARD_IOTLAB_A8_M3) || \
-    defined(BOARD_NUCLEO_F103RB)
-#define SYNC_ACCURACY                        2    /* ticks */
-#else
-#define SYNC_ACCURACY                        1    /* ticks */
-#endif
+#define SYNC_ACCURACY   (SCTIMER_FREQUENCY / RTT_FREQUENCY)    /* ticks */
 /** @} */
 
 static const uint8_t rreg_uriquery[] = "h=ucb";

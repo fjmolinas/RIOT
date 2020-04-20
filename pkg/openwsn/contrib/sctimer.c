@@ -18,6 +18,7 @@
  *
  * @}
  */
+#include <stdatomic.h>
 
 #include "sctimer.h"
 #include "debugpins.h"
@@ -27,15 +28,22 @@
 #define LOG_LEVEL LOG_NONE
 #include "log.h"
 
-#if RTT_FREQUENCY != 32768U
-    #error "RTT_FREQUENCY not supported"
+/**
+ * @brief   Maximum counter difference to not consider an ISR late, this should
+ *          account for the largest timer interval OpenWSN scheduler might work
+ *          with. When running only the stack this should not be more than
+ *          SLOT_DURATION, but when using cjoin it is 65535ms
+ */
+#ifndef SCTIMER_LOOP_THRESHOLD
+#define SCTIMER_LOOP_THRESHOLD       (2*PORT_TICS_PER_MS*65535)
 #endif
 
 /**
- * @brief   Maximum counter difference to not consider an ISR late
+ * @brief   Minimum value difference between current counter value for the
+ *          hardware to correctly set the ISR.
  */
 #ifndef SCTIMER_MIN_COMP_ADVANCE
-#define SCTIMER_MIN_COMP_ADVANCE     (10)
+#define SCTIMER_MIN_COMP_ADVANCE     (5)
 #endif
 
 /**
@@ -49,6 +57,17 @@
 /* execute RTT callback as early as possible */
 #define SCTIMER_ISR_NOW_OFFSET         (10)
 #endif
+#endif
+
+#ifdef SCTIMER_TIME_DIVISION
+#define SCTIMER_PRESCALER            __builtin_ctz( \
+        SCTIMER_FREQUENCY / RTT_FREQUENCY)
+#define SCTIMER_TIME_DIVISION_MASK   (RTT_MAX_VALUE >> SCTIMER_PRESCALER)
+#define SCTIMER_PRESCALER_MASK       (~SCTIMER_TIME_DIVISION_MASK)
+#define SCTIMER_PRESCALER_SHIFT      __builtin_ctz(SCTIMER_TIME_DIVISION_MASK)
+
+static PORT_TIMER_WIDTH prescaler;
+static atomic_bool enable;
 #endif
 
 static sctimer_cbt sctimer_cb;
@@ -69,6 +88,10 @@ void sctimer_init(void)
     LOG_DEBUG("%s\n", __FUNCTION__);
     sctimer_cb = NULL;
     rtt_init();
+#ifdef SCTIMER_TIME_DIVISION
+    prescaler = 0;
+    enable = false;
+#endif
 }
 
 void sctimer_set_callback(sctimer_cbt cb)
@@ -77,21 +100,57 @@ void sctimer_set_callback(sctimer_cbt cb)
     sctimer_cb = cb;
 }
 
+#ifdef SCTIMER_TIME_DIVISION
+PORT_TIMER_WIDTH _update_val(PORT_TIMER_WIDTH val, uint32_t now)
+{
+    now = now & SCTIMER_PRESCALER_MASK;
+    val = val >> SCTIMER_PRESCALER;
+    /* Check if next value would cause an overflow */
+    if ((now - val) > SCTIMER_LOOP_THRESHOLD && enable && now > val) {
+        prescaler += (1 << SCTIMER_PRESCALER_SHIFT);
+        enable = false;
+    }
+    /* Make sure it only updates the prescaler once per overflow cycle */
+    if (val > SCTIMER_LOOP_THRESHOLD && val < 2*SCTIMER_LOOP_THRESHOLD) {
+        enable = true;
+    }
+    val |= prescaler;
+
+    return val;
+}
+#endif
+
 void sctimer_setCompare(uint32_t val)
 {
-    unsigned state = irq_disable();;
+    unsigned state = irq_disable();
 
-    uint32_t cnt = rtt_get_counter();
+    uint32_t now = rtt_get_counter();
 
-    /* If the next compare value (isr) to schedule is already late then trigger
-       the ISR right away */
-    /* ATTENTION! This needs to be an unsigned type */
-    if ((int32_t)(val - cnt) < SCTIMER_MIN_COMP_ADVANCE) {
+#ifdef SCTIMER_TIME_DIVISION
+    val = _update_val(val, now);
+#endif
+
+    now = rtt_get_counter();
+
+    /* If the next compare value (isr) to schedule is already later than the
+       required value, but close enough to think we have been slow in scheduling
+       it, trigger the ISR right away */
+    if (now - val <  SCTIMER_LOOP_THRESHOLD && now >= val) {
 #ifdef RTT_IRQ
-        rtt_set_alarm(cnt + SCTIMER_ISR_NOW_OFFSET, sctimer_isr_internal, NULL);
+        rtt_set_alarm(now + SCTIMER_ISR_NOW_OFFSET, sctimer_isr_internal, NULL);
         NVIC_SetPendingIRQ(RTT_IRQ);
 #else
-        rtt_set_alarm(cnt + SCTIMER_ISR_NOW_OFFSET, sctimer_isr_internal, NULL);
+        rtt_set_alarm(now + SCTIMER_ISR_NOW_OFFSET, sctimer_isr_internal, NULL);
+#endif
+    }
+    /* set callback early when too close to current counter value, hardware
+    limitations might have the callback scheduled 1 full cycle late */
+    else if (val - now < SCTIMER_MIN_COMP_ADVANCE && val >= now) {
+#ifdef RTT_IRQ
+        rtt_set_alarm(now + SCTIMER_ISR_NOW_OFFSET, sctimer_isr_internal, NULL);
+        NVIC_SetPendingIRQ(RTT_IRQ);
+#else
+        rtt_set_alarm(now + SCTIMER_ISR_NOW_OFFSET, sctimer_isr_internal, NULL);
 #endif
     }
     else {
@@ -104,6 +163,10 @@ void sctimer_setCompare(uint32_t val)
 uint32_t sctimer_readCounter(void)
 {
     uint32_t now = rtt_get_counter();
+#ifdef SCTIMER_TIME_DIVISION
+    now &= SCTIMER_TIME_DIVISION_MASK;
+    now = (now << SCTIMER_PRESCALER);
+#endif
     return now;
 }
 
