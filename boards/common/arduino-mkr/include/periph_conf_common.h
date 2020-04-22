@@ -192,13 +192,6 @@ static const i2c_conf_t i2c_config[] = {
 /** @} */
 
 /**
- * @name RTC configuration
- * @{
- */
-#define RTC_DEV             RTC->MODE2
-/** @} */
-
-/**
  * @name RTT configuration
  * @{
  */

@@ -88,13 +88,6 @@ extern "C" {
 /** @} */
 
 /**
- * @name    RTC configuration
- * @{
- */
-#define RTC_DEV             RTC->MODE2
-/** @} */
-
-/**
  * @name    RTT configuration
  * @{
  */

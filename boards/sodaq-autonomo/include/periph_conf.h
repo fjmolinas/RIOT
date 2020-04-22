@@ -24,7 +24,6 @@
 #include "cpu.h"
 #include "periph_cpu.h"
 #include "cfg_clock_default.h"
-#include "cfg_rtc_default.h"
 #include "cfg_rtt_default.h"
 #include "cfg_spi_default.h"
 #include "cfg_timer_default.h"
