@@ -145,8 +145,9 @@ typedef struct {
 #define RTT_IRQ             RTC_IRQn
 #define RTT_ISR             isr_rtc
 
+#define RTT_CLOCK_FREQUENCY ((CLOCK_LSE * 32768U) + (!CLOCK_LSE * CLOCK_LSI))
+
 #define RTT_MAX_VALUE       (0xffffffff)
-#define RTT_CLOCK_FREQUENCY (32768U)                  /* in Hz */
 #define RTT_MIN_FREQUENCY   (1U)                      /* in Hz */
 /* RTC frequency of 32kHz is not recommended, see RM0008 Rev 20, p490 */
 #define RTT_MAX_FREQUENCY   (RTT_CLOCK_FREQUENCY / 2) /* in Hz */

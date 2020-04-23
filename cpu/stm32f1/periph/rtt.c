@@ -26,6 +26,10 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
+#if !CLOCK_LSE
+#pragma message "CLOCK_LSI requires manual calibration"
+#endif
+
 #define RTT_PRESCALER        ((RTT_CLOCK_FREQUENCY / RTT_FREQUENCY) - 1 )
 
 #define RTT_FLAG_RTOFF       ((uint16_t)0x0020)  /**< RTC Operation OFF flag */

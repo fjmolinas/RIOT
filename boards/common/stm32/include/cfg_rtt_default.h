@@ -32,7 +32,7 @@ extern "C" {
  * @{
  */
 #ifdef LPTIM1
-#define RTT_CLOCK_FREQUENCY (32768U)                    /* in Hz */
+#define RTT_CLOCK_FREQUENCY ((CLOCK_LSE * 32768U) + (!CLOCK_LSE * CLOCK_LSI))
 
 #define RTT_MAX_VALUE       (0x0000ffff)                /* 16-bit timer */
 #define RTT_MAX_FREQUENCY   (RTT_CLOCK_FREQUENCY)       /* 32768Hz at @32768Hz */

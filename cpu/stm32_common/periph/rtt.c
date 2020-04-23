@@ -24,29 +24,28 @@
 #include "periph/rtt.h"
 #include "stmclk.h"
 
+#if !CLOCK_LSE
+#pragma message "CLOCK_LSI requires manual calibration"
+#endif
+
 /* this driver is only valid for STM CPUs that provide LPTIMERs */
 #if defined(LPTIM1)
 /* figure out the used pre-scaler */
-#if CLOCK_LSE
-#define RTT_CLOCK_FREQ       (32768U)
-#else
-#define RTT_CLOCK_FREQ       (CLOCK_LSI)
-#endif
-#if (RTT_FREQUENCY == RTT_CLOCK_FREQ)
+#if (RTT_FREQUENCY == RTT_CLOCK_FREQUENCY)
 #define PRE                 (0)
-#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 2U))
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQUENCY / 2U))
 #define PRE                 (LPTIM_CFGR_PRESC_0)
-#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 4U))
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQUENCY / 4U))
 #define PRE                 (LPTIM_CFGR_PRESC_1)
-#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 8U))
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQUENCY / 8U))
 #define PRE                 (LPTIM_CFGR_PRESC_1 | LPTIM_CFGR_PRESC_0)
-#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 16U))
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQUENCY / 16U))
 #define PRE                 (LPTIM_CFGR_PRESC_2)
-#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 32U))
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQUENCY / 32U))
 #define PRE                 (LPTIM_CFGR_PRESC_2 | LPTIM_CFGR_PRESC_0)
-#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 64U))
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQUENCY / 64U))
 #define PRE                 (LPTIM_CFGR_PRESC_2 | LPTIM_CFGR_PRESC_1)
-#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQ / 128U))
+#elif (RTT_FREQUENCY == (RTT_CLOCK_FREQUENCY / 128U))
 #define PRE                 (LPTIM_CFGR_PRESC)
 #else
 #error "RTT config: RTT_FREQUENCY not configured or invalid for your board"
