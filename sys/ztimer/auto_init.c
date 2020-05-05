@@ -50,25 +50,28 @@
 #define WIDTH_TO_MAXVAL(width)  (UINT32_MAX >> (32 - width))
 
 #define FREQ_1MHZ       1000000LU
-#define FREQ_250KHZ     250000LU
 #define FREQ_1KHZ       1000LU
 
 #if MODULE_ZTIMER_USEC
 #  if CONFIG_ZTIMER_USEC_TYPE_PERIPH_TIMER
-static ztimer_periph_timer_t _ztimer_periph_timer_usec = { .min = CONFIG_ZTIMER_USEC_MIN };
+static ztimer_periph_timer_t _ztimer_periph_timer_usec =
+{ .min = CONFIG_ZTIMER_USEC_MIN };
 ztimer_clock_t *const ZTIMER_USEC_BASE = &_ztimer_periph_timer_usec.super;
 #    if CONFIG_ZTIMER_USEC_BASE_FREQ == FREQ_1MHZ
 ztimer_clock_t *const ZTIMER_USEC = &_ztimer_periph_timer_usec.super;
-#    elif CONFIG_ZTIMER_USEC_BASE_FREQ == 250000LU
-static ztimer_convert_shift_t _ztimer_convert_shift_usec;
-ztimer_clock_t *const ZTIMER_USEC = &_ztimer_convert_shift_usec.super.super;
-#    else
+#    elif CONFIG_ZTIMER_USEC_BASE_FREQ > FREQ_1MHZ
 static ztimer_convert_frac_t _ztimer_convert_frac_usec;
 ztimer_clock_t *const ZTIMER_USEC = &_ztimer_convert_frac_usec.super.super;
 #  define ZTIMER_USEC_CONVERT_LOWER (&_ztimer_periph_timer_usec.super)
+#    elif CONFIG_ZTIMER_USEC_BASE_FREQ < FREQ_1MHZ && \
+    (FREQ_1MHZ % CONFIG_ZTIMER_USEC_BASE_FREQ) == 0
+static ztimer_convert_shift_t _ztimer_convert_shift_usec;
+ztimer_clock_t *const ZTIMER_USEC = &_ztimer_convert_shift_usec.super.super;
+#    else
+#    error ztimer_usec selected, but CONFIG_ZTIMER_USEC_BASE_FREQ is invalid!
 #    endif
-#   else
-#     error ztimer_usec selected, but no configuration available!
+#  else
+#    error ztimer_usec selected, but no configuration available!
 #  endif
 #endif
 
@@ -114,10 +117,12 @@ void ztimer_init(void)
                        WIDTH_TO_MAXVAL(CONFIG_ZTIMER_USEC_WIDTH));
 #  endif
 #  if CONFIG_ZTIMER_USEC_BASE_FREQ != FREQ_1MHZ
-#    if CONFIG_ZTIMER_USEC_BASE_FREQ == FREQ_250KHZ
+#    if CONFIG_ZTIMER_USEC_BASE_FREQ < FREQ_1MHZ
     LOG_DEBUG("ztimer_init(): ZTIMER_USEC convert_shift %lu to 1000000\n",
-            CONFIG_ZTIMER_USEC_BASE_FREQ);
-    ztimer_convert_shift_up_init(&_ztimer_convert_shift_usec, &_ztimer_periph_timer_usec.super, 2);
+              CONFIG_ZTIMER_USEC_BASE_FREQ);
+    ztimer_convert_shift_up_init(&_ztimer_convert_shift_usec,
+                                 &_ztimer_periph_timer_usec.super, __builtin_ctz(
+                                     FREQ_1MHZ / CONFIG_ZTIMER_USEC_BASE_FREQ));
 #    else
     LOG_DEBUG("ztimer_init(): ZTIMER_USEC convert_frac %lu to 1000000\n",
             CONFIG_ZTIMER_USEC_BASE_FREQ);
