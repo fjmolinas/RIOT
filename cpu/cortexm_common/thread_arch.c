@@ -409,6 +409,20 @@ void __attribute__((naked)) __attribute__((used)) isr_svc(void)
 #endif
 }
 
+void svc_service_cb(svc_callback_t cb, void *arg)
+{
+    (void)cb;
+    (void)arg;
+
+    __asm__ volatile (
+        "movs r0, %0            \n"
+        "movs r1, %1            \n"
+        "svc  2                 \n"
+        :
+        :"r"(cb), "r"(arg)         /* input */
+     );
+}
+
 static void __attribute__((used)) _svc_dispatch(unsigned int *svc_args)
 {
     /* stack frame:
@@ -430,12 +444,20 @@ static void __attribute__((used)) _svc_dispatch(unsigned int *svc_args)
      */
     unsigned int svc_number = ((char *)svc_args[6])[-2];
 
+    svc_callback_t cb;
+    (void) cb;
     switch (svc_number) {
         case 1: /* SVC number used by cpu_switch_context_exit */
             SCB->ICSR |= SCB_ICSR_PENDSVSET_Msk;
             break;
+        case 2:
+            if (svc_args[0]) {
+                cb = (svc_callback_t) svc_args[0];
+                cb((void*)svc_args[1]);
+            }
+            break;
         default:
-            DEBUG("svc: unhandled SVC #%u\n", svc_number);
+            printf("svc: unhandled SVC #%u\n", svc_number);
             break;
     }
 }

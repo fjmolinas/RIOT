@@ -246,6 +246,21 @@ static inline uint32_t cpu_get_image_baseaddr(void)
  */
 bool cpu_check_address(volatile const char *address);
 
+/**
+ * @brief   Checks is memory address valid or not
+ */
+typedef void (*svc_callback_t)(void *arg);
+
+
+/**
+  * @brief  Execute a callback in SVC context
+  *
+  * @param  svc_callback_t cb : callback
+  * @param  void *carg : optional argument
+  *
+  */
+void svc_service_cb(svc_callback_t cb, void *arg);
+
 #ifdef __cplusplus
 }
 #endif
