@@ -51,6 +51,9 @@ static void *overflow_arg;
 
 void rtt_init(void)
 {
+    alarm_cb = NULL;
+    overflow_cb = NULL;
+
     rtt_poweron();
 
     /* configure interrupt */
@@ -88,6 +91,8 @@ void rtt_clear_overflow_cb(void)
     _rtt_enter_config_mode();
     /* Clear overflow interrupt */
     RTT_DEV->CRH &= ~(RTC_CRH_OWIE);
+    /* Clear overflow callback */
+    overflow_cb = NULL;
     _rtt_leave_config_mode();
 }
 
@@ -147,6 +152,8 @@ void rtt_clear_alarm(void)
     RTT_DEV->ALRH = 0xffff;
     /* Set the ALARM LSB word to reset value */
     RTT_DEV->ALRL = 0xffff;
+    /* Clear alarm callback */
+    alarm_cb = NULL;
 
     _rtt_leave_config_mode();
 }
@@ -189,11 +196,15 @@ void RTT_ISR(void)
 {
     if (RTT_DEV->CRL & RTC_CRL_ALRF) {
         RTT_DEV->CRL &= ~(RTC_CRL_ALRF);
-        alarm_cb(alarm_arg);
+        if(alarm_cb) {
+            alarm_cb(alarm_arg);
+        }
     }
     if (RTT_DEV->CRL & RTC_CRL_OWF) {
         RTT_DEV->CRL &= ~(RTC_CRL_OWF);
-        overflow_cb(overflow_arg);
+        if(overflow_cb) {
+            overflow_cb(overflow_arg);
+        }
     }
     cortexm_isr_end();
 }
