@@ -1,9 +1,6 @@
 # Compile together the Arduino sketches of the application
-# They are declared a as new module $(SKETCH_MODULE) in $(SKETCH_MODULE_DIR)
+# They are declared a as new module arduino_sketches in $(SKETCH_MODULE_DIR)
 
-ifndef SKETCH_MODULE
-  $(error SKETCH_MODULE undefined. It should be defined to the sketches module name)
-endif
 ifndef SKETCH_MODULE_DIR
   $(error SKETCH_MODULE_DIR undefined. It should be defined to the sketches module directory)
 endif

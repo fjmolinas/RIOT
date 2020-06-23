@@ -2,6 +2,7 @@ ifneq (,$(filter arduino,$(USEMODULE)))
   FEATURES_OPTIONAL += periph_i2c
   FEATURES_OPTIONAL += periph_spi
   FEATURES_REQUIRED += periph_uart
+  USEMODULE += arduino_sketches
 endif
 
 ifneq (,$(filter eepreg,$(USEMODULE)))
