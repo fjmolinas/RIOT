@@ -11,23 +11,28 @@
  * @{
  *
  * @file
- * @brief       Internal addresses, registers and constants
+ * @brief       Netdev interface to Decawave DW1000 UWB radio driver
  *
  * @author      Francisco Molina <francois-xavier.molina@inria.fr>
  */
 
-#ifndef DW1000_CONSTANTS_H
-#define DW1000_CONSTANTS_H
+#ifndef DW1000_NETDEV_H
+#define DW1000_NETDEV_H
+
+#include "net/netdev.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* define here the addresses, register and constants of the driver */
+/**
+ * @brief   Reference to the netdev device driver struct
+ */
+extern const netdev_driver_t dw1000_driver;
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DW1000_CONSTANTS_H */
+#endif /* DW1000_NETDEV_H */
 /** @} */

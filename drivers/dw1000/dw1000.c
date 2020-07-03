@@ -19,34 +19,33 @@
  */
 
 #include "dw1000.h"
-#include "dw1000_constants.h"
-#include "dw1000_params.h"
-
 #include "dw1000_hal.h"
-
+#include "dw1000_netdev.h"
 #include "libdw1000.h"
 
 #include "periph/gpio.h"
 #include "xtimer.h"
 
 #ifndef LOG_LEVEL
-#define LOG_LEVEL LOG_DEBUG
+#define LOG_LEVEL LOG_NONE
 #endif
 #include "log.h"
 
 #define DW1000_TRST_OK      (50U) /* nominal value of 50ns */
 #define CLOCK_CORECLOCK_P_N (1000000000 / CLOCK_CORECLOCK) /* period in ns*/
 
+#define DW1000_CS_WAKE           (500U) /* us */
+#define DW1000_CS_INIT_TIME      (5000U) /* us */
 
-static int _dw1000_wake(dw1000_t *dev)
+int dw1000_wake(dw1000_t *dev)
 {
     if (dwGetDeviceId(&(dev->dev)) != 0xdeca0130) {
         /* keep SPI CS line low for 500 microseconds */
         gpio_clear(dev->params.cs_pin);
-        xtimer_usleep(500);
+        xtimer_usleep(DW1000_CS_WAKE);
         gpio_set(dev->params.cs_pin);
         /* give device time to init */
-        xtimer_usleep(5000);
+        xtimer_usleep(DW1000_CS_INIT_TIME);
 
         if (dwGetDeviceId(&(dev->dev)) != 0xdeca0130) {
             LOG_DEBUG("[dw1000]: failed to wakeup device\n");
@@ -60,42 +59,13 @@ static int _dw1000_wake(dw1000_t *dev)
     return 0;
 }
 
-int dw1000_init(dw1000_t *dev, const dw1000_params_t *params)
+void dw1000_setup(dw1000_t *dev, const dw1000_params_t *params)
 {
     LOG_DEBUG("[dw1000]: initializing DWM1000\n");
     /* initialize device descriptor */
+    netdev_t *netdev = (netdev_t*) dev;
+    netdev->driver = &dw1000_driver;
     dev->params = *params;
-
-    /* init cs pin */
-    spi_init_cs(dev->params.spi, dev->params.cs_pin);
-
-    /* init reset pin */
-    if (dev->params.reset_pin != GPIO_UNDEF) {
-        gpio_init(dev->params.reset_pin, GPIO_IN);
-    }
-
-    /* init irq pin */
-    if (dev->params.irq_pin != GPIO_UNDEF) {
-        /* not used by the implementation */
-    }
-
-    /* init libdw */
-    LOG_DEBUG("[dw1000]: configure DWM1000\n");
-    dwInit(&(dev->dev), (dwOps_t*) &dw1000_ops);
-
-    /* wakeup device*/
-    _dw1000_wake(dev);
-
-    /* configure */
-    int result = dwConfigure(&(dev->dev));
-
-    if (result) {
-        LOG_DEBUG("[dw1000]: ERROR %s\n", dwStrError(result));
-        return -1;
-    } else {
-        LOG_DEBUG("[dw1000]: OK\n");
-    }
-    return 0;
 }
 
 void dw1000_reset(dw1000_t *dev)

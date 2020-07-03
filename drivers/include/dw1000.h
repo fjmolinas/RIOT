@@ -25,6 +25,8 @@
 #include <stdbool.h>
 
 #include "board.h"
+#include "net/netdev.h"
+#include "net/netdev/ieee802154.h"
 
 #include "periph/gpio.h"
 #include "periph/spi.h"
@@ -51,9 +53,9 @@ typedef struct {
  * @brief   Device descriptor for the driver
  */
 typedef struct {
-    /** Device initialization parameters */
-    dwDevice_t dev;
-    dw1000_params_t params;
+    netdev_t netdev;                   /**< Netdev parent struct */
+    dwDevice_t dev;                    /**< dwDevice parent struct */
+    dw1000_params_t params;            /**< Device driver parameters */
 } dw1000_t;
 
 /**
@@ -61,10 +63,8 @@ typedef struct {
  *
  * @param[inout] dev        Device descriptor of the driver
  * @param[in]    params     Initialization parameters
- *
- * @return                  0 on success
  */
-int dw1000_init(dw1000_t *dev, const dw1000_params_t *params);
+void dw1000_setup(dw1000_t *dev, const dw1000_params_t *params);
 
 /**
  * @brief   Trigger a hardware reset
@@ -72,6 +72,15 @@ int dw1000_init(dw1000_t *dev, const dw1000_params_t *params);
  * @param[in,out] dev       device to reset
  */
 void dw1000_reset(dw1000_t *dev);
+
+/**
+ * @brief   If not awake, wake up device
+ *
+ * @param[in,out] dev       device to reset
+ *
+ * @return                  0 on success
+ */
+int dw1000_wake(dw1000_t *dev);
 
 #ifdef __cplusplus
 }

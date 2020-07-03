@@ -20,7 +20,6 @@
 #define DW1000_PARAMS_H
 
 #include "board.h"
-#include "dw1000.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -53,7 +52,7 @@ extern "C" {
 #define DW1000_PARAMS           { .spi = DW1000_PARAM_SPI,         \
                                   .spi_clk = DW1000_PARAM_SPI_CLK, \
                                   .cs_pin = DW1000_PARAM_CS,       \
-                                  .mode = DW1000_SPI_MODE,          \
+                                  .mode = DW1000_SPI_MODE,         \
                                   .irq_pin = DW1000_PARAM_IRQ,     \
                                   .reset_pin = DW1000_PARAM_RESET }
 #endif
