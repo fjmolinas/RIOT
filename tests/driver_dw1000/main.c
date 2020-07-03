@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2020 Inria
+ * Copyright (C) 2020 ML!PA Consulting GmbH
  *
  * This file is subject to the terms and conditions of the GNU Lesser
  * General Public License v2.1. See the file LICENSE in the top level
@@ -11,25 +11,29 @@
  * @{
  *
  * @file
- * @brief       Test for Decawave DW1000 UWB radio driver
+ * @brief       Test application for network device drivers
  *
- * @author      Francisco Molina <francois-xavier.molina@inria.fr>
- *
+ * @author      Benjamin Valentin <benjamin.valentin@ml-pa.com>
  * @}
  */
 
-#include <stdio.h>
+#include "thread.h"
+#include "shell.h"
+#include "shell_commands.h"
 
-#include "dw1000.h"
-#include "dw1000_params.h"
-
-static dw1000_t dev;
+#include "net/gnrc/pktdump.h"
+#include "net/gnrc.h"
 
 int main(void)
 {
-    puts("Generated RIOT application: 'driver_dw1000'");
+    /* enable pktdump output */
+    gnrc_netreg_entry_t dump = GNRC_NETREG_ENTRY_INIT_PID(GNRC_NETREG_DEMUX_CTX_ALL,
+                                                          gnrc_pktdump_pid);
+    gnrc_netreg_register(GNRC_NETTYPE_UNDEF, &dump);
 
-    dw1000_init(&dev, &dw1000_params[0]);
-    
+    /* start the shell */
+    char line_buf[SHELL_DEFAULT_BUFSIZE];
+    shell_run(NULL, line_buf, SHELL_DEFAULT_BUFSIZE);
+
     return 0;
 }
