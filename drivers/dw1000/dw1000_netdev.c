@@ -18,6 +18,9 @@
  * @}
  */
 
+#include <assert.h>
+#include <errno.h>
+
 #include "iolist.h"
 #include "xtimer.h"
 
@@ -29,7 +32,6 @@
 #include "dw1000_hal.h"
 #include "dw1000_netdev.h"
 #include "libdw1000.h"
-
 
 #ifndef LOG_LEVEL
 #define LOG_LEVEL LOG_DEBUG
@@ -118,19 +120,63 @@ static void _isr(netdev_t *netdev)
 
 static int _get(netdev_t *netdev, netopt_t opt, void *val, size_t max_len)
 {
-    (void) netdev;
-    (void) opt;
-    (void) val;
-    (void) max_len;
+    dw1000_t *dev = (dw1000_t *) netdev;
+
+    if (netdev == NULL) {
+        return -ENODEV;
+    }
+
+    /* getting these options doesn't require the transceiver to be responsive */
+    switch (opt) {
+        default:
+            /* Can still be handled in second switch */
+            break;
+    }
+
+    int res;
+
+    if (((res = netdev_ieee802154_get((netdev_ieee802154_t *)dev, opt, val,
+                                      max_len)) >= 0) || (res != -ENOTSUP)) {
+        return res;
+    }
+
+    /* temporarily wake up if sleeping */
+
+    /* these options require the transceiver to be not sleeping*/
+    switch (opt) {
+        default:
+            res = -ENOTSUP;
+            break;
+    }
+
+    /* go back to sleep if were sleeping */
+
     return 0;
 }
 
 static int _set(netdev_t *netdev, netopt_t opt, const void *val, size_t len)
 {
-    (void) netdev;
-    (void) opt;
-    (void) val;
-    (void) len;
+    dw1000_t *dev = (dw1000_t *) netdev;
+    int res = -ENOTSUP;
+
+    if (dev == NULL) {
+        return -ENODEV;
+    }
+
+    /* temporarily wake up if sleeping and opt != NETOPT_STATE.
+     * opt != NETOPT_STATE check prevents redundant wake-up. */
+
+    switch (opt) {
+        default:
+            break;
+    }
+
+    /* go back to sleep if were sleeping and state hasn't been changed */
+
+    if (res == -ENOTSUP) {
+        res = netdev_ieee802154_set((netdev_ieee802154_t *)dev, opt, val, len);
+    }
+
     return 0;
 }
 
