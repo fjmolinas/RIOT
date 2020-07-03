@@ -53,7 +53,7 @@ typedef struct {
  * @brief   Device descriptor for the driver
  */
 typedef struct {
-    netdev_t netdev;                   /**< Netdev parent struct */
+    netdev_ieee802154_t netdev;        /**< Netdev parent struct */
     dwDevice_t dev;                    /**< dwDevice parent struct */
     dw1000_params_t params;            /**< Device driver parameters */
 } dw1000_t;

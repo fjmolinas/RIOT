@@ -23,6 +23,7 @@
 #include "dw1000_netdev.h"
 #include "libdw1000.h"
 
+#include "luid.h"
 #include "periph/gpio.h"
 #include "xtimer.h"
 
@@ -61,11 +62,15 @@ int dw1000_wake(dw1000_t *dev)
 
 void dw1000_setup(dw1000_t *dev, const dw1000_params_t *params)
 {
-    LOG_DEBUG("[dw1000]: initializing DWM1000\n");
     /* initialize device descriptor */
     netdev_t *netdev = (netdev_t*) dev;
     netdev->driver = &dw1000_driver;
     dev->params = *params;
+
+    /* TODO: there is no alignment guarantee needs to be fixed in */
+    /* generate EUI-64 and short address #12713 */
+    luid_get_eui64((eui64_t *) &dev->netdev.long_addr);
+    luid_get_short((network_uint16_t *)&dev->netdev.short_addr);
 }
 
 void dw1000_reset(dw1000_t *dev)
