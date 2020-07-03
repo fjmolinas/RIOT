@@ -1,0 +1,6 @@
+/**
+ * @defgroup pkg_driver_dw1000 Driver implementation for the Decawave DW1000 UWB radio chip
+ * @ingroup  pkg
+ * @brief    Open source driver implementation for the Decawave DW1000 UWB radio chip
+ * @see      https://github.com/bitcraze/libdw1000
+ */

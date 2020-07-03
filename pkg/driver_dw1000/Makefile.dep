@@ -1,0 +1,5 @@
+USEMODULE += driver_dw1000_contrib
+USEMODULE += xtimer
+
+FEATURES_REQUIRED += periph_gpio
+FEATURES_REQUIRED += periph_spi

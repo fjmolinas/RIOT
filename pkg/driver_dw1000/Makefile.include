@@ -1,0 +1,5 @@
+INCLUDES += -I$(PKGDIRBASE)/driver_dw1000 \
+            -I$(PKGDIRBASE)/driver_dw1000/inc \
+            -I$(RIOTPKG)/driver_dw1000/include
+
+DIRS += $(RIOTPKG)/driver_dw1000/contrib
