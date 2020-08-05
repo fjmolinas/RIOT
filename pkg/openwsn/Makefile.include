@@ -25,6 +25,7 @@ PSEUDOMODULES += openwsn_serial \
                  openwsn_icmpv6_echo \
                  openwsn_iee802154e_security \
                  openwsn_leds \
+                 openwsn_sock_udp \
                  openwsn_sctimer \
                  openwsn_sctimer_rtt \
                  openwsn_sctimer_ztimer \
@@ -60,6 +61,15 @@ endif
 
 ifneq (,$(filter openwsn_adaptive_msf,$(USEMODULE)))
   CFLAGS += -DOPENWSN_ADAPTIVE_MSF
+endif
+
+ifneq (,$(filter openwsn_sock_udp,$(USEMODULE)))
+  CFLAGS += -DSOCK_HAS_IPV6
+  CFLAGS += -DSOCK_HAS_ASYNC
+ifneq (,$(filter sock_async_event,$(USEMODULE)))
+  # Needed only if using event and not simple callbacks
+  CFLAGS += -DSOCK_HAS_ASYNC_CTX
+endif
 endif
 
 # In OpenWSN the ISR stack is shared with the network stack. OpenWSN stack is
