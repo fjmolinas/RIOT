@@ -42,7 +42,7 @@ USEMODULE += sock_async
 ## Enable Constrained Join Protocol (CoJP)
 USEMODULE += openwsn_cjoin
 ## Enable 6lowpan fragmentation
-USEMODULE += openwsn_6lo_frag
+# USEMODULE += openwsn_6lo_frag
 ## Enable link layer security
 # USEMODULE += openwsn_iee802154e_security
 ## Enable MSF dynamic slot allocation
@@ -82,9 +82,13 @@ USEMODULE += ps
 USEMODULE += od_string
 USEMODULE += shell
 USEMODULE += shell_commands
+USEMODULE += gcoap
 
 # ztimer is used instead of xtimer because it's a dependency of some
 # OpenWSN modules.
 USEMODULE += ztimer_usec
+
+# Account for higher 6TSCH latency by increasing GCOAP timeout
+CFLAGS += -DCONFIG_GCOAP_NON_TIMEOUT=10000000
 
 include $(RIOTBASE)/Makefile.include
