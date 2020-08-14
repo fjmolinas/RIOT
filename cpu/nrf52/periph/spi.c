@@ -43,11 +43,13 @@ static mutex_t locks[SPI_NUMOF];
  * @brief   array with a busy mutex for each SPI device, used to block the
  *          thread until the transfer is done
  */
-static mutex_t busy[SPI_NUMOF];
+// static mutex_t busy[SPI_NUMOF];
 
 static uint8_t _mbuf[SPI_NUMOF][CONFIG_SPI_MBUF_SIZE];
 
 static void spi_isr_handler(void *arg);
+
+static volatile uint8_t tx_ongoing;
 
 static inline NRF_SPIM_Type *dev(spi_t bus)
 {
@@ -128,8 +130,9 @@ void spi_init(spi_t bus)
 
     /* initialize mutex */
     mutex_init(&locks[bus]);
-    mutex_init(&busy[bus]);
-    mutex_lock(&busy[bus]);
+    // mutex_init(&busy[bus]);
+    // mutex_lock(&busy[bus]);
+    tx_ongoing = 0;
     /* initialize pins */
     spi_init_pins(bus);
 }
@@ -196,6 +199,7 @@ static size_t _transfer(spi_t bus, const uint8_t *out_buf, uint8_t *in_buf,
     dev(bus)->RXD.MAXCNT = in_len;
 
     /* clear any spurious END events */
+    tx_ongoing = 1;
     dev(bus)->EVENTS_END = 0;
     dev(bus)->TASKS_START = 1;
     return transfer_len;
@@ -223,15 +227,17 @@ void spi_transfer_bytes(spi_t bus, spi_cs_t cs, bool cont,
     dev(bus)->INTENSET = SPIM_INTENSET_END_Msk;
 
     do {
+        while(tx_ongoing) {};
         size_t transfer_len = _transfer(bus, out_buf, in_buf, len);
         /* Block until the irq releases the mutex, then lock it again for the
          * next transfer */
-        mutex_lock(&busy[bus]);
+        // mutex_lock(&busy[bus]);
         out_buf += out_buf ? transfer_len : 0;
         in_buf += in_buf ? transfer_len : 0;
         len -= transfer_len;
     } while (len);
 
+    while(tx_ongoing) {};
     /* Disable IRQ */
     dev(bus)->INTENCLR = SPIM_INTENCLR_END_Msk;
 
@@ -252,7 +258,7 @@ void spi_transfer_bytes(spi_t bus, spi_cs_t cs, bool cont,
 void spi_isr_handler(void *arg)
 {
     spi_t bus = (spi_t)arg;
-
-    mutex_unlock(&busy[bus]);
+    // mutex_unlock(&busy[bus]);
     dev(bus)->EVENTS_END = 0;
+    tx_ongoing = 0;
 }
