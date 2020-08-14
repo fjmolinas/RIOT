@@ -1,0 +1,6 @@
+/**
+ * @defgroup pkg_uwb_core Device driver model for the Decawave Impulse Radio-Ultra Wideband (IR-UWB) transceiver(s) 
+ * @ingroup  pkg
+ * @brief    Hardware and architecture agnostic platform for IoT Location Based Services (LBS)
+ * @see      https://github.com/Decawave/uwb-core
+ */

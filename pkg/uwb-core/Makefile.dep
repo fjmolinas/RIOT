@@ -1,0 +1,18 @@
+USEMODULE += uwb-core_dpl
+USEMODULE += uwb-core_contrib
+
+DEFAULT_MODULE += auto_init_uwb-core
+
+USEMODULE += sema
+USEMODULE += event_callback
+USEMODULE += xtimer
+USEMODULE += fmt
+
+FEATURES_REQUIRED += periph_gpio_irq
+FEATURES_REQUIRED += periph_spi
+
+ifneq (,$(filter uwb-core_rng,$(USEMODULE)))
+  USEMODULE += uwb-core_rng_math
+  USEMODULE += uwb-core_dsp
+  USEMODULE += uwb-core_uwb_json
+endif
