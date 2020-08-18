@@ -183,7 +183,7 @@ static void test_get_by_pid(void)
     }
 }
 
-static void test_addr_to_str(void)
+static void test_gnrc_addr_to_str(void)
 {
     static const uint8_t ethernet_l2addr[] = ETHERNET_SRC;
     static const uint8_t ieee802154_l2addr_long[] = IEEE802154_LONG_SRC;
@@ -210,7 +210,7 @@ static void test_addr_to_str(void)
     TEST_ASSERT_EQUAL_STRING("3E:E7:B5:0F:19:22:FD:0A", &out[0]);
 }
 
-static void test_addr_from_str(void)
+static void test_gnrc_addr_from_str(void)
 {
     static const uint8_t ethernet_l2addr[] = ETHERNET_SRC;
     static const uint8_t ieee802154_l2addr_long[] = IEEE802154_LONG_SRC;
@@ -1104,6 +1104,56 @@ static void test_netapi_set__SRC_LEN(void)
                 sizeof(orig_ieee802154)));
 }
 
+static void test_netif_addr_to_str(void)
+{
+    static const uint8_t ethernet_l2addr[] = ETHERNET_SRC;
+    static const uint8_t ieee802154_l2addr_long[] = IEEE802154_LONG_SRC;
+    static const uint8_t ieee802154_l2addr_short[] = IEEE802154_SHORT_SRC;
+    static const uint8_t netif0_l2addr[] = NETIF0_SRC;
+    char out[sizeof(netif0_l2addr) * 3];
+
+    TEST_ASSERT(out == netif_addr_to_str(NULL, 0, out));
+    TEST_ASSERT_EQUAL_STRING("", &out[0]);
+    TEST_ASSERT(out == netif_addr_to_str(ethernet_l2addr,
+                                              sizeof(ethernet_l2addr), out));
+    TEST_ASSERT_EQUAL_STRING("3E:E6:B5:22:FD:0A", &out[0]);
+    TEST_ASSERT(out == netif_addr_to_str(ieee802154_l2addr_long,
+                                              sizeof(ieee802154_l2addr_long),
+                                              out));
+    TEST_ASSERT_EQUAL_STRING("3E:E6:B5:0F:19:22:FD:0A", &out[0]);
+    TEST_ASSERT(out == netif_addr_to_str(ieee802154_l2addr_short,
+                                              sizeof(ieee802154_l2addr_short),
+                                              out));
+    TEST_ASSERT_EQUAL_STRING("FD:0A", &out[0]);
+    TEST_ASSERT(out == netif_addr_to_str(netif0_l2addr,
+                                              sizeof(netif0_l2addr),
+                                              out));
+    TEST_ASSERT_EQUAL_STRING("3E:E7:B5:0F:19:22:FD:0A", &out[0]);
+}
+
+static void test_netif_addr_from_str(void)
+{
+    static const uint8_t ethernet_l2addr[] = ETHERNET_SRC;
+    static const uint8_t ieee802154_l2addr_long[] = IEEE802154_LONG_SRC;
+    static const uint8_t ieee802154_l2addr_short[] = IEEE802154_SHORT_SRC;
+    uint8_t out[GNRC_NETIF_L2ADDR_MAXLEN];
+
+    TEST_ASSERT_EQUAL_INT(0, netif_addr_from_str("", out));
+    TEST_ASSERT_EQUAL_INT(sizeof(ethernet_l2addr),
+                          netif_addr_from_str("3E:E6:B5:22:FD:0A", out));
+    TEST_ASSERT_EQUAL_INT(0, memcmp(ethernet_l2addr, out,
+                                    sizeof(ethernet_l2addr)));
+    TEST_ASSERT_EQUAL_INT(sizeof(ieee802154_l2addr_long),
+                          netif_addr_from_str("3E:E6:B5:0F:19:22:FD:0A",
+                                                   out));
+    TEST_ASSERT_EQUAL_INT(0, memcmp(ieee802154_l2addr_long, out,
+                                    sizeof(ieee802154_l2addr_long)));
+    TEST_ASSERT_EQUAL_INT(sizeof(ieee802154_l2addr_short),
+                          netif_addr_from_str("FD:0A", out));
+    TEST_ASSERT_EQUAL_INT(0, memcmp(ieee802154_l2addr_short, out,
+                                    sizeof(ieee802154_l2addr_short)));
+}
+
 static void test_netif_iter(void)
 {
     netif_t *netif = NULL;
@@ -1520,8 +1570,8 @@ static Test *embunit_tests_gnrc_netif(void)
     EMB_UNIT_TESTFIXTURES(fixtures) {
         new_TestFixture(test_creation),
             new_TestFixture(test_get_by_pid),
-            new_TestFixture(test_addr_to_str),
-            new_TestFixture(test_addr_from_str),
+            new_TestFixture(test_gnrc_addr_to_str),
+            new_TestFixture(test_gnrc_addr_from_str),
             new_TestFixture(test_ipv6_addr_add__ENOMEM),
             new_TestFixture(test_ipv6_addr_add__success),
             new_TestFixture(test_ipv6_addr_add__readd_with_free_entry),
@@ -1584,6 +1634,8 @@ static Test *embunit_tests_gnrc_netif(void)
             new_TestFixture(test_netapi_set__ADDRESS),
             new_TestFixture(test_netapi_set__ADDRESS_LONG),
             new_TestFixture(test_netapi_set__SRC_LEN),
+            new_TestFixture(test_netif_addr_to_str),
+            new_TestFixture(test_netif_addr_from_str),
             new_TestFixture(test_netif_iter),
             new_TestFixture(test_netif_get_name),
             new_TestFixture(test_netif_get_by_name),
