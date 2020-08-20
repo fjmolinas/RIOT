@@ -41,6 +41,10 @@
 static at86rf2xx_t at86rf2xx_dev;
 #endif
 
+#ifndef MODULE_OPENWSN_SCHEDULER
+event_queue_t queue;
+#endif
+
 static char _stack[OPENWSN_SCHED_STACKSIZE];
 
 static kernel_pid_t _pid = KERNEL_PID_UNDEF;
@@ -105,14 +109,35 @@ int openwsn_bootstrap(void)
     return _pid;
 }
 
+// static void _event_loop_init(void)
+// {
+//     if (IS_USED(MODULE_OPENWSN_SCHEDULER)) {
+//         LOG_DEBUG("[openwsn]: init scheduler\n");
+//         scheduler_init();
+//     } else {
+//         LOG_DEBUG("[openwsn]: init event queue\n");
+//         event_queue_init(&queue);
+//     }
+// }
+
+// static void _event_loop_run(unsigned irq_state)
+// {
+//     if (IS_USED(MODULE_OPENWSN_SCHEDULER)) {
+//         LOG_DEBUG("[openwsn]: start scheduler loop\n");
+//         scheduler_start(irq_state);
+//     } else {
+//         LOG_DEBUG("[openwsn]: init event queue\n");
+//         irq_restore(irq_state);
+//         event_loop(&queue);
+//     }
+// }
+
 static void *_event_loop(void *arg)
 {
     (void)arg;
-
     LOG_DEBUG("[openwsn]: init scheduler\n");
     scheduler_init();
-    LOG_DEBUG("[openwsn]: init openstack\n");
-    /* Disable IRQ while scheduler is not ready to start */
+    /* Disable IRQ while scheduler/queue is not ready to start */
     unsigned irq_state = irq_disable();
     openstack_init();
     LOG_DEBUG("[openwsn]: start scheduler loop\n");

@@ -14,6 +14,7 @@ IGNORE_MODULES  := openwsn_leds \
                    openwsn_icmpv6_echo \
                    openwsn_iee802154e_security \
                    openwsn_radio \
+                   openwsn_stack \
                    openwsn_serial \
                    openwsn_sctimer \
                    openwsn_sctimer_rtt \
@@ -36,6 +37,7 @@ CFLAGS += -Wno-return-type
 CFLAGS += -Wno-sign-compare
 CFLAGS += -Wno-unused-parameter
 CFLAGS += -Wno-strict-prototypes
+CFLAGS += -Wno-unused-variable
 CFLAGS += -DLOG_LEVEL=$(OPENWSN_LOG_LEVEL)
 
 OPENWSN_PATH_openstack      = openstack
@@ -43,6 +45,7 @@ OPENWSN_PATH_openapps       = openapps
 OPENWSN_PATH_openweb        = openweb
 OPENWSN_PATH_drivers        = drivers/common
 OPENWSN_PATH_crypto         = drivers/common/crypto
+OPENWSN_PATH_openos         = kernel/openos
 OPENWSN_PATH_openos         = kernel/openos
 OPENWSN_PATH_riotos         = kernel/riotos
 OPENWSN_PATH_cjoin          = openapps/cjoin

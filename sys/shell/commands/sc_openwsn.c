@@ -35,14 +35,19 @@
 
 #include "02a-MAClow/IEEE802154E.h"
 #include "02b-MAChigh/neighbors.h"
+<<<<<<< HEAD
 #include "02b-MAChigh/sixtop.h"
 #include "02b-MAChigh/msf.h"
+=======
+>>>>>>> 6f7b7b86a... wip: working mac isolation
 #ifdef MODULE_OPENWSN_IPV6
 #include "03b-IPv6/icmpv6rpl.h"
 #endif
 #ifdef MODULE_OPENWSN_CJOIN
 #include "cjoin.h"
 #endif
+
+#include "openwsn_sap.h"
 
 extern idmanager_vars_t idmanager_vars;
 extern neighbors_vars_t neighbors_vars;
@@ -137,7 +142,7 @@ int _openwsn_ifconfig(char *arg)
     printf("\n");
 
 #ifdef MODULE_OPENWSN_IPV6
-    if (idmanager_vars.isDAGroot) {
+    if (idmanager_vars.role == ROLE_PAN_COORDINATOR) {
         puts("\t\tNode is DAG root");
     }
     else {
@@ -165,7 +170,10 @@ int _openwsn_ifconfig(char *arg)
         }
     }
 #endif
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6f7b7b86a... wip: working mac isolation
     return 0;
 }
 
@@ -270,14 +278,8 @@ static int _cell_manage_cmd(int argc, char **argv)
         return -1;
     }
 
-    if (add) {
-        res = schedule_addActiveSlot(atoi(argv[2]), type, true, false,
-                                     atoi(argv[3]), &addr);
-    }
-    else {
-        res = schedule_removeActiveSlot(atoi(argv[2]), type, true,
-                                        &addr);
-    }
+    res = openwsn_mlme_set_link_request(add, atoi(argv[2]), type,
+                                        true, atoi(argv[3]), addr);
 
     if (res == 0) {
         puts("Successfully set link");

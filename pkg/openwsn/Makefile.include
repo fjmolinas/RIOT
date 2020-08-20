@@ -40,6 +40,8 @@ ifneq (,$(filter openwsn_riotos,$(USEMODULE)))
   INCLUDES += -I$(PKGDIRBASE)/openwsn/kernel/riotos
 endif
 
+DIRS += $(RIOTBASE)/pkg/openwsn/contrib
+
 # Set OpenWSN configurations flags, see $(PKG_SOURCE_DIR)/openwsn-fw/inc/config.h
 
 ifneq (,$(filter openwsn_cjoin,$(USEMODULE)))
