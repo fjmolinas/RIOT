@@ -846,6 +846,15 @@ ifneq (,$(filter sock_async_event,$(USEMODULE)))
   USEMODULE += event
 endif
 
+ifneq (,$(filter sock_async,$(USEMODULE)))
+  ifneq (,$(filter gnrc%,$(USEMODULE)))
+    USEMODULE += gnrc_sock_async
+  endif
+  ifneq (,$(filter openwsn%,$(USEMODULE)))
+    USEMODULE += openwsn_sock_async
+  endif
+endif
+
 ifneq (,$(filter sock_dns,$(USEMODULE)))
   USEMODULE += sock_util
   USEMODULE += posix_headers
@@ -905,12 +914,6 @@ ifneq (,$(filter gcoap,$(USEMODULE)))
   USEMODULE += sock_util
   USEMODULE += event_callback
   USEMODULE += event_timeout
-ifneq (,$(filter gnrc%,$(USEMODULE)))
-  USEMODULE += gnrc_sock_async
-endif
-ifneq (,$(filter openwsn%,$(USEMODULE)))
-  USEMODULE += openwsn_sock_udp
-endif
 endif
 
 ifneq (,$(filter luid,$(USEMODULE)))
