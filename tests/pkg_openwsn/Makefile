@@ -16,10 +16,9 @@ BOARD_WHITELIST = \
 USEPKG += openwsn
 USEMODULE += openwsn_openstack
 USEMODULE += openwsn_scheduler
-USEMODULE += sock_udp
 # Optional OpenWSN Modules
 ## Enable Constrained Join Protocol (CoJP)
-USEMODULE += openwsn_cjoin
+# USEMODULE += openwsn_cjoin
 ## Enable 6lowpan fragmentation
 # USEMODULE += openwsn_6lo_frag
 ## Enable link layer security
@@ -62,9 +61,15 @@ USEMODULE += ps
 USEMODULE += od_string
 USEMODULE += shell
 USEMODULE += shell_commands
+USEMODULE += gcoap
+
 # ztimer is used instead of xtimer because it's a dependency of some
 # OpenWSN modules.
 USEMODULE += ztimer_usec
+
+CFLAGS += -DIEEE802154E_SINGLE_CHANNEL=17
+CFLAGS += -DEB_PORTION=4
+CFLAGS += -DCONFIG_GCOAP_NON_TIMEOUT=10000000
 
 include $(RIOTBASE)/Makefile.include
 

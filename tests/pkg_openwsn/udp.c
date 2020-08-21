@@ -28,6 +28,7 @@
 #include "ztimer.h"
 #include "net/ipv6.h"
 #include "net/sock/udp.h"
+#include "net/sock/async.h"
 #include "od.h"
 
 #include "opendefs.h"
@@ -50,7 +51,9 @@ void _sock_udp_handler(sock_udp_t *sock, sock_async_flags_t type, void *arg)
         int16_t res;
 
         if ((res = sock_udp_recv(sock, buf, sizeof(buf), 0, &remote)) >= 0) {
-            printf("Received %i bytes on port %i\n", res, remote.port);
+            sock_udp_ep_t local;
+            sock_udp_get_local(&_sock_udp, &local);
+            printf("Received %i bytes on port %i\n", res, local.port);
             od_hex_dump(buf, res, OD_WIDTH_DEFAULT);
         }
     }
@@ -185,9 +188,8 @@ int udp_cmd(int argc, char **argv)
                 return 1;
             }
             uint16_t port = atoi(argv[3]);
-            sock_udp_ep_t local;
-            sock_udp_get_local(&_sock_udp, &local);
-            local.port = port;
+            /* TODO: dont access internals */
+            _sock_udp.gen_sock.local.port = port;
             printf("Set UDP server port to %" PRIu16 "\n", port);
             return 0;
         }
