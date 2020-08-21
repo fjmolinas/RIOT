@@ -15,6 +15,8 @@ IGNORE_MODULES  := openwsn_leds \
                    openwsn_iee802154e_security \
                    openwsn_radio \
                    openwsn_sock_udp \
+                   openwsn_sock \
+                   openwsn_sock_async \
                    openwsn_serial \
                    openwsn_sctimer \
                    openwsn_sctimer_rtt \
