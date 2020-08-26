@@ -16,6 +16,9 @@ ifneq (,$(filter openwsn_openstack,$(USEMODULE)))
   DEFAULT_MODULE += auto_init_openwsn
 
   USEMODULE += luid
+  ifneq (,$(filter shell_commands,$(USEMODULE)))
+    USEMODULE += ipv6_addr
+  endif
   USEMODULE += netdev_default
 endif
 
