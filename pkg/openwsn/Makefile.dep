@@ -80,6 +80,8 @@ endif
 
 ifneq (,$(filter openwsn_sock%,$(USEMODULE)))
   USEMODULE += openwsn_sock
+  USEMODULE += core_mbox
+  USEMODULE += ztimer_usec
 endif
 
 ifneq (,$(filter openwsn_sock_async,$(USEMODULE)))
