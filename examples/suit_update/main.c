@@ -93,7 +93,6 @@ int main(void)
     gpio_init_int(BTN0_PIN, BTN0_MODE, GPIO_FALLING, cb, NULL);
 #endif
 
-
     /* start suit coap updater thread */
     suit_coap_run();
 
