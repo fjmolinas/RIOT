@@ -12,25 +12,62 @@ RIOTBASE ?= $(CURDIR)/../..
 #
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
+USE_GNRC ?= 0
 
-# uncomment this to compile in support for a possibly available radio
-#USEMODULE += gnrc_netdev_default
+ifeq (1,$(USE_GNRC))
+  # lower pktbuf size to something sufficient for this application
+  # Set GNRC_PKTBUF_SIZE via CFLAGS if not being set via Kconfig.
+  ifndef CONFIG_GNRC_PKTBUF_SIZE
+    CFLAGS += -DCONFIG_GNRC_PKTBUF_SIZE=2000
+  endif
 
-USEMODULE += auto_init_gnrc_netif
-# Specify the mandatory networking modules for IPv6 and UDP
-USEMODULE += gnrc_ipv6_router_default
-USEMODULE += sock_udp
-# Additional networking modules that can be dropped if not needed
-USEMODULE += gnrc_icmpv6_echo
+  #
+  # Networking
+  #
+  # Include packages that pull up and auto-init the link layer.
+  # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
+
+  # uncomment this to compile in support for a possibly available radio
+  USEMODULE += gnrc_netdev_default
+
+  USEMODULE += auto_init_gnrc_netif
+  # Specify the mandatory networking modules for IPv6 and UDP
+  USEMODULE += gnrc_ipv6_router_default
+  USEMODULE += gnrc_udp
+  USEMODULE += gnrc_sock_udp
+  # Additional networking modules that can be dropped if not needed
+  USEMODULE += gnrc_icmpv6_echo
+endif
+
+USE_OPENWSN ?= 0
+
+ifeq (1, $(USE_OPENWSN))
+  USEPKG += openwsn
+  USEMODULE += openwsn_openstack
+  USEMODULE += openwsn_scheduler
+  USEMODULE += openwsn_6lo_frag
+  USEMODULE += openwsn_leds
+  USEMODULE += openwsn_debugpins
+  USEMODULE += openwsn_adaptive_msf
+
+  CFLAGS += -DIEEE802154E_SINGLE_CHANNEL=17
+  CFLAGS += -DEB_PORTION=4
+  CFLAGS += -DCONFIG_COAP_ACK_TIMEOUT=10
+  CFLAGS += -DCONFIG_COAP_MAX_RETRANSMIT=2
+
+  # Reduce threshold for adaptative msf to take place
+  CFLAGS += -DLIM_NUMCELLSUSED_HIGH=18
+endif
 
 # include this for printing IP addresses
 USEMODULE += shell
 USEMODULE += shell_commands
+USEMODULE += ps
 
 # Set this to 1 to enable code in RIOT that does safety checking
 # which is not needed in a production environment but helps in the
 # development process:
-DEVELHELP ?= 0
+DEVELHELP ?= 1
 
 # Change this to 0 show compiler invocation lines by default:
 QUIET ?= 1
@@ -38,7 +75,6 @@ QUIET ?= 1
 #
 # SUIT update specific stuff
 #
-
 USEMODULE += nanocoap_sock sock_util
 USEMODULE += suit suit_transport_coap suit_storage_flashwrite
 
@@ -55,9 +91,9 @@ CFLAGS += -DSUIT_MANIFEST_RESOURCE=\"$(SUIT_COAP_ROOT)/$(SUIT_NOTIFY_MANIFEST)\"
 DEFAULT_MODULE += test_utils_interactive_sync
 
 # Change this to 0 to not use ethos
-USE_ETHOS ?= 1
+USE_ETHOS ?= 0
 
-ifeq (1,$(USE_ETHOS))
+ifeq (1, $(USE_ETHOS))
   USEMODULE += stdio_ethos
   USEMODULE += gnrc_uhcpc
 
