@@ -20,11 +20,11 @@ USEMODULE += openwsn_scheduler
 ## Enable Constrained Join Protocol (CoJP)
 # USEMODULE += openwsn_cjoin
 ## Enable 6lowpan fragmentation
-# USEMODULE += openwsn_6lo_frag
+USEMODULE += openwsn_6lo_frag
 ## Enable link layer security
 # USEMODULE += openwsn_iee802154e_security
 ## Enable MSF dynamic slot allocation
-# USEMODULE += openwsn_adaptive_msf
+USEMODULE += openwsn_adaptive_msf
 
 ## Optional Module, but required for root nodes
 # USEMODULE += openwsn_serial
