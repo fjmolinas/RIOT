@@ -43,11 +43,15 @@ ifeq (1, $(USE_OPENWSN))
   USEMODULE += openwsn_6lo_frag
   USEMODULE += openwsn_leds
   USEMODULE += openwsn_debugpins
+  USEMODULE += openwsn_adaptive_msf
 
   CFLAGS += -DIEEE802154E_SINGLE_CHANNEL=17
   CFLAGS += -DEB_PORTION=4
   CFLAGS += -DCONFIG_COAP_ACK_TIMEOUT=10
   CFLAGS += -DCONFIG_COAP_MAX_RETRANSMIT=2
+
+  # Reduce threshold for adaptative msf to take place
+  CFLAGS += -DLIM_NUMCELLSUSED_HIGH=18
 endif
 
 # include this for printing IP addresses
