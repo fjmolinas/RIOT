@@ -47,7 +47,7 @@ typedef struct dw1000_dev_cfg dw1000_params_t;
  */
 typedef struct {
     netdev_ieee802154_t netdev;        /**< Netdev parent struct */
-    dw1000_dev_instance_t dev;         /**< dwDevice parent struct */
+    dw1000_dev_instance_t inst;         /**< dwDevice parent struct */
 } dw1000_t;
 
 #ifdef __cplusplus
