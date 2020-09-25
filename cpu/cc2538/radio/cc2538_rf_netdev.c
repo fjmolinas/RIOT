@@ -24,6 +24,7 @@
 #include "net/gnrc.h"
 #include "net/netdev.h"
 
+#include "cpu.h"
 #include "cc2538_rf.h"
 #include "cc2538_rf_netdev.h"
 #include "cc2538_rf_internal.h"
@@ -32,15 +33,7 @@
 #include "debug.h"
 
 /* Reference pointer for the IRQ handler */
-static netdev_t *_dev;
-
-void cc2538_irq_handler(void)
-{
-    RFCORE_SFR_RFIRQF0 = 0;
-    RFCORE_SFR_RFIRQF1 = 0;
-
-    netdev_trigger_event_isr(_dev);
-}
+static cc2538_rf_t *_dev;
 
 static int _get(netdev_t *netdev, netopt_t opt, void *value, size_t max_len)
 {
@@ -127,6 +120,15 @@ static int _get(netdev_t *netdev, netopt_t opt, void *value, size_t max_len)
             }
             *((netopt_state_t *)value) = dev->state;
             return sizeof(netopt_state_t);
+
+        case NETOPT_PRELOADING:
+            if (dev->flags & CC2538_OPT_PRELOADING) {
+                *((netopt_enable_t *)value) = NETOPT_ENABLE;
+            }
+            else {
+                *((netopt_enable_t *)value) = NETOPT_DISABLE;
+            }
+            return sizeof(netopt_enable_t);
 
         case NETOPT_TX_POWER:
             if (max_len < sizeof(int16_t)) {
@@ -237,6 +239,12 @@ static int _set(netdev_t *netdev, netopt_t opt, const void *value, size_t value_
             res = sizeof(netopt_state_t);
             break;
 
+        case NETOPT_PRELOADING:
+            dev->flags = (((const bool *)value)[0]) ? (dev->flags | CC2538_OPT_PRELOADING)
+                         : (dev->flags & ~CC2538_OPT_PRELOADING);
+            res = sizeof(netopt_enable_t);
+            break;
+
         case NETOPT_TX_POWER:
             if (value_len > sizeof(int16_t)) {
                 return -EOVERFLOW;
@@ -259,7 +267,7 @@ static int _set(netdev_t *netdev, netopt_t opt, const void *value, size_t value_
 
 static int _send(netdev_t *netdev, const iolist_t *iolist)
 {
-    (void) netdev;
+    cc2538_rf_t *dev = (cc2538_rf_t *) netdev;
 
     int pkt_len = 0;
 
@@ -287,12 +295,20 @@ static int _send(netdev_t *netdev, const iolist_t *iolist)
     /* Set first byte of TX FIFO to the packet length */
     rfcore_poke_tx_fifo(0, pkt_len + CC2538_AUTOCRC_LEN);
 
-    RFCORE_SFR_RFST = ISTXON;
-
-    /* Wait for transmission to complete */
-    RFCORE_WAIT_UNTIL(RFCORE->XREG_FSMSTAT1bits.TX_ACTIVE == 0);
+    if (!(dev->flags & CC2538_OPT_PRELOADING)) {
+        cc2538_tx_exec(dev);
+    }
 
     return pkt_len;
+}
+
+static void _rx_end(netdev_t *netdev)
+{
+    (void) netdev;
+    /* flush the RX fifo*/
+    RFCORE_SFR_RFST = ISFLUSHRX;
+    /* go back to receiving */
+    RFCORE_SFR_RFST = ISRXON;
 }
 
 static int _recv(netdev_t *netdev, void *buf, size_t len, void *info)
@@ -303,32 +319,42 @@ static int _recv(netdev_t *netdev, void *buf, size_t len, void *info)
 
     if (buf == NULL) {
         /* Check that the last byte of a new frame has been received */
-        if (RFCORE->XREG_FSMSTAT1bits.FIFOP == 0) {
+        if (RFCORE->XREG_FSMSTAT1bits.FIFOP == 0 && \
+            RFCORE->XREG_FSMSTAT1bits.FIFO == 1) {
             DEBUG_PRINT("cc2538_rf: Frame has not finished being received\n");
             return -EAGAIN;
         }
 
+        printf("[cc2538_rf] FIFOCNT %"PRIu32"\n", RFCORE_XREG_RXFIFOCNT);
+
+        if(RFCORE_XREG_RXFIFOCNT == 0) {
+            /* The FIFO is empty*/
+        printf("cc2538_rf: empty fifo\n");
+            _rx_end(netdev);
+            return -ENODATA;
+        }
+        printf("cc2538_rf: not empty\n");
+
         /* GNRC wants to know how much data we've got for it */
         pkt_len = rfcore_read_byte();
-
         /* Make sure pkt_len is sane */
         if (pkt_len > CC2538_RF_MAX_DATA_LEN) {
-            DEBUG_PRINT("cc2538_rf: pkt_len > CC2538_RF_MAX_DATA_LEN\n");
-            RFCORE_SFR_RFST = ISFLUSHRX;
+            printf("cc2538_rf: not sane\n");
+            _rx_end(netdev);
             return -EOVERFLOW;
         }
 
         /* Make sure pkt_len is not too short.
          * There are at least 2 bytes (FCS). */
         if (pkt_len < IEEE802154_FCS_LEN) {
-            DEBUG_PRINT("cc2538_rf: pkt_len < IEEE802154_FCS_LEN\n");
-            RFCORE_SFR_RFST = ISFLUSHRX;
+            printf("cc2538_rf: too short\n");
+            _rx_end(netdev);
             return -ENODATA;
         }
 
         if (len > 0) {
             /* GNRC wants us to drop the packet */
-            RFCORE_SFR_RFST = ISFLUSHRX;
+            _rx_end(netdev);
         }
 
         return pkt_len - IEEE802154_FCS_LEN;
@@ -342,13 +368,6 @@ static int _recv(netdev_t *netdev, void *buf, size_t len, void *info)
 
     int8_t rssi_val = rfcore_read_byte() + CC2538_RSSI_OFFSET;
     uint8_t crc_corr_val = rfcore_read_byte();
-
-    /* CRC check */
-    if (!(crc_corr_val & CC2538_CRC_BIT_MASK)) {
-        /* CRC failed; discard packet */
-        RFCORE_SFR_RFST = ISFLUSHRX;
-        return -ENODATA;
-    }
 
     if (info != NULL) {
         netdev_ieee802154_rx_info_t *radio_info = info;
@@ -373,25 +392,61 @@ static int _recv(netdev_t *netdev, void *buf, size_t len, void *info)
     }
 
     /* Check for overflow of the rx fifo */
-    if (RFCORE->XREG_FSMSTAT1bits.FIFOP != 0 &&
-        RFCORE->XREG_FSMSTAT1bits.FIFO == 0)
-    {
-        DEBUG_PRINT("cc2538_rf: RXFIFO Overflow\n");
-        RFCORE_SFR_RFST = ISFLUSHRX;
-    }
+    _rx_end(netdev);
 
     return pkt_len;
 }
 
+void isr_rfcorerxtx(void)
+{
+    netdev_trigger_event_isr((netdev_t *)&_dev->netdev);
+
+    cortexm_isr_end();
+}
+
+
 static void _isr(netdev_t *netdev)
 {
-    netdev->event_callback(netdev, NETDEV_EVENT_RX_COMPLETE);
+    uint8_t irq_mask_0 = (uint8_t) RFCORE_SFR_RFIRQF0;
+    uint8_t irq_mask_1 = (uint8_t) RFCORE_SFR_RFIRQF1;
+
+    RFCORE_SFR_RFIRQF0 = 0;
+    RFCORE_SFR_RFIRQF1 = 0;
+
+    DEBUG("[cc2538_rf] RFIRQF0 %02x\n", irq_mask_0 );
+    DEBUG("[cc2538_rf] RFIRQF1 %02x\n", irq_mask_1 );
+
+    if (irq_mask_0 & SFD) {
+        if (RFCORE->XREG_FSMSTAT1bits.RX_ACTIVE) {
+            DEBUG_PUTS("[cc2538_rf] EVT - RX_STARTED");
+            netdev->event_callback(netdev, NETDEV_EVENT_RX_STARTED);
+        }
+    }
+    if (irq_mask_1 & TXDONE) {
+        netdev->event_callback(netdev, NETDEV_EVENT_TX_COMPLETE);
+        DEBUG_PUTS("[cc2538_rf] EVT - TX_COMPLETE");
+    }
+    if (irq_mask_0 & (RXPKTDONE | FIFOP)) {
+        /* CRC check */
+        uint8_t pkt_len = rfcore_peek_rx_fifo(0);
+        if (rfcore_peek_rx_fifo(pkt_len) & CC2538_CRC_BIT_MASK) {
+            /* Disable RX while the frame has not been processed */
+            RFCORE_XREG_RXMASKCLR = 0xFF;
+            printf("[cc2538_rf] EVT - RX_COMPLETE %d %"PRIu32"\n", pkt_len, RFCORE_XREG_RXFIFOCNT);
+            netdev->event_callback(netdev, NETDEV_EVENT_RX_COMPLETE);
+        }
+        else {
+            /* CRC failed; discard packet */
+            netdev->event_callback(netdev, NETDEV_EVENT_CRC_ERROR);
+            RFCORE_SFR_RFST = ISFLUSHRX;
+        }
+    }
 }
 
 static int _init(netdev_t *netdev)
 {
     cc2538_rf_t *dev = (cc2538_rf_t *) netdev;
-    _dev = netdev;
+    _dev = dev;
 
     uint16_t chan = cc2538_get_chan();
 

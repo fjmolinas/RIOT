@@ -25,10 +25,12 @@
 #include "cc2538_rf.h"
 #include "cc2538_rf_netdev.h"
 
+#include "ztimer.h"
+
 #define ENABLE_DEBUG    (0)
 #include "debug.h"
 
-/*
+/**
  * @brief MAC timer period
  *
  * The period is set to the CSMA-CA Backoff Period Unit (20 symbols, 320 us).
@@ -38,40 +40,50 @@
 #define TIMER_PERIOD_LSB           (0xF2)
 #define TIMER_PERIOD_MSB           (0x29)
 
-typedef struct {
-    cc2538_reg_t *reg_addr;
-    uint32_t value;
-} init_pair_t;
+/**
+ * @brief MAC timer period
+ *
+ * The period is set to the CSMA-CA Backoff Period Unit (20 symbols, 320 us).
+ * The system clock runs at 32 MHz. Thus, the timeout period is
+ * 320us * 32MHz = ~10738 (0x29F2)
+ */
+#define CCTEST_OBSSELX_EN           (BIT(7))
 
-static const init_pair_t init_table[] = {
-    {&SYS_CTRL_RCGCRFC,      0x01                     },
-    {&SYS_CTRL_SCGCRFC,      0x01                     },
-    {&SYS_CTRL_DCGCRFC,      0x01                     },
-    {&RFCORE_XREG_CCACTRL0,  0xf8                     },
-    {&RFCORE_XREG_TXFILTCFG, 0x09                     },
-    {&RFCORE_XREG_AGCCTRL1,  0x15                     },
-    {&ANA_REGS_IVCTRL,       0x0b                     },
-    {&RFCORE_XREG_MDMTEST1,  0x08                     },
-    {&RFCORE_XREG_FSCAL1,    0x01                     },
-    {&RFCORE_XREG_RXCTRL,    0x3f                     },
-    {&RFCORE_XREG_MDMCTRL1,  0x14                     },
-    {&RFCORE_XREG_ADCTEST0,  0x10                     },
-    {&RFCORE_XREG_ADCTEST1,  0x0e                     },
-    {&RFCORE_XREG_ADCTEST2,  0x03                     },
-    {&RFCORE_XREG_CSPT,      0xff                     },
-    {&RFCORE_XREG_MDMCTRL0,  0x85                     },
-    {&RFCORE_XREG_FSCTRL,    0x55                     },
-    {&RFCORE_XREG_FRMCTRL0,  AUTOCRC | AUTOACK        },
-    {&RFCORE_XREG_FRMCTRL1,  0x00                     },
-    {&RFCORE_XREG_SRCMATCH,  0x00                     },
-    {&RFCORE_XREG_FIFOPCTRL, CC2538_RF_MAX_DATA_LEN   },
-    {&RFCORE_XREG_RFIRQM0,   FIFOP | RXPKTDONE        },
-#if IS_USED(MODULE_IEEE802154_RADIO_HAL)
-    {&RFCORE_XREG_RFIRQM1,   TXDONE | CSP_STOP        },
-#endif
-    {&RFCORE_XREG_RFERRM,    STROBE_ERR | TXUNDERF | TXOVERF | RXUNDERF | RXOVERF | NLOCK},
-    {NULL, 0},
-};
+static void _cc2538_setup_mac_timer(void)
+{
+    RFCORE_SFR_MTMSEL &= ~CC2538_SFR_MTMSEL_MASK;
+    /* Select timer period */
+    RFCORE_SFR_MTMSEL |= CC2538_SFR_MTMSEL_TIMER_P;
+
+    /* Fix timer to Backoff period */
+    RFCORE_SFR_MTM0 |= TIMER_PERIOD_LSB;
+    RFCORE_SFR_MTM1 |= TIMER_PERIOD_MSB;
+
+    RFCORE_SFR_MTMSEL &= ~CC2538_SFR_MTMSEL_MASK;
+    RFCORE_SFR_MTCTRL |= CC2538_MCTRL_SYNC_MASK | CC2538_MCTRL_RUN_MASK;
+}
+
+static void _cc2538_obsservable_signals(void)
+{
+    if (IS_ACTIVE(CONFIG_CC2538_RF_OBS_SIG)) {
+        if (CONFIG_CC2538_RF_OBS_0 != disabled) {
+            RFCORE_XREG_RFC_OBS_CTRL0 = CONFIG_CC2538_RF_OBS_0;
+            *(&CCTEST_OBSSEL0 + CONFIG_CC2538_RF_OBS_SIG_0_PCX) = \
+                CCTEST_OBSSELX_EN | rfc_obs_sig0;
+        }
+        if (CONFIG_CC2538_RF_OBS_1 != disabled) {
+            RFCORE_XREG_RFC_OBS_CTRL1 = CONFIG_CC2538_RF_OBS_1;
+            *(&CCTEST_OBSSEL0 + CONFIG_CC2538_RF_OBS_SIG_1_PCX) = \
+                CCTEST_OBSSELX_EN | rfc_obs_sig1;
+        }
+        if (CONFIG_CC2538_RF_OBS_2 != disabled) {
+            RFCORE_XREG_RFC_OBS_CTRL2 = CONFIG_CC2538_RF_OBS_2;
+            *(&CCTEST_OBSSEL0 + CONFIG_CC2538_RF_OBS_SIG_2_PCX) = \
+                CCTEST_OBSSELX_EN | rfc_obs_sig2;
+        }
+    }
+}
+
 
 bool cc2538_channel_clear(void)
 {
@@ -91,70 +103,79 @@ bool cc2538_channel_clear(void)
 
 void cc2538_init(void)
 {
-    const init_pair_t *pair;
+    /* Enable RF CORE clock in active mode */
+    SYS_CTRL_RCGCRFC = 1UL;
+    /* Enable  RF CORE  clock in sleep mode */
+    SYS_CTRL_SCGCRFC = 1UL;
+    /* Enable  RF CORE  clock in PM0 (system clock always powered down
+        in PM1-3) */
+    SYS_CTRL_DCGCRFC = 1UL;
+    /* Wait for the clock enabling to take effect */
+    while (!(SYS_CTRL_RCGCRFC & 1UL) || \
+           !(SYS_CTRL_SCGCRFC & 1UL) || \
+           !(SYS_CTRL_DCGCRFC & 1UL)
+           ) {}
 
-    for (pair = init_table; pair->reg_addr != NULL; pair++) {
-        *pair->reg_addr = pair->value;
-    }
+    /* Register Setting updates for optimal performance, RM section 23.15 */
+    RFCORE_XREG_TXFILTCFG   = 0x09;
+    RFCORE_XREG_AGCCTRL1    = 0x15;
+    RFCORE_XREG_FSCAL1      = 0x01;
+    ANA_REGS_IVCTRL         = 0x0B;
 
-    /* Select the observable signals (maximum of three) */
-    RFCORE_XREG_RFC_OBS_CTRL0 = tx_active;
-    RFCORE_XREG_RFC_OBS_CTRL1 = rx_active;
-    RFCORE_XREG_RFC_OBS_CTRL2 = ffctrl_fifo;
+    /* Enable AUTOCRC and AUTOACK by default*/
+    RFCORE_XREG_FRMCTRL0   = AUTOCRC | AUTOACK;
 
-    /* Select output pins for the three observable signals */
-#ifdef BOARD_OPENMOTE_CC2538
-    CCTEST_OBSSEL0 = 0;                        /* PC0 = USB_SEL        */
-    CCTEST_OBSSEL1 = 0;                        /* PC1 = N/C            */
-    CCTEST_OBSSEL2 = 0;                        /* PC2 = N/C            */
-    CCTEST_OBSSEL3 = 0;                        /* PC3 = USER_BUTTON    */
-    CCTEST_OBSSEL4 = OBSSEL_EN | rfc_obs_sig0; /* PC4 = RED_LED        */
-    CCTEST_OBSSEL5 = 0;                        /* PC5 = ORANGE_LED     */
-    CCTEST_OBSSEL6 = OBSSEL_EN | rfc_obs_sig1; /* PC6 = YELLOW_LED     */
-    CCTEST_OBSSEL7 = OBSSEL_EN | rfc_obs_sig2; /* PC7 = GREEN_LED      */
+    /* Enable RX after TX? */
+#if IS_ACTIVE(CONFIG_CC2538_RF_RX_AFTER_TX)
+    RFCORE_XREG_FRMCTRL1   = SET_RXENMASK_ON_TX;
 #else
-    /* Assume BOARD_CC2538DK (or similar). */
-    CCTEST_OBSSEL0 = OBSSEL_EN | rfc_obs_sig0; /* PC0 = LED_1 (red)    */
-    CCTEST_OBSSEL1 = OBSSEL_EN | rfc_obs_sig1; /* PC1 = LED_2 (yellow) */
-    CCTEST_OBSSEL2 = OBSSEL_EN | rfc_obs_sig2; /* PC2 = LED_3 (green)  */
-    CCTEST_OBSSEL3 = 0;                        /* PC3 = LED_4 (red)    */
-    CCTEST_OBSSEL4 = 0;                        /* PC4 = BTN_L          */
-    CCTEST_OBSSEL5 = 0;                        /* PC5 = BTN_R          */
-    CCTEST_OBSSEL6 = 0;                        /* PC6 = BTN_UP         */
-    CCTEST_OBSSEL7 = 0;                        /* PC7 = BTN_DN         */
-#endif /* BOARD_OPENMOTE_CC2538 */
+    RFCORE_XREG_FRMCTRL1   = 0x00;
+#endif
 
+    /* Disable source address matching and pending bits */
+    RFCORE_XREG_SRCMATCH = 0x00;
+
+    /* Set FIFOP_THR to its max value*/
+    RFCORE_XREG_FIFOPCTRL = CC2538_RF_MAX_DATA_LEN;
+
+    /* Set default IRQ */
+    RFCORE_XREG_RFIRQM0 = RXPKTDONE | SFD | FIFOP;
+#if IS_USED(MODULE_IEEE802154_RADIO_HAL)
+    RFCORE_XREG_RFIRQM1 = TXDONE | CSP_STOP;
+#else
+    RFCORE_XREG_RFIRQM1 = TXDONE;
+#endif
+
+    /* Enable all RF CORE error interrupts */
+    RFCORE_XREG_RFERRM = STROBE_ERR | TXUNDERF | TXOVERF | \
+                         RXUNDERF | RXOVERF | NLOCK;
+
+    _cc2538_obsservable_signals();
+
+    /* Enable IRQs */
     if (SYS_CTRL->I_MAP) {
-        NVIC_SetPriority(RF_RXTX_ALT_IRQn, RADIO_IRQ_PRIO);
+        NVIC_SetPriority(RF_RXTX_ALT_IRQn, CPU_DEFAULT_IRQ_PRIO);
         NVIC_EnableIRQ(RF_RXTX_ALT_IRQn);
 
-        NVIC_SetPriority(RF_ERR_ALT_IRQn, RADIO_IRQ_PRIO);
+        NVIC_SetPriority(RF_ERR_ALT_IRQn, CPU_DEFAULT_IRQ_PRIO);
         NVIC_EnableIRQ(RF_ERR_ALT_IRQn);
 
-        NVIC_SetPriority(MAC_TIMER_ALT_IRQn, RADIO_IRQ_PRIO);
+        NVIC_SetPriority(MAC_TIMER_ALT_IRQn, CPU_DEFAULT_IRQ_PRIO);
         NVIC_EnableIRQ(MAC_TIMER_ALT_IRQn);
     }
     else {
-        NVIC_SetPriority(RF_RXTX_IRQn, RADIO_IRQ_PRIO);
+        NVIC_SetPriority(RF_RXTX_IRQn, CPU_DEFAULT_IRQ_PRIO);
         NVIC_EnableIRQ(RF_RXTX_IRQn);
 
-        NVIC_SetPriority(RF_ERR_IRQn, RADIO_IRQ_PRIO);
+        NVIC_SetPriority(RF_ERR_IRQn, CPU_DEFAULT_IRQ_PRIO);
         NVIC_EnableIRQ(RF_ERR_IRQn);
 
-        NVIC_SetPriority(MACTIMER_IRQn, RADIO_IRQ_PRIO);
+        NVIC_SetPriority(MACTIMER_IRQn, CPU_DEFAULT_IRQ_PRIO);
         NVIC_EnableIRQ(MACTIMER_IRQn);
     }
 
-    RFCORE_SFR_MTMSEL &= ~CC2538_SFR_MTMSEL_MASK;
-    /* Select timer period */
-    RFCORE_SFR_MTMSEL |= CC2538_SFR_MTMSEL_TIMER_P;
-
-    /* Fix timer to Backoff period */
-    RFCORE_SFR_MTM0 |= TIMER_PERIOD_LSB;
-    RFCORE_SFR_MTM1 |= TIMER_PERIOD_MSB;
-
-    RFCORE_SFR_MTMSEL &= ~CC2538_SFR_MTMSEL_MASK;
-    RFCORE_SFR_MTCTRL |= CC2538_MCTRL_SYNC_MASK | CC2538_MCTRL_RUN_MASK;
+    /* setup mac timer */
+    _cc2538_setup_mac_timer();
 
     /* Flush the receive and transmit FIFOs */
     RFCORE_SFR_RFST = ISFLUSHTX;
@@ -163,7 +184,8 @@ void cc2538_init(void)
 
 bool cc2538_is_on(void)
 {
-    return RFCORE->XREG_FSMSTAT1bits.RX_ACTIVE || RFCORE->XREG_FSMSTAT1bits.TX_ACTIVE;
+    return RFCORE->XREG_FSMSTAT1bits.RX_ACTIVE || \
+           RFCORE->XREG_FSMSTAT1bits.TX_ACTIVE;
 }
 
 void cc2538_off(void)
@@ -171,18 +193,17 @@ void cc2538_off(void)
     /* Wait for ongoing TX to complete (e.g. this could be an outgoing ACK) */
     RFCORE_WAIT_UNTIL(RFCORE->XREG_FSMSTAT1bits.TX_ACTIVE == 0);
 
-    /* Flush RX FIFO */
-    RFCORE_SFR_RFST = ISFLUSHRX;
-
     /* Don't turn off if we are off as this will trigger a Strobe Error */
     if (RFCORE_XREG_RXENABLE != 0) {
         RFCORE_SFR_RFST = ISRFOFF;
+        /* Clear FIFO IRQ */
+        RFCORE_SFR_RFIRQF0 &= ~(RXPKTDONE | FIFOP | SFD);
     }
 }
 
 bool cc2538_on(void)
 {
-    /* Flush RX FIFO */
+    /* Flush RX FIFO and reset demodulator */
     RFCORE_SFR_RFST = ISFLUSHRX;
 
     /* Enable/calibrate RX */
@@ -210,4 +231,26 @@ void cc2538_setup(cc2538_rf_t *dev)
     cc2538_set_addr_short(dev->netdev.short_addr);
 
     cc2538_on();
+}
+
+void cc2538_tx_exec(const cc2538_rf_t *dev)
+{
+    netdev_t *netdev = (netdev_t *)dev;
+
+    RFCORE_SFR_RFST = ISTXON;
+
+    /* Transmission does not trigger an SFD interrupt, so we need to
+       poll and wait fot the SFD bit to be set */
+    while (RFCORE->XREG_FSMSTAT1bits.TX_ACTIVE) {
+        if(RFCORE->XREG_FSMSTAT1bits.SFD) {
+            DEBUG_PUTS("[cc2538_rf] EVT - TX_STARTED");
+            netdev->event_callback(netdev, NETDEV_EVENT_TX_STARTED);
+            break;
+        } else {
+            thread_yield();
+        }
+    }
+
+    /* Wait for transmission to complete */
+    RFCORE_WAIT_UNTIL(RFCORE->XREG_FSMSTAT1bits.TX_ACTIVE == 0);
 }

@@ -174,6 +174,9 @@ void cc2538_set_monitor(bool mode)
 void cc2538_set_state(cc2538_rf_t *dev, netopt_state_t state)
 {
     switch (state) {
+        case NETOPT_STATE_STANDBY:
+            cc2538_off();
+            break;
         case NETOPT_STATE_OFF:
         case NETOPT_STATE_SLEEP:
             cc2538_off();
@@ -188,11 +191,12 @@ void cc2538_set_state(cc2538_rf_t *dev, netopt_state_t state)
             }
             dev->state = state;
             break;
-
         case NETOPT_STATE_TX:
-            dev->state = NETOPT_STATE_IDLE;
+            dev->state = state;
+            if (dev->flags & CC2538_OPT_PRELOADING) {
+                cc2538_tx_exec(dev);
+            }
             break;
-
         case NETOPT_STATE_RESET:
             cc2538_off();
             cc2538_on();

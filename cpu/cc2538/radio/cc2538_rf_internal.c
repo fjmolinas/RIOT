@@ -19,13 +19,12 @@
  * @}
  */
 
-#include "cpu.h"
 #include "cc2538.h"
 #include "cc2538_rf.h"
 #include "cc2538_rf_netdev.h"
 #include "cc2538_rf_internal.h"
 
-#define ENABLE_DEBUG    (0)
+#define ENABLE_DEBUG    (1)
 #include "debug.h"
 
 void isr_rfcoreerr(void)
@@ -60,13 +59,6 @@ void isr_rfcoreerr(void)
         DEBUG("%s(): NLOCK detected!\n", __FUNCTION__);
         RFCORE_FLUSH_RECEIVE_FIFO();
     }
-}
-
-void isr_rfcorerxtx(void)
-{
-   cc2538_irq_handler();
-
-    cortexm_isr_end();
 }
 
 uint_fast8_t rfcore_read_byte(void)
@@ -123,8 +115,8 @@ void rfcore_write_fifo(const void *buf, uint_fast8_t len)
 bool RFCORE_ASSERT_failure(const char *expr, const char *func, int line)
 {
 #if (DEVELHELP || ENABLE_DEBUG)
-    DEBUG_PRINT("RFCORE_ASSERT(%s) failed at line %u in %s()!\n", expr, line, func);
-    DEBUG_PRINT("  RFCORE_SFR_RFERRF = 0x%02x\n", (unsigned int)RFCORE_SFR_RFERRF);
+    DEBUG("RFCORE_ASSERT(%s) failed at line %u in %s()!\n", expr, line, func);
+    DEBUG("  RFCORE_SFR_RFERRF = 0x%02x\n", (unsigned int)RFCORE_SFR_RFERRF);
 #else
     (void)expr;
     (void)func;
