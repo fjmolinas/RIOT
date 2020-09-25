@@ -123,19 +123,17 @@ void radio_setFrequency(uint8_t frequency, radio_freq_t tx_or_rx)
 
 void radio_rfOn(void)
 {
-    netopt_state_t state = NETOPT_STATE_IDLE;
-
-    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE, &(state),
-                                   sizeof(netopt_state_t));
+    netopt_state_t state = NETOPT_STATE_STANDBY;
+    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE,
+                                   &(state), sizeof(netopt_state_t));
 }
 
 void radio_rfOff(void)
 {
-    netopt_state_t state = NETOPT_STATE_STANDBY;
-
-    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE, &(state),
-                                   sizeof(netopt_state_t));
-
+    /* NETOPT_STATE_OFF is mostly unsupported so sleep instead*/
+    netopt_state_t state = NETOPT_STATE_SLEEP;
+    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE,
+                                   &(state), sizeof(netopt_state_t));
     debugpins_radio_clr();
     leds_radio_off();
 }
@@ -159,6 +157,9 @@ void radio_loadPacket(uint8_t *packet, uint16_t len)
 
 void radio_txEnable(void)
 {
+    netopt_state_t state = NETOPT_STATE_STANDBY;
+    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE,
+                                   &(state), sizeof(netopt_state_t));
     debugpins_radio_set();
     leds_radio_on();
 }
@@ -166,7 +167,6 @@ void radio_txEnable(void)
 void radio_txNow(void)
 {
     netopt_state_t state = NETOPT_STATE_TX;
-
     openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE, &state,
                                    sizeof(netopt_state_t));
 }
@@ -175,14 +175,17 @@ void radio_rxEnable(void)
 {
     debugpins_radio_set();
     leds_radio_on();
-    netopt_state_t state = NETOPT_STATE_IDLE;
+    netopt_state_t state = NETOPT_STATE_STANDBY;
     openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE, &(state),
                                    sizeof(state));
 }
 
 void radio_rxNow(void)
 {
-    /* nothing to do */
+    /* NETOPT_STATE_IDLE actually means receiving is enabled */
+    netopt_state_t state = NETOPT_STATE_IDLE;
+    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE, &(state),
+                                   sizeof(state));
 }
 
 void radio_getReceivedFrame(uint8_t *bufRead,
@@ -207,11 +210,12 @@ void radio_getReceivedFrame(uint8_t *bufRead,
                                                          NULL, 0,
                                                          NULL);
 
-    if (bytes_expected < (int)(IEEE802154_ACK_FRAME_LEN - IEEE802154_FCS_LEN)) {
-        /* drop invalid packet */
-        openwsn_radio.dev->driver->recv(openwsn_radio.dev, NULL, bytes_expected,
-                                        NULL);
-        radio_rxEnable();
+    /* If there was error return, don't check for invalid frames OpenWSN
+       does this */
+    if (bytes_expected < 0) {
+        *lenRead = 0;
+        *crc = 0;
+        *rssi = 0;
         return;
     }
 
@@ -227,8 +231,6 @@ void radio_getReceivedFrame(uint8_t *bufRead,
     *lqi = rx_info.lqi;
     /* only valid crc frames are currently accepted */
     *crc = 1;
-
-    radio_rxEnable();
 }
 
 static void _event_cb(netdev_t *dev, netdev_event_t event)
