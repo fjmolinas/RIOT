@@ -86,6 +86,14 @@ int openwsn_radio_init(netdev_t *netdev)
     /* Set default PANID */
     uint16_t panid = OPENWSN_PANID;
     netdev->driver->set(netdev, NETOPT_NID, &(panid), sizeof(uint16_t));
+#ifdef MODULE_CC2538_RF
+    /* If frame filtering is enabled cc2538 will not accept beacons
+       where the destination-address mode is 0 (no destination address).
+       per rfc8180 4.5.1 the destination address must be set, which means
+       the destination-address mode can't be 0 */
+    enable = NETOPT_ENABLE;
+    netdev->driver->set(netdev, NETOPT_PROMISCUOUSMODE, &(enable), sizeof(enable));
+#endif
 
     return 0;
 }
@@ -123,19 +131,17 @@ void radio_setFrequency(uint8_t frequency, radio_freq_t tx_or_rx)
 
 void radio_rfOn(void)
 {
-    netopt_state_t state = NETOPT_STATE_IDLE;
-
-    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE, &(state),
-                                   sizeof(netopt_state_t));
+    netopt_state_t state = NETOPT_STATE_STANDBY;
+    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE,
+                                   &(state), sizeof(netopt_state_t));
 }
 
 void radio_rfOff(void)
 {
-    netopt_state_t state = NETOPT_STATE_STANDBY;
-
-    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE, &(state),
-                                   sizeof(netopt_state_t));
-
+    /* NETOPT_STATE_OFF is mostly unsupported so sleep instead*/
+    netopt_state_t state = NETOPT_STATE_SLEEP;
+    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE,
+                                   &(state), sizeof(netopt_state_t));
     debugpins_radio_clr();
     leds_radio_off();
 }
@@ -159,6 +165,9 @@ void radio_loadPacket(uint8_t *packet, uint16_t len)
 
 void radio_txEnable(void)
 {
+    netopt_state_t state = NETOPT_STATE_STANDBY;
+    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE,
+                                   &(state), sizeof(netopt_state_t));
     debugpins_radio_set();
     leds_radio_on();
 }
@@ -166,7 +175,6 @@ void radio_txEnable(void)
 void radio_txNow(void)
 {
     netopt_state_t state = NETOPT_STATE_TX;
-
     openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE, &state,
                                    sizeof(netopt_state_t));
 }
@@ -175,14 +183,17 @@ void radio_rxEnable(void)
 {
     debugpins_radio_set();
     leds_radio_on();
-    netopt_state_t state = NETOPT_STATE_IDLE;
+    netopt_state_t state = NETOPT_STATE_STANDBY;
     openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE, &(state),
                                    sizeof(state));
 }
 
 void radio_rxNow(void)
 {
-    /* nothing to do */
+    /* NETOPT_STATE_IDLE actually means receiving is enabled */
+    netopt_state_t state = NETOPT_STATE_IDLE;
+    openwsn_radio.dev->driver->set(openwsn_radio.dev, NETOPT_STATE, &(state),
+                                   sizeof(state));
 }
 
 void radio_getReceivedFrame(uint8_t *bufRead,
@@ -207,11 +218,12 @@ void radio_getReceivedFrame(uint8_t *bufRead,
                                                          NULL, 0,
                                                          NULL);
 
-    if (bytes_expected < (int)(IEEE802154_ACK_FRAME_LEN - IEEE802154_FCS_LEN)) {
-        /* drop invalid packet */
-        openwsn_radio.dev->driver->recv(openwsn_radio.dev, NULL, bytes_expected,
-                                        NULL);
-        radio_rxEnable();
+    /* If there was error return, don't check for invalid frames OpenWSN
+       does this */
+    if (bytes_expected < 0) {
+        *lenRead = 0;
+        *crc = 0;
+        *rssi = 0;
         return;
     }
 
@@ -220,15 +232,13 @@ void radio_getReceivedFrame(uint8_t *bufRead,
 
     /* FCS is skipped by netdev in the returned length, but OpenWSN includes
        IEEE802154_FCS_LEN in its length value */
-    *lenRead = nread + IEEE802154_FCS_LEN;
+    *lenRead = (uint8_t)nread + IEEE802154_FCS_LEN;
 
     /* get rssi, lqi & crc */
     *rssi = rx_info.rssi;
     *lqi = rx_info.lqi;
     /* only valid crc frames are currently accepted */
     *crc = 1;
-
-    radio_rxEnable();
 }
 
 static void _event_cb(netdev_t *dev, netdev_event_t event)

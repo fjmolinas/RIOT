@@ -30,6 +30,10 @@
 #include "at86rf2xx_params.h"
 #endif
 
+#ifdef MODULE_CC2538_RF
+#include "cc2538_rf.h"
+#endif
+
 #define LOG_LEVEL LOG_NONE
 #include "log.h"
 
@@ -40,6 +44,11 @@
 #ifdef MODULE_AT86RF2XX
 static at86rf2xx_t at86rf2xx_dev;
 #endif
+
+#ifdef MODULE_CC2538_RF
+static cc2538_rf_t cc2538_rf_dev;
+#endif
+
 
 static char _stack[OPENWSN_SCHED_STACKSIZE];
 
@@ -72,6 +81,12 @@ int openwsn_bootstrap(void)
 #ifdef MODULE_AT86RF2XX
     netdev_t *netdev = (netdev_t *)&at86rf2xx_dev.netdev.netdev;
     at86rf2xx_setup(&at86rf2xx_dev, &at86rf2xx_params[0], 0);
+    (void) netdev;
+#endif
+
+#ifdef MODULE_CC2538_RF
+    netdev_t *netdev = (netdev_t *)&cc2538_rf_dev.netdev.netdev;
+    cc2538_setup(&cc2538_rf_dev);
     (void) netdev;
 #endif
 
