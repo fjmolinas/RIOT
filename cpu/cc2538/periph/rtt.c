@@ -30,9 +30,9 @@
 #define SMWDTHROSC_STLOAD_STLOAD_MASK  (0x00000001)
 
 /* allocate memory for alarm and overflow callbacks + args */
-static rtt_cb_t alarm_cb = NULL;
+static rtt_cb_t alarm_cb;
 static void *alarm_arg;
-static rtt_cb_t overflow_cb = NULL;
+static rtt_cb_t overflow_cb;
 static void *overflow_arg;
 
 static uint32_t rtt_alarm;
@@ -68,6 +68,10 @@ void rtt_poweroff(void)
 
 void rtt_init(void)
 {
+    rtt_clear_overflow_cb();
+    rtt_clear_alarm();
+    rtt_offset = 0;
+    rtt_alarm = 0;
     rtt_poweron();
 }
 
