@@ -214,6 +214,7 @@ enum {
 typedef struct {
     netdev_ieee802154_t netdev;   /**< netdev parent struct */
     uint8_t state;                /**< current state of the radio */
+    uint8_t flags;                /**< Device specific flags */
 } cc2538_rf_t;
 
 /**
@@ -298,6 +299,13 @@ void cc2538_off(void);
  *
  */
 bool cc2538_on(void);
+
+/**
+ * @brief   Trigger sending of data previously loaded into transmit buffer
+ *
+ * @param[in] dev           device to trigger
+ */
+void cc2538_tx_exec(cc2538_rf_t *dev);
 
 /**
  * @brief   Setup a CC2538 radio device for use with netdev
