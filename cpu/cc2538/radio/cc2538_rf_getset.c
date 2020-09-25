@@ -174,6 +174,9 @@ void cc2538_set_monitor(bool mode)
 void cc2538_set_state(cc2538_rf_t *dev, netopt_state_t state)
 {
     switch (state) {
+        case NETOPT_STATE_STANDBY:
+            cc2538_off();
+            break;
         case NETOPT_STATE_OFF:
         case NETOPT_STATE_SLEEP:
             cc2538_off();
