@@ -5,11 +5,18 @@ include ../Makefile.tests_common
 # list of arm boards that provide at86rf2xx radios, can't require it so
 # add whitelist
 BOARD_WHITELIST = \
+  firefly \
   fox \
   iotlab-m3 \
   iotlab-a8-m3 \
+  omote \
+  openmote-b \
+  openmote-cc2538 \
   samr21-xpro \
   samr30-xpro \
+  remote-pa \
+  remote-reva \
+  remote-revb \
   #
 
 # OpenWSN Modules
@@ -18,9 +25,9 @@ USEMODULE += openwsn_openstack
 
 # Optional OpenWSN Modules
 ## Enable Constrained Join Protocol (CoJP)
-USEMODULE += openwsn_cjoin
+# USEMODULE += openwsn_cjoin
 ## Enable 6lowpan fragmentation
-USEMODULE += openwsn_6lo_frag
+# USEMODULE += openwsn_6lo_frag
 ## Enable link layer security
 # USEMODULE += openwsn_iee802154e_security
 ## Enable MSF dynamic slot allocation
