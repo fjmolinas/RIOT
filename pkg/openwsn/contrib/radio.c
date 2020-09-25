@@ -86,6 +86,14 @@ int openwsn_radio_init(netdev_t *netdev)
     /* Set default PANID */
     uint16_t panid = OPENWSN_PANID;
     netdev->driver->set(netdev, NETOPT_NID, &(panid), sizeof(uint16_t));
+#ifdef MODULE_CC2538_RF
+    /* If frame filtering is enabled cc2538 will not accept beacons
+       where the destination-address mode is 0 (no destination address).
+       per rfc8180 4.5.1 the destination address must be set, which means
+       the destination-address mode can't be 0 */
+    enable = NETOPT_ENABLE;
+    netdev->driver->set(netdev, NETOPT_PROMISCUOUSMODE, &(enable), sizeof(enable));
+#endif
 
     return 0;
 }
