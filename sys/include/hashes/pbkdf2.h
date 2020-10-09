@@ -28,13 +28,22 @@
 extern "C" {
 #endif
 
+/**
+ * @brief   PBKDF2 key size length
+ *
+ * @note Currently only one derived key length is supported (32)
+ */
 #define PBKDF2_KEY_SIZE SHA256_DIGEST_LENGTH
 
 /**
- * Create a key from a password and hash using PBKDF2.
+ * @brief Create a key from a password and hash using PBKDF2.
  *
- * @param   iterations  Number of rounds. Must be >1.
- * @param[out]   output  Array of size PBKDF2_KEY_SIZE
+ * @param[in]   password        password pointer
+ * @param[in]   password_len    length of password
+ * @param[in]   salt            salt pointer
+ * @param[in]   salt_len        salt length
+ * @param[in]   iterations      number of rounds. Must be >1.
+ * @param[out]  output          array of size PBKDF2_KEY_SIZE
  */
 void pbkdf2_sha256(const uint8_t *password, size_t password_len,
                    const uint8_t *salt, size_t salt_len,

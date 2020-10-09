@@ -42,6 +42,14 @@ enum TEST_STATE {
     TEST_ERROR
 };
 
+
+static void _clear_input(void)
+{
+    /* clear input buffer */
+    int c;
+    while ( (c = getchar()) != '\n' && c != EOF ) { }
+}
+
 int main(void)
 {
     static char linebuf[LINEBUF_SZ];
@@ -56,6 +64,8 @@ int main(void)
 
     enum TEST_STATE state = TEST_READ_PASS;
 
+    _clear_input();
+
     while ((puts(input_message), fgets(linebuf, LINEBUF_SZ, stdin) != NULL)) {
         char *s_end;
         int conversion_status, line_len = strlen(linebuf)-1;
@@ -67,7 +77,6 @@ int main(void)
             case TEST_READ_PASS:
                 strcpy(password, linebuf);
                 passwd_len = line_len;
-
                 state++;
 
                 break;
@@ -83,7 +92,7 @@ int main(void)
                                                       salt, &salt_len);
                 }
 
-                if(conversion_status == BASE64_SUCCESS) {
+                if (conversion_status == BASE64_SUCCESS) {
                     state++;
                 } else {
                     state = TEST_ERROR;
@@ -115,7 +124,7 @@ int main(void)
                                                   (uint8_t*)linebuf,
                                                   &b64_buff_size);
 
-                if(conversion_status == BASE64_SUCCESS) {
+                if (conversion_status == BASE64_SUCCESS) {
                     linebuf[b64_buff_size] = 0;
                     puts(linebuf);
                 } else {

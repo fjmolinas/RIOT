@@ -40,7 +40,7 @@ VECTORS = [
     randomvector(0, 16, 10),
     randomvector(8, 0, 10),
     randomvector(9, 64, 1),
-    randomvector(65, 38, 20),
+    randomvector(64, 38, 20),
     randomvector(32, 15, 12),
     randomvector(48, 32, 15),
     ]

@@ -5,13 +5,7 @@ USEMODULE += stdin
 USEMODULE += hashes
 USEMODULE += base64
 
-ifeq (,$(filter native,$(BOARD)))
-  RIOT_TERMINAL = other
-  TERMPROG = miniterm.py
-  TERMFLAGS = --eol LF /dev/ttyACM0 115200
-endif
-
-# boards fail due to UART weirdness and line buffering done by the terminal
-BOARD_WHITELIST += native
+# Use a terminal that does not introduce extra characters into the stream.
+RIOT_TERMINAL ?= socat
 
 include $(RIOTBASE)/Makefile.include
