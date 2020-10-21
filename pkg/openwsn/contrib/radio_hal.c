@@ -41,14 +41,6 @@ openwsn_radio_t openwsn_radio;
 /* stores the event capture time */
 static PORT_TIMER_WIDTH _txrx_event_capture_time = 0;
 
-/* OpenWSN makes calls to `radio_rfOff` before reading the content of
-   a received frame, this violates the ieee802154_hall state machine,
-   to workaround this we read the received frame immediately upon
-   receiving the RX_DONE ISR and store the frame data locally */
-static ieee802154_rx_info_t _rx_info;
-static size_t _rx_size;
-static uint8_t _rx_buffer[IEEE802154_FRAME_LEN_MAX];
-
 void _idmanager_addr_override(void)
 {
     /* Initiate Id manager here and not in `openstack_init` function to
@@ -96,10 +88,6 @@ static void _hal_radio_cb(ieee802154_dev_t *dev, ieee802154_trx_ev_t status)
             openwsn_radio.endFrame_cb(_txrx_event_capture_time);
             break;
         case IEEE802154_RADIO_INDICATION_RX_DONE:
-            _rx_size = ieee802154_radio_indication_rx(openwsn_radio.dev,
-                _rx_buffer, IEEE802154_FRAME_LEN_MAX, &_rx_info);
-            ieee802154_radio_request_set_trx_state(openwsn_radio.dev,
-                IEEE802154_TRX_STATE_TRX_OFF);
             openwsn_radio.endFrame_cb(_txrx_event_capture_time);
             break;
         case IEEE802154_RADIO_INDICATION_TX_START:
@@ -302,14 +290,15 @@ void radio_getReceivedFrame(uint8_t *bufRead,
                             uint8_t *lqi,
                             bool *crc)
 {
-    (void) maxBufLen;
-    memcpy(bufRead, _rx_buffer, _rx_size);
+    ieee802154_rx_info_t rx_info;
+    size_t size = ieee802154_radio_read(openwsn_radio.dev, bufRead,
+                                        maxBufLen, &rx_info);
     /* FCS is skipped by the radio-hal in the returned length, but
        OpenWSN includes IEEE802154_FCS_LEN in its length value */
-    *lenRead = _rx_size + IEEE802154_FCS_LEN;
+    *lenRead = size + IEEE802154_FCS_LEN;
     /* get rssi, lqi & crc */
-    *rssi = _rx_info.rssi;
-    *lqi = _rx_info.lqi;
+    *rssi = rx_info.rssi;
+    *lqi = rx_info.lqi;
     /* only valid crc frames are currently accepted */
     *crc = 1;
 }
