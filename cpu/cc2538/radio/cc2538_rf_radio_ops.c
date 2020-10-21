@@ -171,9 +171,6 @@ static int _read(ieee802154_dev_t *dev, void *buf, size_t size, ieee802154_rx_in
     pkt_len -= IEEE802154_FCS_LEN;
 
     if (pkt_len > size) {
-        RFCORE_SFR_RFST = ISFLUSHRX;
-        /* re-enable receiver */
-        RFCORE_XREG_RXMASKSET = BIT(7);
         return -ENOBUFS;
     }
 
@@ -208,9 +205,6 @@ static int _read(ieee802154_dev_t *dev, void *buf, size_t size, ieee802154_rx_in
         res = 0;
     }
 
-    RFCORE_SFR_RFST = ISFLUSHRX;
-    /* re-enable receiver */
-    RFCORE_XREG_RXMASKSET = BIT(7);
     return res;
 }
 
