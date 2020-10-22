@@ -110,7 +110,7 @@ void auto_init(void)
     }
     if (IS_USED(MODULE_AUTO_INIT_OPENWSN)) {
         LOG_DEBUG("Bootstrapping openwsn.\n");
-        extern void openwsn_bootstrap(void);
+        extern int openwsn_bootstrap(void);
         openwsn_bootstrap();
     }
     if (IS_USED(MODULE_GCOAP) &&

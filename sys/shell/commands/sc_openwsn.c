@@ -103,7 +103,7 @@ int _openwsn_ifconfig(char *arg)
     char addr_str[IEEE802154_LONG_ADDRESS_LEN_STR_MAX];
 #endif
 
-    printf("Iface  %d  ", openwsn_get_pid());
+    printf("Iface  %d  ", openwsn_sched_pid());
 
     addr = idmanager_getMyID(ADDR_16B);
     printf("\tHWaddr: %s  ",

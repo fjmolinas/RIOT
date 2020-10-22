@@ -3,6 +3,8 @@ PKG_URL=https://github.com/openwsn-berkeley/openwsn-fw.git
 PKG_VERSION=028db872c0c60f756e16880a0c86d6282e421c71
 PKG_LICENSE=BSD-3-Clause
 
+PKG_SOURCE_LOCAL = /home/francisco/workspace/openwsn/openwsn-fw-riot
+
 include $(RIOTBASE)/pkg/pkg.mk
 
 # openwsn_% RIOT Modules or PSEUDOMODULES that don't have custom rules

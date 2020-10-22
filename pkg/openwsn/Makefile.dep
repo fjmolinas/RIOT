@@ -65,6 +65,8 @@ endif
 ifneq (,$(filter openwsn_radio_hal,$(USEMODULE)))
   USEMODULE += luid
   USEMODULE += ieee802154_radio_hal
+  USEMODULE += event
+  USEMODULE += event_callback
   # Used here only for dependency resolution
   USEMODULE += netdev_default
   DISABLE_MODULE += auto_init_gnrc_netif

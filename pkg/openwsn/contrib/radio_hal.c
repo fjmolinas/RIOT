@@ -29,6 +29,8 @@
 #include "luid.h"
 #include "net/ieee802154.h"
 #include "net/ieee802154/radio.h"
+#include "event.h"
+#include "event/callback.h"
 
 #include "openwsn.h"
 #include "openwsn_radio.h"
@@ -38,10 +40,28 @@
 
 openwsn_radio_t openwsn_radio;
 
-/* stores the event capture time */
-static PORT_TIMER_WIDTH _txrx_event_capture_time = 0;
+/* radio stack */
+static event_queue_t* _radio_evq = NULL;
 
-void _idmanager_addr_override(void)
+/* Types for event frames */
+typedef struct {
+    event_t super;                      /**< event_t structure that gets extended   */
+    void (*callback)(PORT_TIMER_WIDTH); /**< callback function                      */
+    PORT_TIMER_WIDTH time;              /**< event capture time             */
+} event_frame_t;
+
+static void _event_frame_handler(event_t *event)
+{
+    event_frame_t *event_frame = (event_frame_t *) event;
+    event_frame->callback(event_frame->time);
+}
+
+static event_frame_t _frame_start = { .super.handler =_event_frame_handler,
+                                      .callback = NULL, .time = 0 };
+static event_frame_t _frame_end = { .super.handler =_event_frame_handler,
+                                    .callback = NULL, .time = 0 };
+
+static void _idmanager_addr_override(void)
 {
     /* Initiate Id manager here and not in `openstack_init` function to
        allow overriding the short id address before additional stack
@@ -78,23 +98,27 @@ static void _hal_radio_cb(ieee802154_dev_t *dev, ieee802154_trx_ev_t status)
     (void) dev;
 
     debugpins_isr_set();
-    _txrx_event_capture_time = sctimer_readCounter();
+    PORT_TIMER_WIDTH capture_time = sctimer_readCounter();
     debugpins_isr_clr();
 
     switch(status) {
         case IEEE802154_RADIO_CONFIRM_TX_DONE:
             ieee802154_radio_request_set_trx_state(openwsn_radio.dev,
                 IEEE802154_TRX_STATE_TRX_OFF);
-            openwsn_radio.endFrame_cb(_txrx_event_capture_time);
+            _frame_end.time = capture_time;
+            event_post(_radio_evq, &_frame_end.super);
             break;
         case IEEE802154_RADIO_INDICATION_RX_DONE:
-            openwsn_radio.endFrame_cb(_txrx_event_capture_time);
+            _frame_end.time = capture_time;
+            event_post(_radio_evq, &_frame_end.super);
             break;
         case IEEE802154_RADIO_INDICATION_TX_START:
-            openwsn_radio.startFrame_cb(_txrx_event_capture_time);
+            _frame_start.time = capture_time;
+            event_post(_radio_evq, &_frame_start.super);
             break;
         case IEEE802154_RADIO_INDICATION_RX_START:
-            openwsn_radio.startFrame_cb(_txrx_event_capture_time);
+            _frame_start.time = capture_time;
+            event_post(_radio_evq, &_frame_start.super);
             break;
         default:
            break;
@@ -147,17 +171,19 @@ int openwsn_radio_init(void* radio_dev)
 
     ieee802154_radio_config_phy(dev, &conf);
 
+    _radio_evq = openwsn_tsch_radio_evq();
+    event_queue_init_detached(_radio_evq);
     return 0;
 }
 
 void radio_setStartFrameCb(radio_capture_cbt cb)
 {
-    openwsn_radio.startFrame_cb = cb;
+    _frame_start.callback = cb;
 }
 
 void radio_setEndFrameCb(radio_capture_cbt cb)
 {
-    openwsn_radio.endFrame_cb = cb;
+    _frame_end.callback = cb;
 }
 
 void radio_reset(void)
@@ -185,10 +211,10 @@ void radio_setFrequency(uint8_t frequency, radio_freq_t tx_or_rx)
 void radio_rfOn(void)
 {
     ieee802154_radio_request_on(openwsn_radio.dev);
-    ieee802154_radio_request_set_trx_state(openwsn_radio.dev,
-        IEEE802154_TRX_STATE_TRX_OFF);
     /* If the radio is still not in TRX_OFF state, spin */
     while (ieee802154_radio_confirm_on(openwsn_radio.dev) == -EAGAIN) {}
+    ieee802154_radio_request_set_trx_state(openwsn_radio.dev, IEEE802154_TRX_STATE_TRX_OFF);
+    while (ieee802154_radio_confirm_set_trx_state(openwsn_radio.dev) == -EAGAIN) {}
 }
 
 void radio_rfOff(void)
@@ -249,9 +275,9 @@ void radio_txNow(void)
         /* Trigger startFrame manually if no IEEE802154_CAP_IRQ_TX_START */
         if (!ieee802154_radio_has_irq_tx_start(openwsn_radio.dev)) {
             debugpins_isr_set();
-            _txrx_event_capture_time = sctimer_readCounter();
+            _frame_start.time = sctimer_readCounter();
+            event_post(_radio_evq, &_frame_start.super);
             debugpins_isr_clr();
-            openwsn_radio.startFrame_cb(_txrx_event_capture_time);
         }
     }
 }

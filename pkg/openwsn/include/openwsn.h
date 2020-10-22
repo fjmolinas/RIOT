@@ -25,6 +25,7 @@ extern "C" {
 #endif
 
 #include "thread.h"
+#include "event.h"
 
 /**
  * @brief   Default PANID for OpenWSN network
@@ -36,17 +37,28 @@ extern "C" {
 /**
  * @brief   Initializes OpenWSN thread
  *
- * @return  PID of OpenWSN thread
+ * @return  0 if initialized
  * @return  -1 on initialization error
  */
 int openwsn_bootstrap(void);
 
 /**
- * @brief   get PID of OpenWsn thread.
+ * @brief   get PID of OpenWsn scheduler thread.
  *
- * @return  PID of OpenWsn thread
+ * @return  PID of OpenWsn scheduler thread
  */
-kernel_pid_t openwsn_get_pid(void);
+kernel_pid_t openwsn_sched_pid(void);
+
+/**
+ * @brief   get PID of OpenWsn TSCH thread.
+ *
+ * @return  PID of OpenWsn TSCH thread
+ */
+kernel_pid_t openwsn_tsch_pid(void);
+
+event_queue_t* openwsn_tsch_radio_evq(void);
+
+event_queue_t* openwsn_tsch_timer_evq(void);
 
 #ifdef __cplusplus
 }

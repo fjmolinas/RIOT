@@ -36,7 +36,7 @@ USEMODULE += openwsn_openstack
 
 # Optional OpenWSN Modules
 ## Enable Constrained Join Protocol (CoJP)
-USEMODULE += openwsn_cjoin
+# USEMODULE += openwsn_cjoin
 ## Enable 6lowpan fragmentation
 USEMODULE += openwsn_6lo_frag
 ## Enable link layer security

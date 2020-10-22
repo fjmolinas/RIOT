@@ -1,0 +1,1859 @@
+13:09:33 VERBOSE loading logging configuration: config/logging.conf
+13:09:33 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_0', '/dev/riot/tty-openmote-b_1']
+	- baudrates to probe      = [115200]
+13:09:33 INFO opening tun interface
+13:09:33 INFO created following virtual interfaces
+13:09:33 WARNING Probing motes: ['/dev/riot/tty-openmote-b_0', '/dev/riot/tty-openmote-b_1'] at baudrates [115200]
+13:09:33 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-openmote-b_0', '/dev/riot/tty-openmote-b_1']
+13:09:33 INFO extracting firmware definitions.
+13:09:33 VERBOSE extracting firmware component names
+13:09:33 VERBOSE extracting firmware log descriptions.
+13:09:33 VERBOSE extracting 6top return codes.
+13:09:33 VERBOSE extracting 6top states.
+13:09:33 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-openmote-b_0
+13:09:33 INFO starting RPC server
+13:09:33 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-openmote-b_1
+13:09:40 SUCCESS Setting mote 5de6 as root
+13:09:40 ERROR 5de6 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+13:09:41 INFO registering DAGroot ae-8d-fe-e1-60-c7-cb-8a
+13:09:50 SUCCESS 7d12 [IEEE802154E] synchronized at slotOffset 0
+13:10:03 INFO 7d12 [CJOIN] sending CJOIN request
+13:10:05 VERBOSE New node: ae8d:fee1:e052:d7d7. Creating new OSCORE context in /home/francisco/workspace/RIOT/bin/oscore_context_ae8dfee1e052d7d7.json.
+13:10:05 VERBOSE received JRC join request
+13:10:06 SUCCESS 7d12 [CJOIN] node joined
+13:10:14 INFO 7d12 [SIXTOP] sending a 6top request
+13:10:16 SUCCESS 7d12 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_ADDRESPONSE
+13:11:13 INFO received RPL DAO from bbbb:0:0:0:ae8d:fee1:e052:d7d7
+	- parents:
+	   bbbb:0:0:0:ae8d:fee1:60c7:cb8a
+	- children:
+13:11:56 INFO received RPL DAO from bbbb:0:0:0:ae8d:fee1:e052:d7d7
+	- parents:
+	   bbbb:0:0:0:ae8d:fee1:60c7:cb8a
+	- children:
+13:12:36 INFO received RPL DAO from bbbb:0:0:0:ae8d:fee1:e052:d7d7
+	- parents:
+	   bbbb:0:0:0:ae8d:fee1:60c7:cb8a
+	- children:
+13:13:19 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:13:25 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:13:29 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:13:34 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:13:40 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:13:43 INFO received RPL DAO from bbbb:0:0:0:ae8d:fee1:e052:d7d7
+	- parents:
+	   bbbb:0:0:0:ae8d:fee1:60c7:cb8a
+	- children:
+13:13:44 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:13:50 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:13:54 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:00 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:04 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:10 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:14 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:15 INFO received RPL DAO from bbbb:0:0:0:ae8d:fee1:e052:d7d7
+	- parents:
+	   bbbb:0:0:0:ae8d:fee1:60c7:cb8a
+	- children:
+13:14:20 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:24 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:30 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:34 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:40 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:44 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:50 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:14:54 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:00 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:04 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:10 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:14 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:19 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:25 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:29 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:35 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:39 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:45 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:49 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:55 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:15:59 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:05 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:09 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:15 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:19 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:25 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:26 INFO received RPL DAO from bbbb:0:0:0:ae8d:fee1:e052:d7d7
+	- parents:
+	   bbbb:0:0:0:ae8d:fee1:60c7:cb8a
+	- children:
+13:16:29 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:35 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:36 INFO received RPL DAO from bbbb:0:0:0:ae8d:fee1:e052:d7d7
+	- parents:
+	   bbbb:0:0:0:ae8d:fee1:60c7:cb8a
+	- children:
+13:16:39 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:45 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:49 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:55 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:16:59 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:06 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:10 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:14 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:20 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:24 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:30 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:34 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:40 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:44 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:50 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:17:54 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:00 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:04 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:10 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:14 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:20 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:24 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:30 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:34 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:40 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:44 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:50 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:55 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:18:59 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:05 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:09 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:15 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:19 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:25 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:26 INFO received RPL DAO from bbbb:0:0:0:ae8d:fee1:e052:d7d7
+	- parents:
+	   bbbb:0:0:0:ae8d:fee1:60c7:cb8a
+	- children:
+13:19:29 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:35 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:39 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:45 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:49 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:55 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:19:59 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:20:05 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:20:09 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:20:15 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:20:19 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:20:25 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:20:29 ERROR 5de6 [OPENSERIAL] wrong CRC in input Buffer
+13:20:35 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:20:39 INFO received RPL DAO from bbbb:0:0:0:ae8d:fee1:e052:d7d7
+	- parents:
+	   bbbb:0:0:0:ae8d:fee1:60c7:cb8a
+	- children:
+13:20:40 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:20:46 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:20:50 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:20:56 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:21:00 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:21:06 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:21:10 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:21:14 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:21:20 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:21:24 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:21:30 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:21:34 INFO 7d12 [ICMPv6ECHO] received an echo request (length: 48)
+13:21:39 INFO received RPL DAO from bbbb:0:0:0:ae8d:fee1:e052:d7d7
+	- parents:
+	   bbbb:0:0:0:ae8d:fee1:60c7:cb8a
+	- children:
+13:21:51 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+13:21:51 WARNING /dev/riot/tty-openmote-b_0; exit loop
+13:21:51 WARNING closing serial port /dev/riot/tty-openmote-b_0
+13:21:51 WARNING /dev/riot/tty-openmote-b_1; exit loop
+13:21:51 WARNING closing serial port /dev/riot/tty-openmote-b_1
+13:22:00 VERBOSE loading logging configuration: config/logging.conf
+13:22:00 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-nrf52840-mdk__*']
+	- baudrates to probe      = [115200]
+13:22:00 INFO opening tun interface
+13:22:00 INFO created following virtual interfaces
+13:22:00 WARNING Probing motes: [] at baudrates [115200]
+13:22:00 SUCCESS Discovered serial-port(s): []
+13:22:00 INFO extracting firmware definitions.
+13:22:00 VERBOSE extracting firmware component names
+13:22:00 VERBOSE extracting firmware log descriptions.
+13:22:00 VERBOSE extracting 6top return codes.
+13:22:00 VERBOSE extracting 6top states.
+13:22:00 INFO starting RPC server
+13:22:02 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+13:22:13 VERBOSE loading logging configuration: config/logging.conf
+13:22:13 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1']
+	- baudrates to probe      = [115200]
+13:22:13 INFO opening tun interface
+13:22:13 INFO created following virtual interfaces
+13:22:13 WARNING Probing motes: ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1'] at baudrates [115200]
+13:22:21 SUCCESS Discovered serial-port(s): []
+13:22:21 INFO extracting firmware definitions.
+13:22:21 VERBOSE extracting firmware component names
+13:22:21 VERBOSE extracting firmware log descriptions.
+13:22:21 VERBOSE extracting 6top return codes.
+13:22:21 VERBOSE extracting 6top states.
+13:22:21 INFO starting RPC server
+13:22:24 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+13:22:26 VERBOSE loading logging configuration: config/logging.conf
+13:22:26 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1']
+	- baudrates to probe      = [115200]
+13:22:26 INFO opening tun interface
+13:22:26 INFO created following virtual interfaces
+13:22:26 WARNING Probing motes: ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1'] at baudrates [115200]
+13:22:34 SUCCESS Discovered serial-port(s): []
+13:22:34 INFO extracting firmware definitions.
+13:22:34 VERBOSE extracting firmware component names
+13:22:34 VERBOSE extracting firmware log descriptions.
+13:22:34 VERBOSE extracting 6top return codes.
+13:22:34 VERBOSE extracting 6top states.
+13:22:34 INFO starting RPC server
+13:22:38 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+13:22:39 VERBOSE loading logging configuration: config/logging.conf
+13:22:39 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1']
+	- baudrates to probe      = [115200]
+13:22:39 INFO opening tun interface
+13:22:39 INFO created following virtual interfaces
+13:22:40 WARNING Probing motes: ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1'] at baudrates [115200]
+13:22:48 SUCCESS Discovered serial-port(s): []
+13:22:48 INFO extracting firmware definitions.
+13:22:48 VERBOSE extracting firmware component names
+13:22:48 VERBOSE extracting firmware log descriptions.
+13:22:48 VERBOSE extracting 6top return codes.
+13:22:48 VERBOSE extracting 6top states.
+13:22:48 INFO starting RPC server
+13:22:49 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+13:25:09 VERBOSE loading logging configuration: config/logging.conf
+13:25:09 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1']
+	- baudrates to probe      = [115200]
+13:25:09 INFO opening tun interface
+13:25:09 INFO created following virtual interfaces
+13:25:09 WARNING Probing motes: ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1'] at baudrates [115200]
+13:25:17 SUCCESS Discovered serial-port(s): []
+13:25:17 INFO extracting firmware definitions.
+13:25:17 VERBOSE extracting firmware component names
+13:25:17 VERBOSE extracting firmware log descriptions.
+13:25:17 VERBOSE extracting 6top return codes.
+13:25:17 VERBOSE extracting 6top states.
+13:25:17 INFO starting RPC server
+13:25:19 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+13:26:07 VERBOSE loading logging configuration: config/logging.conf
+13:26:07 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1']
+	- baudrates to probe      = [115200]
+13:26:07 INFO opening tun interface
+13:26:07 INFO created following virtual interfaces
+13:26:07 WARNING Probing motes: ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1'] at baudrates [115200]
+13:26:07 WARNING MoteProbe@/dev/riot/tty-nrf52840-mdk_1: invalid serial frame: (60B) 7e-53-67-07-08-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-00-3c-44-41-50-4c-69-6e-6b-3a-4f-76-65-72-66-6c-6f-77-3e-0a-7e wrong CRC
+13:26:07 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1']
+13:26:07 INFO extracting firmware definitions.
+13:26:07 VERBOSE extracting firmware component names
+13:26:07 VERBOSE extracting firmware log descriptions.
+13:26:07 VERBOSE extracting 6top return codes.
+13:26:07 VERBOSE extracting 6top states.
+13:26:07 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-nrf52840-mdk_0
+13:26:07 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-nrf52840-mdk_1
+13:26:07 INFO starting RPC server
+13:26:17 SUCCESS Setting mote 25f0 as root
+13:26:17 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+13:26:17 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+13:26:39 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+13:26:48 INFO 6707 [CJOIN] sending CJOIN request
+13:26:49 VERBOSE New node: aa04:8169:befa:4338. Creating new OSCORE context in /home/francisco/workspace/RIOT/bin/oscore_context_aa048169befa4338.json.
+13:26:49 VERBOSE received JRC join request
+13:26:49 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+13:26:49 SUCCESS 6707 [CJOIN] node joined
+13:27:09 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+13:27:17 INFO 6707 [SIXTOP] sending a 6top request
+13:27:17 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_ADDRESPONSE
+13:27:33 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:28:00 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+13:28:12 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+13:28:26 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:28:48 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+13:29:02 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:29:24 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+13:29:37 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+13:29:53 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:30:17 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+13:30:40 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 1)
+13:31:02 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+13:31:05 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+13:31:34 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+13:31:44 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+13:32:00 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+13:32:20 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+13:32:24 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+13:32:29 SUCCESS 6707 [OPENWSN] booted
+13:32:29 SUCCESS 25f0 [OPENWSN] booted
+13:32:30 WARNING unregistering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+13:32:33 SUCCESS Setting mote 25f0 as root
+13:32:33 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+13:32:34 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+13:32:40 SUCCESS 6707 [OPENWSN] booted
+13:32:41 SUCCESS 25f0 [OPENWSN] booted
+13:32:41 WARNING unregistering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+13:32:43 SUCCESS Setting mote 25f0 as root
+13:32:43 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+13:32:43 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+13:33:26 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+13:33:33 INFO 6707 [CJOIN] sending CJOIN request
+13:33:33 ERROR Type-error in conversion of ™Åiæ˙C8
+13:33:33 WARNING coapRcBadRequest(reason=OSCORE unprotect failed: oscoreError(reason=Replay protection failed))
+13:33:52 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+13:33:52 WARNING /dev/riot/tty-nrf52840-mdk_0; exit loop
+13:33:52 WARNING closing serial port /dev/riot/tty-nrf52840-mdk_0
+13:33:52 WARNING /dev/riot/tty-nrf52840-mdk_1; exit loop
+13:33:52 WARNING closing serial port /dev/riot/tty-nrf52840-mdk_1
+13:34:18 VERBOSE loading logging configuration: config/logging.conf
+13:34:18 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1']
+	- baudrates to probe      = [115200]
+13:34:18 INFO opening tun interface
+13:34:18 INFO created following virtual interfaces
+13:34:18 WARNING Probing motes: ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1'] at baudrates [115200]
+13:34:18 WARNING MoteProbe@/dev/riot/tty-nrf52840-mdk_1: invalid serial frame: (27B) 7e-53-67-07-08-00-00-3c-44-41-50-4c-69-6e-6b-3a-4f-76-65-72-66-6c-6f-77-3e-0a-7e wrong CRC
+13:34:18 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1']
+13:34:18 INFO extracting firmware definitions.
+13:34:18 VERBOSE extracting firmware component names
+13:34:18 VERBOSE extracting firmware log descriptions.
+13:34:18 VERBOSE extracting 6top return codes.
+13:34:18 VERBOSE extracting 6top states.
+13:34:18 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-nrf52840-mdk_0
+13:34:18 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-nrf52840-mdk_1
+13:34:18 INFO starting RPC server
+13:34:23 SUCCESS Setting mote 25f0 as root
+13:34:23 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+13:34:23 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+13:34:53 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+13:35:05 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+13:35:06 INFO 6707 [CJOIN] sending CJOIN request
+13:35:07 VERBOSE New node: aa04:8169:befa:4338. Creating new OSCORE context in /home/francisco/workspace/RIOT/bin/oscore_context_aa048169befa4338.json.
+13:35:07 VERBOSE received JRC join request
+13:35:07 SUCCESS 6707 [CJOIN] node joined
+13:35:23 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+13:35:48 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:35:48 INFO 6707 [SIXTOP] sending a 6top request
+13:35:50 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_ADDRESPONSE
+13:36:14 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+13:36:26 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+13:36:40 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:37:02 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+13:37:16 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:37:39 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+13:37:51 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+13:38:07 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+13:38:29 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:38:51 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+13:39:12 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 1)
+13:39:19 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:39:48 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+13:40:14 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+13:40:14 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+13:40:14 WARNING /dev/riot/tty-nrf52840-mdk_0; exit loop
+13:40:14 WARNING closing serial port /dev/riot/tty-nrf52840-mdk_0
+13:40:14 WARNING /dev/riot/tty-nrf52840-mdk_1; exit loop
+13:40:14 WARNING closing serial port /dev/riot/tty-nrf52840-mdk_1
+13:52:53 VERBOSE loading logging configuration: config/logging.conf
+13:52:53 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1']
+	- baudrates to probe      = [115200]
+13:52:53 INFO opening tun interface
+13:52:53 INFO created following virtual interfaces
+13:52:53 WARNING Probing motes: ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1'] at baudrates [115200]
+13:52:53 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-nrf52840-mdk_0', '/dev/riot/tty-nrf52840-mdk_1']
+13:52:53 INFO extracting firmware definitions.
+13:52:53 VERBOSE extracting firmware component names
+13:52:53 VERBOSE extracting firmware log descriptions.
+13:52:53 VERBOSE extracting 6top return codes.
+13:52:53 VERBOSE extracting 6top states.
+13:52:53 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-nrf52840-mdk_0
+13:52:53 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-nrf52840-mdk_1
+13:52:53 INFO starting RPC server
+13:52:58 SUCCESS Setting mote 25f0 as root
+13:52:58 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+13:52:59 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+13:54:09 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+13:54:16 INFO 6707 [SIXTOP] sending a 6top request
+13:54:17 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_ADDRESPONSE
+13:54:47 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+13:55:06 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+13:55:40 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:55:56 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:56:30 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+13:56:55 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+13:57:16 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+13:57:39 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+13:57:43 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+13:58:13 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+13:58:37 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+13:59:01 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+13:59:24 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:00:00 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:00:17 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+14:00:17 INFO 6707 [ICMPv6ECHO] received an echo request (length: 64)
+14:00:17 VERBOSE 6707 [FRAG] fragmenting a big packet, original size 87, number of fragments 2
+14:00:19 INFO 6707 [ICMPv6ECHO] received an echo request (length: 64)
+14:00:19 VERBOSE 6707 [FRAG] fragmenting a big packet, original size 87, number of fragments 2
+14:00:21 ERROR 25f0 [OPENSERIAL] wrong CRC in input Buffer
+14:00:23 INFO 6707 [ICMPv6ECHO] received an echo request (length: 48)
+14:00:25 INFO 6707 [ICMPv6ECHO] received an echo request (length: 48)
+14:00:26 SUCCESS [GATEWAY] Reassembled 2 frags with tag 1685 into an IPv6 packet of size 87
+14:00:27 INFO 6707 [ICMPv6ECHO] received an echo request (length: 48)
+14:00:29 INFO 6707 [ICMPv6ECHO] received an echo request (length: 48)
+14:00:31 INFO 6707 [ICMPv6ECHO] received an echo request (length: 48)
+14:00:38 SUCCESS [GATEWAY] Reassembled 2 frags with tag 1686 into an IPv6 packet of size 87
+14:00:43 INFO 6707 [ICMPv6ECHO] received an echo request (length: 48)
+14:00:48 ERROR 25f0 [OPENSERIAL] wrong CRC in input Buffer
+14:01:01 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+14:01:30 SUCCESS 25f0 [OPENWSN] booted
+14:01:30 WARNING unregistering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:01:31 SUCCESS 25f0 [IEEE802154E] synchronized at slotOffset 0
+14:01:41 SUCCESS 25f0 [OPENWSN] booted
+14:01:43 SUCCESS 6707 [OPENWSN] booted
+14:01:45 SUCCESS Setting mote 25f0 as root
+14:01:45 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+14:01:46 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:01:59 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+14:02:11 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:02:44 ERROR 6707 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+14:02:46 ERROR 6707 [IEEE802154E] got desynchronized at slotOffset 33
+14:02:52 SUCCESS 25f0 [OPENWSN] booted
+14:02:52 WARNING unregistering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:02:52 SUCCESS 6707 [OPENWSN] booted
+14:02:56 SUCCESS Setting mote 25f0 as root
+14:02:56 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+14:02:56 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:03:10 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+14:03:22 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+14:03:54 WARNING 6707 [IEEE802154E] large timeCorr.: -17 ticks (code loc. 0)
+14:04:08 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:04:33 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:04:39 ERROR 6707 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+14:04:43 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:05:29 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:05:51 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:06:02 SUCCESS 25f0 [OPENWSN] booted
+14:06:02 WARNING unregistering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:06:03 SUCCESS 6707 [OPENWSN] booted
+14:06:03 SUCCESS Setting mote 25f0 as root
+14:06:04 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:06:04 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+14:06:14 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+14:06:32 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:07:04 WARNING 6707 [IEEE802154E] large timeCorr.: -17 ticks (code loc. 0)
+14:07:20 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:08:03 ERROR 6707 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+14:08:15 ERROR 6707 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+14:08:23 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:08:41 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:09:01 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:09:15 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:09:31 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:10:06 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:10:30 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:11:05 ERROR 6707 [IEEE802154E] got desynchronized at slotOffset 33
+14:11:23 SUCCESS 25f0 [OPENWSN] booted
+14:11:23 SUCCESS 6707 [OPENWSN] booted
+14:11:23 WARNING unregistering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:11:32 SUCCESS Setting mote 25f0 as root
+14:12:05 SUCCESS Setting mote 25f0 as root
+14:12:05 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+14:12:05 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:13:03 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+14:13:09 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+14:14:00 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:14:22 ERROR 6707 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+14:14:36 WARNING 6707 [IEEE802154E] large timeCorr.: -15 ticks (code loc. 0)
+14:14:50 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:15:17 SUCCESS 25f0 [OPENWSN] booted
+14:15:17 SUCCESS 6707 [OPENWSN] booted
+14:15:17 WARNING unregistering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:15:20 SUCCESS Setting mote 25f0 as root
+14:15:20 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+14:15:20 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:15:28 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+14:15:48 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:16:18 WARNING 6707 [IEEE802154E] large timeCorr.: -17 ticks (code loc. 0)
+14:16:34 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:16:38 INFO 6707 [SIXTOP] sending a 6top request
+14:16:41 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:16:41 INFO 6707 [SIXTOP] sending a 6top request
+14:16:43 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:16:43 INFO 6707 [SIXTOP] sending a 6top request
+14:16:45 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_ADDRESPONSE
+14:17:55 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:18:15 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:18:29 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:18:54 ERROR 6707 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+14:18:54 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+14:19:00 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:19:20 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:19:44 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:20:05 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+14:20:27 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 1)
+14:20:33 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:21:03 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:21:25 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:21:48 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+14:21:57 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:22:26 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:22:42 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:22:48 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:23:07 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 1)
+14:23:07 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:23:29 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+14:23:39 SUCCESS 6707 [OPENWSN] booted
+14:23:42 SUCCESS 25f0 [OPENWSN] booted
+14:23:42 WARNING unregistering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:24:05 SUCCESS Setting mote 25f0 as root
+14:24:05 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+14:24:06 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:24:13 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+14:24:44 WARNING 6707 [IEEE802154E] large timeCorr.: -17 ticks (code loc. 0)
+14:25:00 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:25:24 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:25:30 ERROR 6707 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+14:26:21 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:26:55 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:27:11 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:27:45 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:28:10 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:28:45 ERROR 6707 [IEEE802154E] got desynchronized at slotOffset 33
+14:28:58 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+14:29:03 INFO 6707 [SIXTOP] sending a 6top request
+14:29:04 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:04 INFO 6707 [SIXTOP] sending a 6top request
+14:29:06 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:07 INFO 6707 [SIXTOP] sending a 6top request
+14:29:08 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:08 INFO 6707 [SIXTOP] sending a 6top request
+14:29:10 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:11 INFO 6707 [SIXTOP] sending a 6top request
+14:29:12 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:12 INFO 6707 [SIXTOP] sending a 6top request
+14:29:14 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:15 INFO 6707 [SIXTOP] sending a 6top request
+14:29:16 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:16 INFO 6707 [SIXTOP] sending a 6top request
+14:29:18 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:19 INFO 6707 [SIXTOP] sending a 6top request
+14:29:20 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:20 INFO 6707 [SIXTOP] sending a 6top request
+14:29:22 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:23 INFO 6707 [SIXTOP] sending a 6top request
+14:29:25 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:25 INFO 6707 [SIXTOP] sending a 6top request
+14:29:27 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:27 INFO 6707 [SIXTOP] sending a 6top request
+14:29:29 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:29 INFO 6707 [SIXTOP] sending a 6top request
+14:29:31 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:31 INFO 6707 [SIXTOP] sending a 6top request
+14:29:33 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:33 INFO 6707 [SIXTOP] sending a 6top request
+14:29:35 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:35 INFO 6707 [SIXTOP] sending a 6top request
+14:29:37 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:37 INFO 6707 [SIXTOP] sending a 6top request
+14:29:39 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:39 INFO 6707 [SIXTOP] sending a 6top request
+14:29:41 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:41 INFO 6707 [SIXTOP] sending a 6top request
+14:29:43 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:43 INFO 6707 [SIXTOP] sending a 6top request
+14:29:45 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:45 INFO 6707 [SIXTOP] sending a 6top request
+14:29:46 ERROR 6707 [IEEE802154E] wdAckDuration overflows while at state 13 in slotOffset 80
+14:29:47 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARREQUEST_SENDDONE
+14:29:47 INFO 6707 [SIXTOP] sending a 6top request
+14:29:51 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:51 INFO 6707 [SIXTOP] sending a 6top request
+14:29:53 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:53 INFO 6707 [SIXTOP] sending a 6top request
+14:29:55 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:55 INFO 6707 [SIXTOP] sending a 6top request
+14:29:57 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:29:57 INFO 6707 [SIXTOP] sending a 6top request
+14:29:59 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:29:59 INFO 6707 [SIXTOP] sending a 6top request
+14:30:01 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:30:01 INFO 6707 [SIXTOP] sending a 6top request
+14:30:03 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:30:03 INFO 6707 [SIXTOP] sending a 6top request
+14:30:05 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:30:05 INFO 6707 [SIXTOP] sending a 6top request
+14:30:07 ERROR 6707 [SIXTOP] sixtop return code RC_SEQNUM_ERR at sixtop state WAIT_ADDRESPONSE
+14:30:07 INFO 6707 [SIXTOP] sending a 6top request
+14:30:09 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_CLEARRESPONSE
+14:30:10 INFO 6707 [SIXTOP] sending a 6top request
+14:30:11 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_ADDRESPONSE
+14:30:23 ERROR 6707 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+14:30:29 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:30:42 SUCCESS 25f0 [OPENWSN] booted
+14:30:42 WARNING unregistering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:31:04 ERROR 6707 [IEEE802154E] got desynchronized at slotOffset 33
+14:31:44 SUCCESS Setting mote 25f0 as root
+14:31:44 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+14:31:44 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:31:47 SUCCESS 6707 [OPENWSN] booted
+14:31:50 SUCCESS 25f0 [OPENWSN] booted
+14:31:50 WARNING unregistering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:31:59 SUCCESS 25f0 [OPENWSN] booted
+14:32:05 SUCCESS 6707 [OPENWSN] booted
+14:32:16 SUCCESS Setting mote 25f0 as root
+14:32:16 ERROR 25f0 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+14:32:16 INFO registering DAGroot 6e-d6-5b-b6-4b-52-c5-2f
+14:32:18 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+14:32:30 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:33:00 WARNING 6707 [IEEE802154E] large timeCorr.: -16 ticks (code loc. 0)
+14:33:16 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:33:26 INFO 6707 [SIXTOP] sending a 6top request
+14:33:27 SUCCESS 6707 [SIXTOP] sixtop return code RC_SUCCESS at sixtop state WAIT_ADDRESPONSE
+14:33:47 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:34:37 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:34:59 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:35:11 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:35:36 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+14:36:12 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+14:36:26 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:36:48 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+14:37:11 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+14:37:21 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:37:45 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:38:09 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:38:33 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+14:38:56 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:39:38 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+14:39:46 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:40:02 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+14:40:02 INFO 6707 [ICMPv6ECHO] received an echo request (length: 48)
+14:40:08 INFO 6707 [ICMPv6ECHO] received an echo request (length: 48)
+14:40:10 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:40:12 INFO 6707 [ICMPv6ECHO] received an echo request (length: 48)
+14:40:14 WARNING 6707 [IEEE802154E] large timeCorr.: 10 ticks (code loc. 0)
+14:40:16 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 1)
+14:40:17 ERROR 25f0 [OPENSERIAL] wrong CRC in input Buffer
+14:40:23 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:40:23 INFO 6707 [ICMPv6ECHO] received an echo request (length: 48)
+14:40:26 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:40:32 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:41:01 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+14:41:25 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:41:27 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:41:33 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:41:45 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:42:17 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:42:46 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+14:43:08 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+14:43:30 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+14:43:36 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:43:46 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:44:04 WARNING 6707 [IEEE802154E] large timeCorr.: -14 ticks (code loc. 0)
+14:44:45 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+14:44:49 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:45:03 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+14:45:39 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:45:53 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:46:20 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+14:46:22 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:46:24 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:46:48 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:47:26 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:47:40 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:47:50 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:48:13 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:48:25 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:48:47 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+14:48:51 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:49:17 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+14:49:33 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:49:46 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:49:54 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:50:08 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+14:50:08 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:50:08 WARNING 6707 [IEEE802154E] large timeCorr.: 11 ticks (code loc. 0)
+14:50:10 WARNING 6707 [IEEE802154E] large timeCorr.: -15 ticks (code loc. 0)
+14:50:34 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+14:50:40 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:50:54 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:51:16 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+14:51:24 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:51:28 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:52:15 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+14:53:05 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+14:53:22 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:53:44 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+14:54:00 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:54:16 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:54:32 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:54:54 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 1)
+14:54:58 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:55:11 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:55:27 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:55:49 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 1)
+14:55:49 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:55:55 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:56:13 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+14:56:37 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+14:56:55 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 1)
+14:56:56 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:57:12 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+14:57:22 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+14:57:36 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+14:57:54 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:58:34 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+14:58:57 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+14:59:13 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 0)
+14:59:37 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+15:00:05 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:00:15 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:00:21 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+15:00:34 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:00:56 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:01:32 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:01:50 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:02:12 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:02:31 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 0)
+15:03:17 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+15:03:45 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:03:57 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:04:10 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:04:12 ERROR 25f0 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+15:04:22 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:04:50 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:05:20 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:05:42 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+15:06:03 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:06:31 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:06:53 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:07:11 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:07:39 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:08:00 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:08:24 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:08:28 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:08:38 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:08:38 WARNING 6707 [IEEE802154E] large timeCorr.: 30 ticks (code loc. 0)
+15:09:00 ERROR 25f0 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 100
+15:09:00 ERROR 25f0 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+15:09:13 ERROR 6707 [IEEE802154E] got desynchronized at slotOffset 33
+15:09:18 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+15:09:35 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 1)
+15:09:35 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:09:35 ERROR 25f0 [IEEE802154E] wdRadio overflows while at state 7 in slotOffset 0
+15:09:35 ERROR 25f0 [IEEE802154E] wrong state 0 in start of frame, at slotOffset 0
+15:09:35 ERROR 25f0 [IEEE802154E] wrong state 0 in end of frame, at slotOffset 0
+15:09:35 WARNING 6707 [IEEE802154E] large timeCorr.: 38 ticks (code loc. 0)
+15:10:10 ERROR 6707 [IEEE802154E] got desynchronized at slotOffset 33
+15:10:23 SUCCESS 6707 [IEEE802154E] synchronized at slotOffset 0
+15:10:45 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:10:51 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:10:55 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:11:15 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 1)
+15:11:28 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:11:48 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:12:02 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:12:04 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:12:06 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:12:12 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:12:14 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:12:26 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:13:00 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:13:29 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:13:51 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:14:03 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:14:07 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:14:29 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:15:06 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:15:28 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:15:34 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:15:46 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:16:12 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:16:26 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:16:55 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:17:21 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:17:45 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:18:07 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+15:18:38 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:18:44 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:18:56 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:19:00 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+15:19:14 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:19:42 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:19:46 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:19:56 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:20:00 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:20:18 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:20:53 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:21:27 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:22:05 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:22:28 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:23:06 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:23:20 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:23:32 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:24:03 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:24:25 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:24:45 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:25:03 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+15:25:33 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:25:48 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:26:10 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:26:32 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:26:50 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:27:04 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:27:28 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:27:57 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+15:28:21 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:28:43 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:28:59 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+15:29:30 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:30:16 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:30:32 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 0)
+15:30:44 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:30:50 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:30:56 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:31:19 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:31:41 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:32:01 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:32:21 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:32:21 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:32:21 WARNING 6707 [IEEE802154E] large timeCorr.: 12 ticks (code loc. 0)
+15:32:23 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 1)
+15:32:23 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:32:41 WARNING 6707 [IEEE802154E] large timeCorr.: -14 ticks (code loc. 0)
+15:33:02 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:33:36 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:33:38 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:33:52 WARNING 6707 [IEEE802154E] large timeCorr.: -16 ticks (code loc. 0)
+15:34:26 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:34:32 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:35:07 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:35:17 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:35:31 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:35:45 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+15:35:59 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:36:50 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:37:10 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:37:24 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:37:50 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:38:02 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:38:23 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:38:45 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:38:53 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:39:21 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:39:33 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:39:35 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:39:57 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 1)
+15:40:18 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+15:40:28 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:40:38 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:40:58 WARNING 6707 [IEEE802154E] large timeCorr.: -17 ticks (code loc. 0)
+15:41:20 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:41:24 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:41:42 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 0)
+15:42:09 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:42:29 WARNING 6707 [IEEE802154E] large timeCorr.: -15 ticks (code loc. 0)
+15:42:39 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:43:07 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:43:19 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:43:33 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:43:54 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:44:08 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:44:10 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:44:14 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:44:18 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:44:36 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:44:48 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:45:24 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:45:41 ERROR 6707 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+15:45:47 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 1)
+15:46:09 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:46:25 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+15:46:47 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:46:57 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:47:34 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:47:38 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:47:58 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:48:02 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:48:30 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:48:32 ERROR 6707 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+15:48:36 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:48:38 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:48:50 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:49:11 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+15:49:31 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:49:53 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:50:01 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:50:21 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:50:33 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:50:47 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:51:02 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:51:14 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:51:32 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:51:54 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:52:14 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+15:52:24 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+15:52:53 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+15:53:11 WARNING 6707 [IEEE802154E] large timeCorr.: -14 ticks (code loc. 0)
+15:53:19 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:53:27 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:53:29 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:53:37 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+15:53:43 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:53:59 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 0)
+15:54:11 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:54:15 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:54:36 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+15:55:00 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:55:20 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+15:55:50 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:56:14 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:56:20 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+15:56:53 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:57:07 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+15:57:19 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:57:35 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 0)
+15:57:53 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+15:58:18 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:58:22 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+15:58:26 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+15:58:50 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+15:59:12 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+15:59:50 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:00:01 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:00:11 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:00:31 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:00:53 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:01:05 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 1)
+16:01:05 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:01:23 WARNING 6707 [IEEE802154E] large timeCorr.: -14 ticks (code loc. 0)
+16:01:35 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:01:50 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:02:12 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:02:24 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:02:36 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:02:38 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:02:48 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:02:50 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:02:54 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:03:30 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:03:37 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:03:59 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:04:03 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:04:35 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:04:57 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:05:17 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 1)
+16:05:26 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:05:44 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:06:22 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:06:28 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:06:50 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:07:23 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:07:49 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:07:51 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:07:55 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:08:01 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:08:21 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:08:43 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:08:58 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:09:10 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:09:26 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:09:40 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:10:02 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:10:16 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+16:10:32 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:10:49 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:11:01 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:11:21 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:11:41 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:12:09 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:12:17 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:12:31 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:12:52 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:13:00 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:13:20 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:13:30 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:13:32 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:13:54 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 1)
+16:14:10 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+16:14:25 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:14:39 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:14:51 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:15:19 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:15:27 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:15:49 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:15:55 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:16:18 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:16:30 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:16:52 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:17:14 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 1)
+16:17:28 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:17:50 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:18:07 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:18:21 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:18:35 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:18:49 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:18:57 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:19:25 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:19:33 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:19:43 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:20:02 WARNING 6707 [IEEE802154E] large timeCorr.: -14 ticks (code loc. 0)
+16:20:08 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:20:24 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:20:50 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+16:21:00 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+16:21:20 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+16:21:24 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:21:45 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+16:22:07 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:22:31 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:22:55 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+16:22:55 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:23:17 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+16:23:38 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 1)
+16:23:38 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:23:58 WARNING 6707 [IEEE802154E] large timeCorr.: -14 ticks (code loc. 0)
+16:24:22 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:24:44 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:25:04 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:25:21 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:25:23 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:25:55 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:25:57 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:26:01 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:26:19 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:26:39 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+16:26:51 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+16:27:14 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:27:40 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:27:50 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:28:04 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:28:12 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:28:14 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:28:30 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+16:28:57 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:29:07 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:29:29 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:29:41 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+16:30:13 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+16:30:19 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:30:54 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:31:04 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:31:16 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 0)
+16:32:02 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:32:18 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:32:25 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:32:47 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:33:09 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+16:33:19 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:33:33 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:34:10 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:34:44 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:34:46 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:35:08 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+16:35:20 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+16:35:38 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:35:52 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:36:03 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:36:09 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+16:36:25 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:36:39 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:36:51 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:37:07 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:37:27 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+16:37:41 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:37:54 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:38:16 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:38:30 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:38:58 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:39:06 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:39:22 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+16:39:43 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+16:40:07 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:40:35 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:40:43 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:40:53 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:41:05 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:41:28 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:41:42 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:42:16 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:42:38 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 1)
+16:42:42 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:43:00 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:43:25 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:43:29 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:43:47 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:44:09 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:44:31 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+16:44:37 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:45:24 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:45:30 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:45:52 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+16:45:56 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:46:16 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:46:44 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+16:46:59 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:47:21 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:47:51 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+16:47:55 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:48:01 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:48:09 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:48:25 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:48:58 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:49:20 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+16:49:24 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:50:00 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:50:10 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:50:23 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:50:29 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:50:33 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:50:53 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:50:55 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:50:59 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:51:23 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:51:45 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+16:52:05 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 1)
+16:52:18 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+16:52:32 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:52:54 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:53:06 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:53:20 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:53:40 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+16:54:21 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+16:54:45 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:54:47 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:54:57 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+16:54:59 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:55:07 ERROR 25f0 [IEEE802154E] wdDataDuration overflows while at state 19 in slotOffset 0
+16:55:17 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 0)
+16:55:23 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+16:55:45 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 1)
+16:55:52 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:56:10 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+16:56:26 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+16:56:40 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+16:57:06 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+16:57:34 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+16:57:55 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 1)
+16:57:59 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+16:58:25 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+16:59:03 WARNING 6707 [IEEE802154E] large timeCorr.: -11 ticks (code loc. 0)
+16:59:30 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+17:00:04 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+17:00:24 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+17:00:36 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 1)
+17:00:36 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+17:00:56 WARNING 6707 [IEEE802154E] large timeCorr.: -15 ticks (code loc. 0)
+17:01:19 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 1)
+17:01:21 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+17:01:21 ERROR 25f0 [IEEE802154E] wdRadio overflows while at state 7 in slotOffset 0
+17:01:21 ERROR 25f0 [IEEE802154E] wrong state 0 in start of frame, at slotOffset 0
+17:01:21 ERROR 25f0 [IEEE802154E] wrong state 0 in end of frame, at slotOffset 0
+17:01:27 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+17:01:59 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 0)
+17:02:19 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 1)
+17:02:41 WARNING 6707 [IEEE802154E] large timeCorr.: -13 ticks (code loc. 1)
+17:03:08 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 1)
+17:03:08 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+17:03:12 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+17:03:18 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+17:03:28 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+17:03:54 WARNING 6707 [IEEE802154E] large timeCorr.: -8 ticks (code loc. 0)
+17:04:18 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+17:04:34 WARNING 6707 [IEEE802154E] large timeCorr.: -12 ticks (code loc. 0)
+17:04:46 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+17:04:57 WARNING 6707 [IEEE802154E] large timeCorr.: -6 ticks (code loc. 0)
+17:05:03 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+17:05:29 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+17:05:37 WARNING 6707 [IEEE802154E] large timeCorr.: -7 ticks (code loc. 0)
+17:05:55 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+17:06:17 WARNING 6707 [IEEE802154E] large timeCorr.: -9 ticks (code loc. 1)
+17:06:27 INFO received RPL DAO from bbbb:0:0:0:aa04:8169:befa:4338
+	- parents:
+	   bbbb:0:0:0:6ed6:5bb6:4b52:c52f
+	- children:
+17:06:40 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+17:07:04 WARNING 6707 [IEEE802154E] large timeCorr.: -10 ticks (code loc. 0)
+17:07:08 WARNING device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+17:07:09 WARNING /dev/riot/tty-nrf52840-mdk_1; exit loop
+17:07:09 WARNING closing serial port /dev/riot/tty-nrf52840-mdk_1
+17:11:54 WARNING device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+17:11:55 WARNING /dev/riot/tty-nrf52840-mdk_0; exit loop
+17:11:55 WARNING closing serial port /dev/riot/tty-nrf52840-mdk_0
+08:23:19 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-nrf52840-mdk_0
+08:23:20 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-nrf52840-mdk_1
+09:07:12 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:17:35 VERBOSE loading logging configuration: config/logging.conf
+17:17:35 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_0']
+	- baudrates to probe      = [115200]
+17:17:35 INFO opening tun interface
+17:17:35 INFO created following virtual interfaces
+17:17:35 WARNING Probing motes: ['/dev/riot/tty-openmote-b_0'] at baudrates [115200]
+17:17:35 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-openmote-b_0']
+17:17:35 INFO extracting firmware definitions.
+17:17:35 VERBOSE extracting firmware component names
+17:17:35 VERBOSE extracting firmware log descriptions.
+17:17:35 VERBOSE extracting 6top return codes.
+17:17:35 VERBOSE extracting 6top states.
+17:17:36 INFO starting RPC server
+17:17:36 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-openmote-b_0
+17:17:36 WARNING returning fault: Unknown mote ID: 6707
+17:17:56 SUCCESS Setting mote 67eb as root
+17:17:56 ERROR 67eb [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+17:17:57 INFO registering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:18:03 SUCCESS 67eb [OPENWSN] booted
+17:18:03 WARNING unregistering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:18:06 SUCCESS Setting mote 67eb as root
+17:18:06 ERROR 67eb [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+17:18:06 INFO registering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:18:23 SUCCESS 67eb [OPENWSN] booted
+17:18:23 WARNING unregistering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:18:40 SUCCESS Setting mote 67eb as root
+17:18:40 ERROR 67eb [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+17:18:41 INFO registering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:20:54 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:20:54 WARNING /dev/riot/tty-openmote-b_0; exit loop
+17:20:54 WARNING closing serial port /dev/riot/tty-openmote-b_0
+17:21:22 VERBOSE loading logging configuration: config/logging.conf
+17:21:22 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_0']
+	- baudrates to probe      = [115200]
+17:21:22 INFO opening tun interface
+17:21:22 INFO created following virtual interfaces
+17:21:22 WARNING Probing motes: ['/dev/riot/tty-openmote-b_0'] at baudrates [115200]
+17:21:24 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-openmote-b_0']
+17:21:24 INFO extracting firmware definitions.
+17:21:24 VERBOSE extracting firmware component names
+17:21:24 VERBOSE extracting firmware log descriptions.
+17:21:24 VERBOSE extracting 6top return codes.
+17:21:24 VERBOSE extracting 6top states.
+17:21:24 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-openmote-b_0
+17:21:24 INFO starting RPC server
+17:21:27 SUCCESS Setting mote 67eb as root
+17:21:27 ERROR 67eb [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+17:21:27 INFO registering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:21:35 CRITICAL 67eb [IEEE802154E] wrong state 0 in timer fires, at slotOffset 0
+17:21:45 SUCCESS Setting mote 67eb as root
+17:21:46 SUCCESS Setting mote 67eb as root
+17:22:41 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:22:41 WARNING /dev/riot/tty-openmote-b_0; exit loop
+17:22:41 WARNING closing serial port /dev/riot/tty-openmote-b_0
+17:23:10 VERBOSE loading logging configuration: config/logging.conf
+17:23:10 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_0']
+	- baudrates to probe      = [115200]
+17:23:10 INFO opening tun interface
+17:23:10 INFO created following virtual interfaces
+17:23:10 WARNING Probing motes: ['/dev/riot/tty-openmote-b_0'] at baudrates [115200]
+17:23:10 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-openmote-b_0']
+17:23:10 INFO extracting firmware definitions.
+17:23:10 VERBOSE extracting firmware component names
+17:23:10 VERBOSE extracting firmware log descriptions.
+17:23:10 VERBOSE extracting 6top return codes.
+17:23:10 VERBOSE extracting 6top states.
+17:23:10 INFO starting RPC server
+17:23:10 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-openmote-b_0
+17:23:11 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:23:12 WARNING /dev/riot/tty-openmote-b_0; exit loop
+17:23:12 WARNING closing serial port /dev/riot/tty-openmote-b_0
+17:23:40 VERBOSE loading logging configuration: config/logging.conf
+17:23:40 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_0']
+	- baudrates to probe      = [115200]
+17:23:40 INFO opening tun interface
+17:23:40 INFO created following virtual interfaces
+17:23:40 WARNING Probing motes: ['/dev/riot/tty-openmote-b_0'] at baudrates [115200]
+17:23:42 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-openmote-b_0']
+17:23:42 INFO extracting firmware definitions.
+17:23:42 VERBOSE extracting firmware component names
+17:23:42 VERBOSE extracting firmware log descriptions.
+17:23:42 VERBOSE extracting 6top return codes.
+17:23:42 VERBOSE extracting 6top states.
+17:23:43 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-openmote-b_0
+17:23:43 INFO starting RPC server
+17:23:44 SUCCESS Setting mote 67eb as root
+17:23:45 ERROR 67eb [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+17:23:45 INFO registering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:23:52 CRITICAL 67eb [IEEE802154E] wrong state 0 in timer fires, at slotOffset 0
+17:23:59 SUCCESS 67eb [OPENWSN] booted
+17:23:59 WARNING unregistering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:31:37 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:31:37 WARNING /dev/riot/tty-openmote-b_0; exit loop
+17:31:37 WARNING closing serial port /dev/riot/tty-openmote-b_0
+17:32:09 VERBOSE loading logging configuration: config/logging.conf
+17:32:09 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_0']
+	- baudrates to probe      = [115200]
+17:32:09 INFO opening tun interface
+17:32:09 INFO created following virtual interfaces
+17:32:09 WARNING Probing motes: ['/dev/riot/tty-openmote-b_0'] at baudrates [115200]
+17:32:11 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-openmote-b_0']
+17:32:11 INFO extracting firmware definitions.
+17:32:11 VERBOSE extracting firmware component names
+17:32:11 VERBOSE extracting firmware log descriptions.
+17:32:11 VERBOSE extracting 6top return codes.
+17:32:11 VERBOSE extracting 6top states.
+17:32:11 INFO starting RPC server
+17:32:11 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-openmote-b_0
+17:32:12 SUCCESS Setting mote 67eb as root
+17:32:15 SUCCESS 67eb [OPENWSN] booted
+17:32:18 VERBOSE loading logging configuration: config/logging.conf
+17:32:18 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_0']
+	- baudrates to probe      = [115200]
+17:32:18 INFO opening tun interface
+17:32:18 INFO created following virtual interfaces
+17:32:18 WARNING Probing motes: ['/dev/riot/tty-openmote-b_0'] at baudrates [115200]
+17:32:18 WARNING MoteProbe@/dev/riot/tty-openmote-b_0: invalid serial frame: (10B) 7e-53-67-eb-0b-00-00-00-27-7e wrong CRC
+17:32:18 WARNING MoteProbe@/dev/riot/tty-openmote-b_0: invalid serial frame: (12B) 7e-eb-e4-02-8b-00-00-48-53-eb-00-7e wrong CRC
+17:32:19 WARNING MoteProbe@/dev/riot/tty-openmote-b_0: invalid serial frame: ( 4B) 7e-67-1b-7e wrong CRC
+17:32:19 WARNING MoteProbe@/dev/riot/tty-openmote-b_0: invalid serial frame: (12B) 7e-67-0c-00-c0-fb-53-eb-00-00-49-7e wrong CRC
+17:32:19 WARNING MoteProbe@/dev/riot/tty-openmote-b_0: invalid serial frame: ( 5B) 7e-00-00-0d-7e wrong CRC
+17:32:19 WARNING MoteProbe@/dev/riot/tty-openmote-b_0: invalid serial frame: ( 5B) 7e-67-ff-63-7e wrong CRC
+17:32:19 WARNING device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+17:32:19 WARNING MoteProbe@/dev/riot/tty-openmote-b_0: invalid serial frame: ( 8B) 7e-67-03-80-80-10-9a-7e wrong CRC
+17:32:19 SUCCESS 67eb [OPENWSN] booted
+17:32:19 SUCCESS 67eb [OPENWSN] booted
+17:32:20 WARNING /dev/riot/tty-openmote-b_0; exit loop
+17:32:20 WARNING closing serial port /dev/riot/tty-openmote-b_0
+17:32:20 ERROR Attempting to use a port that is not open
+17:32:20 SUCCESS Discovered serial-port(s): []
+17:32:20 INFO extracting firmware definitions.
+17:32:20 VERBOSE extracting firmware component names
+17:32:20 VERBOSE extracting firmware log descriptions.
+17:32:20 VERBOSE extracting 6top return codes.
+17:32:20 VERBOSE extracting 6top states.
+17:32:20 CRITICAL [Errno 98] Address already in use
+17:32:20 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:32:20 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:32:20 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:32:30 SUCCESS 67eb [OPENWSN] booted
+17:32:31 SUCCESS Setting mote 67eb as root
+17:32:41 ERROR 67eb [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+17:33:01 INFO registering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:33:07 SUCCESS 67eb [OPENWSN] booted
+17:33:07 WARNING unregistering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:33:55 SUCCESS Setting mote 67eb as root
+17:34:05 ERROR 67eb [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+17:34:29 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:34:30 WARNING /dev/riot/tty-openmote-b_0; exit loop
+17:34:30 WARNING closing serial port /dev/riot/tty-openmote-b_0
+17:35:01 VERBOSE loading logging configuration: config/logging.conf
+17:35:01 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_0']
+	- baudrates to probe      = [115200]
+17:35:01 INFO opening tun interface
+17:35:01 INFO created following virtual interfaces
+17:35:01 WARNING Probing motes: ['/dev/riot/tty-openmote-b_0'] at baudrates [115200]
+17:35:03 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-openmote-b_0']
+17:35:03 INFO extracting firmware definitions.
+17:35:03 VERBOSE extracting firmware component names
+17:35:03 VERBOSE extracting firmware log descriptions.
+17:35:03 VERBOSE extracting 6top return codes.
+17:35:03 VERBOSE extracting 6top states.
+17:35:03 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-openmote-b_0
+17:35:03 INFO starting RPC server
+17:35:11 ERROR list index out of range
+17:35:58 INFO registering DAGroot ae-8d-fe-e1-e0-2c-e2-2d
+17:37:48 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:37:48 WARNING /dev/riot/tty-openmote-b_0; exit loop
+17:37:48 WARNING closing serial port /dev/riot/tty-openmote-b_0
+17:38:27 VERBOSE loading logging configuration: config/logging.conf
+17:38:27 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_1']
+	- baudrates to probe      = [115200]
+17:38:27 INFO opening tun interface
+17:38:27 INFO created following virtual interfaces
+17:38:27 WARNING Probing motes: [] at baudrates [115200]
+17:38:27 SUCCESS Discovered serial-port(s): []
+17:38:27 INFO extracting firmware definitions.
+17:38:27 VERBOSE extracting firmware component names
+17:38:27 VERBOSE extracting firmware log descriptions.
+17:38:27 VERBOSE extracting 6top return codes.
+17:38:27 VERBOSE extracting 6top states.
+17:38:27 INFO starting RPC server
+17:38:34 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:38:37 VERBOSE loading logging configuration: config/logging.conf
+17:38:37 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_1']
+	- baudrates to probe      = [115200]
+17:38:37 INFO opening tun interface
+17:38:37 INFO created following virtual interfaces
+17:38:37 WARNING Probing motes: [] at baudrates [115200]
+17:38:37 SUCCESS Discovered serial-port(s): []
+17:38:37 INFO extracting firmware definitions.
+17:38:37 VERBOSE extracting firmware component names
+17:38:37 VERBOSE extracting firmware log descriptions.
+17:38:37 VERBOSE extracting 6top return codes.
+17:38:37 VERBOSE extracting 6top states.
+17:38:37 INFO starting RPC server
+17:38:38 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+17:38:43 VERBOSE loading logging configuration: config/logging.conf
+17:38:43 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_2']
+	- baudrates to probe      = [115200]
+17:38:43 INFO opening tun interface
+17:38:43 INFO created following virtual interfaces
+17:38:43 WARNING Probing motes: ['/dev/riot/tty-openmote-b_2'] at baudrates [115200]
+17:38:43 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-openmote-b_2']
+17:38:43 INFO extracting firmware definitions.
+17:38:43 VERBOSE extracting firmware component names
+17:38:43 VERBOSE extracting firmware log descriptions.
+17:38:43 VERBOSE extracting 6top return codes.
+17:38:43 VERBOSE extracting 6top states.
+17:38:43 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-openmote-b_2
+17:38:43 INFO starting RPC server
+17:38:46 SUCCESS Setting mote 2596 as root
+17:38:56 ERROR 2596 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+17:39:41 INFO registering DAGroot ae-8d-fe-e1-20-8c-87-0d
+18:00:25 SUCCESS 2596 [OPENWSN] booted
+18:00:26 SUCCESS 2596 [OPENWSN] booted
+18:00:26 WARNING unregistering DAGroot ae-8d-fe-e1-20-8c-87-0d
+18:00:28 WARNING device reports readiness to read but returned no data (device disconnected or multiple access on port?)
+18:00:28 SUCCESS Setting mote 2596 as root
+18:00:29 WARNING /dev/riot/tty-openmote-b_2; exit loop
+18:00:29 WARNING closing serial port /dev/riot/tty-openmote-b_2
+18:00:40 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+18:00:46 VERBOSE loading logging configuration: config/logging.conf
+18:00:46 INFO initializing OV Server with options:
+	- host address server     = localhost
+	- port number server      = 9000
+	- firmware path           = /home/francisco/workspace/openwsn/openwsn-fw-riot
+	- opentun                 = True
+	- use page zero           = False
+	- use VCD logger          = False
+	- serial port mask        = ['/dev/riot/tty-openmote-b_2']
+	- baudrates to probe      = [115200]
+18:00:46 INFO opening tun interface
+18:00:46 INFO created following virtual interfaces
+18:00:46 WARNING Probing motes: ['/dev/riot/tty-openmote-b_2'] at baudrates [115200]
+18:00:46 SUCCESS Discovered serial-port(s): ['/dev/riot/tty-openmote-b_2']
+18:00:46 INFO extracting firmware definitions.
+18:00:46 VERBOSE extracting firmware component names
+18:00:46 VERBOSE extracting firmware log descriptions.
+18:00:46 VERBOSE extracting 6top return codes.
+18:00:46 VERBOSE extracting 6top states.
+18:00:46 SUCCESS connected to broker (argus.paris.inria.fr) for mote on port: /dev/riot/tty-openmote-b_2
+18:00:46 INFO starting RPC server
+18:00:49 SUCCESS Setting mote 2596 as root
+18:00:58 ERROR 2596 [IEEE802154E] wrong state 1 in startSlot, at slotOffset 1
+18:01:43 INFO registering DAGroot ae-8d-fe-e1-20-8c-87-0d
+18:09:37 ERROR no source route to [187, 187, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2]
+18:09:37 WARNING /dev/riot/tty-openmote-b_2; exit loop
+18:09:37 WARNING closing serial port /dev/riot/tty-openmote-b_2

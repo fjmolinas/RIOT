@@ -74,11 +74,11 @@ int openwsn_radio_init(void *radio_dev);
 typedef struct {
 #if IS_ACTIVE(MODULE_OPENWSN_RADIO_NETDEV)
     netdev_t *dev;                    /**< netdev device */
+    radio_capture_cbt startFrame_cb;  /**< start of frame capture callback */
+    radio_capture_cbt endFrame_cb;    /**< end of frame capture callback */
 #else
     ieee802154_dev_t  *dev;           /**< radio hal */
 #endif
-    radio_capture_cbt startFrame_cb;  /**< start of frame capture callback */
-    radio_capture_cbt endFrame_cb;    /**< end of frame capture callback */
 } openwsn_radio_t;
 
 #ifdef __cplusplus
