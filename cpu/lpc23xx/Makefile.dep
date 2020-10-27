@@ -1,7 +1,7 @@
 USEMODULE += arm7_common
 USEMODULE += bitfield
 USEMODULE += periph
-USEMODULE += pm_layered
+DEFAULT_MODULE += pm_layered
 
 ifneq (,$(filter mci,$(USEMODULE)))
   USEMODULE += xtimer

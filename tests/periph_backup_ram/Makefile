@@ -2,7 +2,7 @@ include ../Makefile.tests_common
 
 FEATURES_REQUIRED = backup_ram
 
-USEMODULE += pm_layered
+DEFAULT_MODULE += pm_layered
 USEMODULE += periph_rtc
 USEMODULE += xtimer
 

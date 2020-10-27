@@ -14,7 +14,7 @@ endif
 USEPKG += gecko_sdk
 
 # include layered power management
-USEMODULE += pm_layered
+DEFAULT_MODULE += pm_layered
 
 # CMSIS-DSP is needed for arm_math.h on Cortex-M0+ architectures
 ifeq ($(CPU_CORE),cortex-m0plus)
