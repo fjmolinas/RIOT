@@ -60,7 +60,17 @@ void scheduler_start(unsigned state)
 
     /* wait for events */
     event_t *event;
+#ifdef MODULE_PM_LAYERED
+#if IS_USED(MODULE_CC2538_RF)
+    /* unblock modes that have RAM retention */
+    pm_unblock(PM_NUM_MODES - 2);
+#endif
+    pm_unblock(PM_NUM_MODES - 1);
+#endif
     while ((event = event_wait_multi(_queues, TASKPRIO_MAX))) {
+#ifdef MODULE_PM_LAYERED
+        pm_block(PM_NUM_MODES - 1);
+#endif
         debugpins_task_set();
         event->handler(event);
         /* remove from task list */
@@ -69,6 +79,9 @@ void scheduler_start(unsigned state)
         scheduler_dbg.numTasksCur--;
 #endif
         debugpins_task_clr();
+#ifdef MODULE_PM_LAYERED
+        pm_unblock(PM_NUM_MODES - 1);
+#endif
     }
 }
 

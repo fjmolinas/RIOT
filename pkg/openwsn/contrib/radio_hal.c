@@ -23,6 +23,7 @@
 #include "sctimer.h"
 #include "idmanager.h"
 #include "eui64.h"
+#include "periph/pm.h"
 
 #include "byteorder.h"
 
