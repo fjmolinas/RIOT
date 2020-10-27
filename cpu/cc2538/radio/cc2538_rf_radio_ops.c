@@ -23,12 +23,20 @@
 #include <errno.h>
 #include <stdio.h>
 
+#include "periph/pm.h"
 #include "net/gnrc.h"
 
 #include "cc2538_rf.h"
 #include "cc2538_rf_internal.h"
 
 #include "net/ieee802154/radio.h"
+
+/**
+ * @brief   Lowest Mode the radio can TX/RX in
+ */
+#ifndef CC2538_RF_PM_LOWEST
+#define CC2538_RF_PM_LOWEST      (3)
+#endif
 
 static const ieee802154_radio_ops_t cc2538_rf_ops;
 
@@ -46,6 +54,31 @@ static bool cc2538_cca;         /**< used to check whether the last CCA result
                                      CSMA-CA */
 static bool cc2538_sfd_listen;  /**< used to check whether we should ignore
                                      the SFD flag */
+
+#ifdef MODULE_PM_LAYERED
+/* keep track if the lowest allowed mode is already blocked */
+static bool _blocked = false;
+#endif
+
+static void _pm_block(void)
+{
+#ifdef MODULE_PM_LAYERED
+    if (!_blocked) {
+        _blocked = true;
+        pm_block(CC2538_RF_PM_LOWEST);
+    }
+#endif
+}
+
+static void _pm_unblock(void)
+{
+#ifdef MODULE_PM_LAYERED
+    if (_blocked) {
+        _blocked = false;
+        pm_unblock(CC2538_RF_PM_LOWEST);
+    }
+#endif
+}
 
 static int _write(ieee802154_dev_t *dev, const iolist_t *iolist)
 {
@@ -304,12 +337,19 @@ static int _request_set_trx_state(ieee802154_dev_t *dev, ieee802154_trx_state_t 
 
     switch (state) {
         case IEEE802154_TRX_STATE_TRX_OFF:
+            _pm_unblock();
+            if (RFCORE->XREG_FSMSTAT0bits.FSM_FFCTRL_STATE != FSM_STATE_IDLE) {
+                RFCORE_SFR_RFST = ISRFOFF;
+            }
+            break;
         case IEEE802154_TRX_STATE_TX_ON:
+            _pm_block();
             if (RFCORE->XREG_FSMSTAT0bits.FSM_FFCTRL_STATE != FSM_STATE_IDLE) {
                 RFCORE_SFR_RFST = ISRFOFF;
             }
             break;
         case IEEE802154_TRX_STATE_RX_ON:
+            _pm_block();
             RFCORE_XREG_RFIRQM0 |= RXPKTDONE;
             RFCORE_SFR_RFST = ISFLUSHRX;
             RFCORE_SFR_RFST = ISRXON;
