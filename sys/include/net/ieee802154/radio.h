@@ -93,6 +93,10 @@ typedef enum {
      */
     IEEE802154_CAP_SUB_GHZ,
     /**
+     * @brief the device reports reception off frames with invalid CRC.
+     */
+    IEEE802154_CAP_IRQ_CRC_ERROR,
+    /**
      * @brief the device reports when the transmission is done
      */
     IEEE802154_CAP_IRQ_TX_DONE,
@@ -191,6 +195,26 @@ typedef enum {
     IEEE802154_RADIO_INDICATION_RX_START,
 
     /**
+     * @brief the transceiver received a frame with an invalid crc
+     *        and lies in the internal framebuffer.
+     *
+     * This indication should be generated only if the CRC is invalid and
+     * the frame passes the address matching filter (this includes ACK
+     * and Beacon frames). The latter only applies if the radio is not
+     * in promiscuous mode.
+     *
+     * The transceiver is in @ref IEEE802154_TRX_STATE_RX_ON state when
+     * this function is called, but with framebuffer protection (either
+     * dynamic framebuffer protection or disabled RX). Thus, the frame
+     * won't be overwritten before calling @ref ieee802154_radio_indication_crc_error
+     * function. However, @ref ieee802154_radio_indication_crc_error
+     * MUST be called in order to receive new frames. If there's no
+     * interest in the frame, the function can be called with a NULL
+     * buffer to drop the frame.
+     */
+    IEEE802154_RADIO_INDICATION_CRC_ERROR,
+
+    /**
      * @brief the transceiver sent out a valid SFD
      *
      * This event is present if radio has @ref IEEE802154_CAP_IRQ_TX_START cap.
@@ -244,6 +268,18 @@ typedef struct {
 } ieee802154_csma_be_t;
 
 /**
+ * @name IEE802154 rx_info flags
+ *
+ * These flags apply to the received frame
+ * @{
+ */
+/**
+ * @brief   Frame checksum was valid on receive
+ */
+#define IEE802154_RX_INFO_FLAGS_CRC_VALID  (1 << 0)
+/** @} */
+
+/**
  * @brief RX information associated to a frame
  */
 typedef struct {
@@ -255,6 +291,7 @@ typedef struct {
      */
     uint8_t rssi;
     uint8_t lqi;    /**< LQI of the received frame */
+    uint8_t flags;  /**< flags as defined above */
 } ieee802154_rx_info_t;
 
 /**
