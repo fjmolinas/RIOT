@@ -50,13 +50,11 @@ void _idmanager_addr_override(void)
 
     /* override 16b address to avoid short address collision */
     network_uint16_t short_addr;
-    luid_get_short(&short_addr);
-    open_addr_t id;
-    id.type = ADDR_16B;
-    memcpy(&id.addr_16b, short_addr.u8, IEEE802154_SHORT_ADDRESS_LEN);
-    idmanager_setMyID(&id);
+    open_addr_t* id_p = idmanager_getMyID(ADDR_16B);
+    memcpy(short_addr.u8, id_p->addr_16b, IEEE802154_SHORT_ADDRESS_LEN);
 
     /* override PANID */
+    open_addr_t id;
     id.type = ADDR_PANID;
     network_uint16_t panid_be = byteorder_htons(OPENWSN_PANID);
     memcpy(&id.panid, &panid_be, IEEE802154_SHORT_ADDRESS_LEN);
