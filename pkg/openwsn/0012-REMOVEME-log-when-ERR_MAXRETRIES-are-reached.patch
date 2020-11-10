@@ -1,0 +1,54 @@
+From 109e2ba5e9b8378569012d7c5dfc57563841dc0d Mon Sep 17 00:00:00 2001
+From: Francisco Molina <femolina@uc.cl>
+Date: Wed, 4 Nov 2020 16:30:37 +0100
+Subject: [PATCH 12/13] REMOVEME: log when ERR_MAXRETRIES are reached
+
+---
+ openstack/02a-MAClow/IEEE802154E.c | 10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/openstack/02a-MAClow/IEEE802154E.c b/openstack/02a-MAClow/IEEE802154E.c
+index e8e3eb90..c06fad02 100644
+--- a/openstack/02a-MAClow/IEEE802154E.c
++++ b/openstack/02a-MAClow/IEEE802154E.c
+@@ -1083,7 +1083,7 @@ port_INLINE void activity_ti1ORri1(void) {
+                     endSlot();
+                     return;
+                 }
+-                
++
+                 // configure the radio to listen to the default synchronizing channel
+                 radio_setFrequency(ieee154e_vars.freq, FREQ_TX);
+ 
+@@ -1121,7 +1121,7 @@ port_INLINE void activity_ti1ORri1(void) {
+             // 3.  set capture interrupt for Rx SFD done and receiving packet done
+             sctimer_setCapture(ACTION_RX_SFD_DONE);
+             sctimer_setCapture(ACTION_RX_DONE);
+-        
++
+             // configure the radio to listen to the default synchronizing channel
+             radio_setFrequency(ieee154e_vars.freq, FREQ_RX);
+ #else
+@@ -1422,6 +1422,9 @@ port_INLINE void activity_tie5(void) {
+     ieee154e_vars.dataToSend->l2_retriesLeft--;
+ 
+     if (ieee154e_vars.dataToSend->l2_retriesLeft == 0) {
++        LOG_ERROR(COMPONENT_IEEE802154E, ERR_MAXRETRIES_REACHED,
++                (errorparameter_t)0,
++                (errorparameter_t)0);
+         // indicate tx fail if no more retries left
+         notif_sendDone(ieee154e_vars.dataToSend, E_FAIL);
+     } else {
+@@ -2869,6 +2872,9 @@ void endSlot(void) {
+         ieee154e_vars.dataToSend->l2_retriesLeft--;
+ 
+         if (ieee154e_vars.dataToSend->l2_retriesLeft == 0) {
++            LOG_ERROR(COMPONENT_IEEE802154E, ERR_MAXRETRIES_REACHED,
++                (errorparameter_t)0,
++                (errorparameter_t)0);
+             // indicate tx fail if no more retries left
+             notif_sendDone(ieee154e_vars.dataToSend, E_FAIL);
+         } else {
+-- 
+2.28.0
+
