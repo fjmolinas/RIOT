@@ -1,0 +1,30 @@
+From a3757b91628abfb0deb1ecdca35f49100a6ee0ea Mon Sep 17 00:00:00 2001
+From: Francisco Molina <femolina@uc.cl>
+Date: Fri, 13 Nov 2020 09:19:59 +0100
+Subject: [PATCH 15/15] REMOVEME: remove ERR_WDACKDURATION_OVERFLOWS on ACK
+ sender
+
+---
+ openstack/02a-MAClow/IEEE802154E.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/openstack/02a-MAClow/IEEE802154E.c b/openstack/02a-MAClow/IEEE802154E.c
+index c06fad02..cca680ee 100644
+--- a/openstack/02a-MAClow/IEEE802154E.c
++++ b/openstack/02a-MAClow/IEEE802154E.c
+@@ -2151,9 +2151,9 @@ port_INLINE void activity_ri8(PORT_TIMER_WIDTH capturedTime) {
+ 
+ port_INLINE void activity_rie6(void) {
+     // log the error
+-    LOG_ERROR(COMPONENT_IEEE802154E, ERR_WDACKDURATION_OVERFLOWS,
+-              (errorparameter_t) ieee154e_vars.state,
+-              (errorparameter_t) ieee154e_vars.slotOffset);
++    // LOG_ERROR(COMPONENT_IEEE802154E, ERR_WDACKDURATION_OVERFLOWS,
++    //           (errorparameter_t) ieee154e_vars.state,
++    //           (errorparameter_t) ieee154e_vars.slotOffset);
+     // abort
+     endSlot();
+ }
+-- 
+2.28.0
+

@@ -1,0 +1,25 @@
+From 17b3ce78889435e6bdd9462dde426296d704ec10 Mon Sep 17 00:00:00 2001
+From: Francisco Molina <femolina@uc.cl>
+Date: Thu, 12 Nov 2020 21:55:48 +0100
+Subject: [PATCH 14/15] kernel/scheduler.h: add more scheduler debug functions
+
+---
+ kernel/scheduler.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/kernel/scheduler.h b/kernel/scheduler.h
+index 51b6d9cb..482b2209 100644
+--- a/kernel/scheduler.h
++++ b/kernel/scheduler.h
+@@ -51,6 +51,8 @@ void scheduler_start(unsigned state);
+ void scheduler_push_task(task_cbt task_cb, task_prio_t prio);
+ 
+ #if SCHEDULER_DEBUG_ENABLE
++void scheduler_debug_TasksSum_reset(void);
++uint32_t scheduler_debug_get_TasksSum(void);
+ uint8_t scheduler_debug_get_TasksCur(void);
+ uint8_t scheduler_debug_get_TasksMax(void);
+ #endif
+-- 
+2.28.0
+
