@@ -87,7 +87,7 @@ endif
 FEATURES_OPTIONAL += periph_gpio
 
 # always select power management if available
-FEATURES_OPTIONAL += periph_pm
+# FEATURES_OPTIONAL += periph_pm
 
 # always select provided architecture features
 FEATURES_REQUIRED += $(filter arch_%,$(FEATURES_PROVIDED))

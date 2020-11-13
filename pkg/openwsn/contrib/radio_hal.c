@@ -264,7 +264,7 @@ void radio_txNow(void)
 void radio_rxEnable(void)
 {
     int ret = ieee802154_radio_request_set_trx_state(openwsn_radio.dev,
-                                                     IEEE802154_TRX_STATE_TRX_OFF);
+                                                     IEEE802154_TRX_STATE_TX_ON);
 
     if (ret) {
         LOG_ERROR("[openwsn/radio]: request_set_trx_state failed %s\n",
