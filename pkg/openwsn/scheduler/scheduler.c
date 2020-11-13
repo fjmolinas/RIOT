@@ -106,7 +106,35 @@ void scheduler_push_task(task_cbt cb, task_prio_t prio)
     if (scheduler_dbg.numTasksCur > scheduler_dbg.numTasksMax) {
         scheduler_dbg.numTasksMax = scheduler_dbg.numTasksCur;
     }
+    scheduler_dbg.numTasksSum += scheduler_dbg.numTasksCur;
 #endif
 
     irq_restore(state);
 }
+
+#if SCHEDULER_DEBUG_ENABLE
+uint8_t scheduler_debug_get_TasksCur(void)
+{
+   return scheduler_dbg.numTasksCur;
+}
+
+uint32_t scheduler_debug_get_TasksSum(void)
+{
+   return scheduler_dbg.numTasksSum;
+}
+
+void scheduler_debug_TasksSum_reset(void)
+{
+    INTERRUPT_DECLARATION();
+
+    DISABLE_INTERRUPTS();
+
+    scheduler_dbg.numTasksSum = 0;
+    ENABLE_INTERRUPTS();
+}
+
+uint8_t scheduler_debug_get_TasksMax(void)
+{
+   return scheduler_dbg.numTasksMax;
+}
+#endif

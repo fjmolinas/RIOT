@@ -44,6 +44,7 @@ typedef struct {
  * @brief   OpenWSN scheduler debug variables
  */
 typedef struct {
+    uint32_t numTasksSum;   /**< Cumulated tasks in queue */
     uint8_t numTasksCur;    /**< Current task number */
     uint8_t numTasksMax;    /**< Current peak queued tasks */
 } scheduler_dbg_t;
