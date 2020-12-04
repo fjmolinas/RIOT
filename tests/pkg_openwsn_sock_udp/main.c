@@ -298,14 +298,16 @@ static void test_sock_udp_recv__socketed(void)
     static const sock_udp_ep_t remote = { .addr = { .ipv6 = _TEST_ADDR_REMOTE },
                                           .family = AF_INET6,
                                           .port = _TEST_PORT_REMOTE };
+    static uint8_t test_data[] = "ABCD";
 
     expect(0 == sock_udp_create(&_sock, &local, &remote, SOCK_FLAGS_REUSE_EP));
     expect(_inject_packet(&src_addr, &dst_addr, _TEST_PORT_REMOTE,
-                          _TEST_PORT_LOCAL, "ABCD", sizeof("ABCD"),
+                          _TEST_PORT_LOCAL, test_data, sizeof(test_data),
                           _TEST_NETIF));
-    expect(sizeof("ABCD") == sock_udp_recv(&_sock, _test_buffer,
-                                           sizeof(_test_buffer),
-                                           SOCK_NO_TIMEOUT, NULL));
+    sock_udp_recv(&_sock, _test_buffer, sizeof(_test_buffer), SOCK_NO_TIMEOUT,
+                  NULL);
+    expect(memcmp(test_data, _test_buffer, sizeof(test_data)) == 0);
+
     expect(_check_net());
 }
 
@@ -318,15 +320,16 @@ static void test_sock_udp_recv__socketed_with_remote(void)
     static const sock_udp_ep_t remote = { .addr = { .ipv6 = _TEST_ADDR_REMOTE },
                                           .family = AF_INET6,
                                           .port = _TEST_PORT_REMOTE };
+    static uint8_t test_data[] = "ABCD";
     sock_udp_ep_t result;
 
     expect(0 == sock_udp_create(&_sock, &local, &remote, SOCK_FLAGS_REUSE_EP));
     expect(_inject_packet(&src_addr, &dst_addr, _TEST_PORT_REMOTE,
-                          _TEST_PORT_LOCAL, "ABCD", sizeof("ABCD"),
+                          _TEST_PORT_LOCAL, test_data, sizeof(test_data),
                           _TEST_NETIF));
-    expect(sizeof("ABCD") == sock_udp_recv(&_sock, _test_buffer,
-                                           sizeof(_test_buffer),
-                                           SOCK_NO_TIMEOUT, &result));
+    sock_udp_recv(&_sock, _test_buffer, sizeof(_test_buffer), SOCK_NO_TIMEOUT,
+                  &result);
+    expect(memcmp(test_data, _test_buffer, sizeof(test_data)) == 0);
     expect(AF_INET6 == result.family);
     expect(memcmp(&result.addr, &src_addr, sizeof(result.addr)) == 0);
     expect(_TEST_PORT_REMOTE == result.port);
@@ -342,17 +345,18 @@ static void test_sock_udp_recv__socketed_with_port0(void)
     static const sock_udp_ep_t remote = { .addr = { .ipv6 = _TEST_ADDR_REMOTE },
                                           .family = AF_INET6,
                                           .port = _TEST_PORT_REMOTE };
+    static uint8_t test_data[] = "ABCD";
     sock_udp_ep_t result;
 
     expect(0 == sock_udp_create(&_sock, &local, &remote, SOCK_FLAGS_REUSE_EP));
     expect(0 == sock_udp_get_local(&_sock, &local));
     expect(0 != local.port);
     expect(_inject_packet(&src_addr, &dst_addr, _TEST_PORT_REMOTE,
-                          local.port, "ABCD", sizeof("ABCD"),
+                          local.port, test_data, sizeof(test_data),
                           _TEST_NETIF));
-    expect(sizeof("ABCD") == sock_udp_recv(&_sock, _test_buffer,
-                                           sizeof(_test_buffer),
-                                           SOCK_NO_TIMEOUT, &result));
+    sock_udp_recv(&_sock, _test_buffer, sizeof(_test_buffer), SOCK_NO_TIMEOUT,
+                  &result);
+    expect(memcmp(test_data, _test_buffer, sizeof(test_data)) == 0);
     expect(AF_INET6 == result.family);
     expect(memcmp(&result.addr, &src_addr, sizeof(result.addr)) == 0);
     expect(_TEST_PORT_REMOTE == result.port);
@@ -367,14 +371,15 @@ static void test_sock_udp_recv__unsocketed(void)
     static const sock_udp_ep_t local = { .addr = { .ipv6 = _TEST_ADDR_LOCAL },
                                          .family = AF_INET6,
                                          .port = _TEST_PORT_LOCAL };
+    static uint8_t test_data[] = "ABCD";
 
     expect(0 == sock_udp_create(&_sock, &local, NULL, SOCK_FLAGS_REUSE_EP));
     expect(_inject_packet(&src_addr, &dst_addr, _TEST_PORT_REMOTE,
-                          _TEST_PORT_LOCAL, "ABCD", sizeof("ABCD"),
+                          _TEST_PORT_LOCAL, test_data, sizeof(test_data),
                           _TEST_NETIF));
-    expect(sizeof("ABCD") == sock_udp_recv(&_sock, _test_buffer,
-                                           sizeof(_test_buffer),
-                                           SOCK_NO_TIMEOUT, NULL));
+    sock_udp_recv(&_sock, _test_buffer, sizeof(_test_buffer), SOCK_NO_TIMEOUT,
+                  NULL);
+    expect(memcmp(test_data, _test_buffer, sizeof(test_data)) == 0);
     expect(_check_net());
 }
 
@@ -384,15 +389,16 @@ static void test_sock_udp_recv__unsocketed_with_remote(void)
     static const ipv6_addr_t dst_addr = { .u8 = _TEST_ADDR_LOCAL };
     static const sock_udp_ep_t local = { .family = AF_INET6,
                                          .port = _TEST_PORT_LOCAL };
+    static uint8_t test_data[] = "ABCD";
     sock_udp_ep_t result;
 
     expect(0 == sock_udp_create(&_sock, &local, NULL, SOCK_FLAGS_REUSE_EP));
     expect(_inject_packet(&src_addr, &dst_addr, _TEST_PORT_REMOTE,
-                          _TEST_PORT_LOCAL, "ABCD", sizeof("ABCD"),
+                          _TEST_PORT_LOCAL, test_data, sizeof(test_data),
                           _TEST_NETIF));
-    expect(sizeof("ABCD") == sock_udp_recv(&_sock, _test_buffer,
-                                           sizeof(_test_buffer),
-                                           SOCK_NO_TIMEOUT, &result));
+    sock_udp_recv(&_sock, _test_buffer, sizeof(_test_buffer), SOCK_NO_TIMEOUT,
+                  &result);
+    expect(memcmp(test_data, _test_buffer, sizeof(test_data)) == 0);
     expect(AF_INET6 == result.family);
     expect(memcmp(&result.addr, &src_addr, sizeof(result.addr)) == 0);
     expect(_TEST_PORT_REMOTE == result.port);
@@ -406,15 +412,16 @@ static void test_sock_udp_recv__with_timeout(void)
     static const ipv6_addr_t dst_addr = { .u8 = _TEST_ADDR_LOCAL };
     static const sock_udp_ep_t local = { .family = AF_INET6,
                                          .port = _TEST_PORT_LOCAL };
+    static uint8_t test_data[] = "ABCD";
     sock_udp_ep_t result;
 
     expect(0 == sock_udp_create(&_sock, &local, NULL, SOCK_FLAGS_REUSE_EP));
     expect(_inject_packet(&src_addr, &dst_addr, _TEST_PORT_REMOTE,
-                          _TEST_PORT_LOCAL, "ABCD", sizeof("ABCD"),
+                          _TEST_PORT_LOCAL, test_data, sizeof(test_data),
                           _TEST_NETIF));
-    expect(sizeof("ABCD") == sock_udp_recv(&_sock, _test_buffer,
-                                           sizeof(_test_buffer), _TEST_TIMEOUT,
-                                           &result));
+    sock_udp_recv(&_sock, _test_buffer, sizeof(_test_buffer), _TEST_TIMEOUT,
+                  &result);
+    expect(memcmp(test_data, _test_buffer, sizeof(test_data)) == 0);
     expect(AF_INET6 == result.family);
     expect(memcmp(&result.addr, &src_addr, sizeof(result.addr)) == 0);
     expect(_TEST_PORT_REMOTE == result.port);
@@ -428,14 +435,15 @@ static void test_sock_udp_recv__non_blocking(void)
     static const ipv6_addr_t dst_addr = { .u8 = _TEST_ADDR_LOCAL };
     static const sock_udp_ep_t local = { .family = AF_INET6,
                                          .port = _TEST_PORT_LOCAL };
+    static uint8_t test_data[] = "ABCD";
     sock_udp_ep_t result;
 
     expect(0 == sock_udp_create(&_sock, &local, NULL, SOCK_FLAGS_REUSE_EP));
     expect(_inject_packet(&src_addr, &dst_addr, _TEST_PORT_REMOTE,
-                          _TEST_PORT_LOCAL, "ABCD", sizeof("ABCD"),
+                          _TEST_PORT_LOCAL, test_data, sizeof(test_data),
                           _TEST_NETIF));
-    expect(sizeof("ABCD") == sock_udp_recv(&_sock, _test_buffer,
-                                           sizeof(_test_buffer), 0, &result));
+    sock_udp_recv(&_sock, _test_buffer, sizeof(_test_buffer), 0, &result);
+    expect(memcmp(test_data, _test_buffer, sizeof(test_data)) == 0);
     expect(AF_INET6 == result.family);
     expect(memcmp(&result.addr, &src_addr, sizeof(result.addr)) == 0);
     expect(_TEST_PORT_REMOTE == result.port);
@@ -452,20 +460,21 @@ static void test_sock_udp_recv_buf__success(void)
     static const sock_udp_ep_t remote = { .addr = { .ipv6 = _TEST_ADDR_REMOTE },
                                           .family = AF_INET6,
                                           .port = _TEST_PORT_REMOTE };
+    static uint8_t test_data[] = "ABCD";
     void *data = NULL, *ctx = NULL;
 
-    assert(0 == sock_udp_create(&_sock, &local, &remote, SOCK_FLAGS_REUSE_EP));
-    assert(_inject_packet(&src_addr, &dst_addr, _TEST_PORT_REMOTE,
-                          _TEST_PORT_LOCAL, "ABCD", sizeof("ABCD"),
+    expect(0 == sock_udp_create(&_sock, &local, &remote, SOCK_FLAGS_REUSE_EP));
+    expect(_inject_packet(&src_addr, &dst_addr, _TEST_PORT_REMOTE,
+                          _TEST_PORT_LOCAL, &test_data, sizeof(test_data),
                           _TEST_NETIF));
-    assert(sizeof("ABCD") == sock_udp_recv_buf(&_sock, &data, &ctx,
-                                               SOCK_NO_TIMEOUT, NULL));
-    assert(data != NULL);
-    assert(ctx != NULL);
-    assert(0 == sock_udp_recv_buf(&_sock, &data, &ctx, SOCK_NO_TIMEOUT, NULL));
-    assert(data == NULL);
-    assert(ctx == NULL);
-    assert(_check_net());
+    sock_udp_recv_buf(&_sock, &data, &ctx, SOCK_NO_TIMEOUT, NULL);
+    expect(memcmp(test_data, data, sizeof(test_data)) == 0);
+    expect(data != NULL);
+    expect(ctx != NULL);
+    expect(0 == sock_udp_recv_buf(&_sock, &data, &ctx, SOCK_NO_TIMEOUT, NULL));
+    expect(data == NULL);
+    expect(ctx == NULL);
+    expect(_check_net());
 }
 
 static void test_sock_udp_send__EAFNOSUPPORT(void)
