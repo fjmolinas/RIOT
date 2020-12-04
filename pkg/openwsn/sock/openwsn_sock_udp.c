@@ -380,7 +380,7 @@ ssize_t sock_udp_recv_buf_aux(sock_udp_t *sock, void **data, void **buf_ctx,
                               uint32_t timeout, sock_udp_ep_t *remote,
                               sock_udp_aux_rx_t *aux)
 {
-    (void)aux;
+    (void) aux;
     sock_udp_ep_t ep;
     OpenQueueEntry_t *pkt = NULL;
     msg_t msg;
@@ -461,7 +461,7 @@ ssize_t sock_udp_recv_buf_aux(sock_udp_t *sock, void **data, void **buf_ctx,
         return -EPROTO;
     }
 
-    *data = &pkt->l4_payload;
+    *data = pkt->l4_payload;
     *buf_ctx = pkt;
 
     return pkt->l4_length;
