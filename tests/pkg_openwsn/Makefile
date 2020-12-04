@@ -90,5 +90,7 @@ USEMODULE += ztimer_usec
 
 # Account for higher 6TSCH latency by increasing GCOAP timeout
 CFLAGS += -DCONFIG_GCOAP_NON_TIMEOUT=10000000
+# Change default port to avoid conflict with OpenWSN
+CFLAGS += -DOPENWSN_COAP_PORT_DEFAULT=5688
 
 include $(RIOTBASE)/Makefile.include
