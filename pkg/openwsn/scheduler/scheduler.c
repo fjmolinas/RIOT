@@ -22,6 +22,7 @@
 #include "memarray.h"
 #include "periph/pm.h"
 
+#include "board.h"
 #include "scheduler.h"
 #include "debugpins.h"
 #include "leds.h"
@@ -39,6 +40,31 @@ static event_queue_t _queues[TASKPRIO_MAX];
 scheduler_dbg_t scheduler_dbg;
 #endif
 
+#ifdef MODULE_PM_LAYERED
+/* keep track if the lowest allowed mode is already blocked */
+static bool _blocked = false;
+#endif
+
+static void _pm_block(void)
+{
+#ifdef MODULE_PM_LAYERED
+    if (!_blocked) {
+        _blocked = true;
+        pm_block(OPENWSN_SCHEDULER_PM_BLOCKER);
+    }
+#endif
+}
+
+static void _pm_unblock(void)
+{
+#ifdef MODULE_PM_LAYERED
+    if (_blocked) {
+        _blocked = false;
+        pm_unblock(OPENWSN_SCHEDULER_PM_BLOCKER);
+    }
+#endif
+}
+
 void scheduler_init(void)
 {
 #if SCHEDULER_DEBUG_ENABLE
@@ -51,6 +77,35 @@ void scheduler_init(void)
     event_queues_init_detached(_queues, TASKPRIO_MAX);
 }
 
+/* verbatim copy of event_wait_multi() but additionally calling pm_unblock()
+   when queues are empty */
+event_t *_event_wait_multi(event_queue_t *queues, size_t n_queues)
+{
+    assert(queues && n_queues);
+    event_t *result;
+
+    do {
+        unsigned state = irq_disable();
+        for (size_t i = 0; i < n_queues; i++) {
+            result = container_of(clist_lpop(&queues[i].event_list),
+                                  event_t, list_node);
+            if (result) {
+                break;
+            }
+        }
+        irq_restore(state);
+        if (result == NULL) {
+            if (IS_USED(MODULE_PM_LAYERED)) {
+                _pm_unblock();
+            }
+            thread_flags_wait_any(THREAD_FLAG_EVENT);
+        }
+    } while (result == NULL);
+
+    result->list_node.next = NULL;
+    return result;
+}
+
 void scheduler_start(unsigned state)
 {
     irq_restore(state);
@@ -58,8 +113,6 @@ void scheduler_start(unsigned state)
     /* claim all queues */
     event_queues_claim(_queues, TASKPRIO_MAX);
 
-    /* wait for events */
-    event_t *event;
 #ifdef MODULE_PM_LAYERED
 #if IS_USED(MODULE_CC2538_RF)
     /* unblock modes that have RAM retention */
@@ -67,10 +120,10 @@ void scheduler_start(unsigned state)
 #endif
     pm_unblock(PM_NUM_MODES - 1);
 #endif
-    while ((event = event_wait_multi(_queues, TASKPRIO_MAX))) {
-#ifdef MODULE_PM_LAYERED
-        pm_block(PM_NUM_MODES - 1);
-#endif
+
+    /* wait for events */
+    event_t *event;
+    while ((event = _event_wait_multi(_queues, TASKPRIO_MAX))) {
         debugpins_task_set();
         event->handler(event);
         /* remove from task list */
@@ -79,15 +132,17 @@ void scheduler_start(unsigned state)
         scheduler_dbg.numTasksCur--;
 #endif
         debugpins_task_clr();
-#ifdef MODULE_PM_LAYERED
-        pm_unblock(PM_NUM_MODES - 1);
-#endif
     }
 }
 
 void scheduler_push_task(task_cbt cb, task_prio_t prio)
 {
     unsigned state = irq_disable();
+
+    if(IS_USED(MODULE_PM_LAYERED)) {
+        _pm_block();
+    }
+
     /* get a free event from the queue */
     event_callback_t *event = memarray_calloc(&_scheduler_vars.memarray);
 

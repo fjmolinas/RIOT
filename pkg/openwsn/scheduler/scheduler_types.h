@@ -24,6 +24,7 @@
 
 #include "opendefs.h"
 #include "scheduler.h"
+#include "periph/pm.h"
 #include "event/callback.h"
 #include "memarray.h"
 
@@ -48,6 +49,16 @@ typedef struct {
     uint8_t numTasksCur;    /**< Current task number */
     uint8_t numTasksMax;    /**< Current peak queued tasks */
 } scheduler_dbg_t;
+#endif
+
+/**
+ * @brief   OpenWSN scheduler lowest PM that must remain active
+ *
+ * @note By default the highest PM is blocked so that the scheduler tasks
+ * are ran with a fully clocked CPU.
+ */
+#ifndef OPENWSN_SCHEDULER_PM_BLOCKER
+#define OPENWSN_SCHEDULER_PM_BLOCKER    (PM_NUM_MODES - 1)
 #endif
 
 #ifdef __cplusplus
