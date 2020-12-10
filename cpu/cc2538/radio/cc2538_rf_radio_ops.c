@@ -179,6 +179,7 @@ static int _read(ieee802154_dev_t *dev, void *buf, size_t size, ieee802154_rx_in
         rfcore_read_fifo(buf, pkt_len);
         res = pkt_len;
         if (info != NULL) {
+            uint8_t crc_corr_val;
             uint8_t corr_val;
             int8_t rssi_val;
             rssi_val = rfcore_read_byte();
@@ -187,7 +188,8 @@ static int _read(ieee802154_dev_t *dev, void *buf, size_t size, ieee802154_rx_in
              * received packet */
             info->rssi = -CC2538_RSSI_OFFSET + rssi_val + IEEE802154_RADIO_RSSI_OFFSET;
 
-            corr_val = rfcore_read_byte() & CC2538_CORR_VAL_MASK;
+            crc_corr_val = rfcore_read_byte();
+            corr_val = crc_corr_val & CC2538_CORR_VAL_MASK;
 
             if (corr_val < CC2538_CORR_VAL_MIN) {
                 corr_val = CC2538_CORR_VAL_MIN;
@@ -200,6 +202,14 @@ static int _read(ieee802154_dev_t *dev, void *buf, size_t size, ieee802154_rx_in
              * to provide an LQI value */
             info->lqi = 255 * (corr_val - CC2538_CORR_VAL_MIN) /
                               (CC2538_CORR_VAL_MAX - CC2538_CORR_VAL_MIN);
+
+            /* Set CRC_VALID flag */
+            if (crc_corr_val & CC2538_CRC_BIT_MASK) {
+                info->flags |= IEE802154_RX_INFO_FLAGS_CRC_VALID;
+            }
+            else {
+                info->flags &= ~IEE802154_RX_INFO_FLAGS_CRC_VALID;
+            }
         }
     }
     else {
@@ -348,8 +358,10 @@ void cc2538_irq_handler(void)
             cc2538_rf_dev.cb(&cc2538_rf_dev, IEEE802154_RADIO_INDICATION_RX_DONE);
         }
         else {
+            /* Disable RX while the frame has not been processed */
+            RFCORE_XREG_RXMASKCLR = 0xFF;
             /* CRC failed; discard packet */
-            RFCORE_SFR_RFST = ISFLUSHRX;
+            cc2538_rf_dev.cb(&cc2538_rf_dev, IEEE802154_RADIO_INDICATION_CRC_ERROR);
         }
     }
 
@@ -391,11 +403,12 @@ static bool _get_cap(ieee802154_dev_t *dev, ieee802154_rf_caps_t cap)
     (void) dev;
     switch (cap) {
         case IEEE802154_CAP_24_GHZ:
+        case IEEE802154_CAP_AUTO_CSMA:
+        case IEEE802154_CAP_IRQ_CRC_ERROR:
         case IEEE802154_CAP_IRQ_TX_DONE:
         case IEEE802154_CAP_IRQ_CCA_DONE:
         case IEEE802154_CAP_IRQ_RX_START:
         case IEEE802154_CAP_IRQ_TX_START:
-        case IEEE802154_CAP_AUTO_CSMA:
             return true;
         default:
             return false;

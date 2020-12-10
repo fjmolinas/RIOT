@@ -89,12 +89,11 @@ static void _hal_radio_cb(ieee802154_dev_t *dev, ieee802154_trx_ev_t status)
         while (ieee802154_radio_confirm_set_trx_state(openwsn_radio.dev) == -EAGAIN) {}
         openwsn_radio.endFrame_cb(_txrx_event_capture_time);
         break;
+    case IEEE802154_RADIO_INDICATION_CRC_ERROR:
     case IEEE802154_RADIO_INDICATION_RX_DONE:
         openwsn_radio.endFrame_cb(_txrx_event_capture_time);
         break;
     case IEEE802154_RADIO_INDICATION_TX_START:
-        openwsn_radio.startFrame_cb(_txrx_event_capture_time);
-        break;
     case IEEE802154_RADIO_INDICATION_RX_START:
         openwsn_radio.startFrame_cb(_txrx_event_capture_time);
         break;
@@ -313,5 +312,5 @@ void radio_getReceivedFrame(uint8_t *bufRead,
     *rssi = rx_info.rssi;
     *lqi = rx_info.lqi;
     /* only valid crc frames are currently accepted */
-    *crc = 1;
+    *crc = (rx_info.flags & IEE802154_RX_INFO_FLAGS_CRC_VALID) ? 1 : 0;
 }
