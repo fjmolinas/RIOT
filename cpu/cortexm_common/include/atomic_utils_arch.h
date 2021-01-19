@@ -92,10 +92,12 @@ static inline bool _is_addr_valid_for_bitbanding(volatile void *_addr)
      * peripheral bit-band region goes from 0x40000000 to 0x400fffff */
     uintptr_t addr = (uintptr_t)_addr;
     if ((addr < 0x20000000UL) || (addr > 0x400fffffUL)) {
+        printf("addres:: %d\n", addr);
         return false;
     }
 
     if ((addr >= 0x200fffffUL) && (addr < 0x40000000UL)) {
+        puts("here2");
         return false;
     }
 

@@ -8,6 +8,12 @@ ifeq (,$(filter efm32zg efm32hg, $(CPU_FAM)))
   FEATURES_PROVIDED += cortexm_mpu
 endif
 
+# families with bitband support
+ifeq (,$(filter efm32gg efm32g efm32lg efm32pg1 efm32pg12 efr32mg1 \
+                efr32mg12 ezr32wg,$(CPU_FAM)))
+  FEATURES_PROVIDED += cortexm_bitband_all_sram
+endif
+
 FEATURES_PROVIDED += arch_efm32
 FEATURES_PROVIDED += periph_cpuid
 FEATURES_PROVIDED += periph_flashpage

@@ -24,6 +24,10 @@ ifneq (,$(filter k w,$(CPU_FAM)))
   FEATURES_PROVIDED += periph_flashpage_pagewise
 endif
 
+ifneq (,$(filter k,$(CPU_FAM)))
+  FEATURES_PROVIDED += cortexm_bitband_all_sram
+endif
+
 ifeq (ea,$(CPU_FAM))
   FEATURES_PROVIDED += periph_ics
 else ifeq (l,$(CPU_FAM))

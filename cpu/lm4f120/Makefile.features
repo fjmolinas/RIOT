@@ -1,6 +1,7 @@
 CPU_CORE = cortex-m4f
 CPU_FAM = lm4f120
 
+FEATURES_PROVIDED += cortexm_bitband_all_sram
 FEATURES_PROVIDED += cortexm_mpu
 
 include $(RIOTCPU)/cortexm_common/Makefile.features
