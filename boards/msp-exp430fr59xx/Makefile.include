@@ -1,0 +1,3 @@
+# setup flash tool
+PROGRAMMER ?= mspdebug
+MSPDEBUG_PROGRAMMER ?= tilib

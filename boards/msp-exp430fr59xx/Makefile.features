@@ -1,0 +1,13 @@
+# CPU used by this board
+CPU = msp430fr59xx
+CPU_MODEL = msp430fr5969
+
+# Put defined MCU peripherals here (in alphabetical order)
+FEATURES_PROVIDED += periph_gpio
+FEATURES_PROVIDED += periph_gpio_irq
+FEATURES_PROVIDED += periph_uart
+FEATURES_PROVIDED += periph_timer
+FEATURES_PROVIDED += periph_pm
+FEATURES_PROVIDED += periph_dma
+
+include $(RIOTCPU)/msp430fr59xx/Makefile.features
