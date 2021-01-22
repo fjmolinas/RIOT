@@ -68,21 +68,29 @@ void _sock_udp_handler(sock_udp_t *sock, sock_async_flags_t type, void *arg)
     }
 }
 
-void udp_cli_init(void)
+static int _sock_udp_create(uint16_t port)
 {
-    memset(&_sock_udp, 0, sizeof(sock_udp_t));
     sock_udp_ep_t local;
 
     local.family = AF_INET6;
     local.netif = SOCK_ADDR_ANY_NETIF;
-    local.port = WKP_UDP_ECHO;
+    local.port = port;
 
-    if (sock_udp_create(&_sock_udp, &local, NULL, 0) < 0) {
+    int ret = sock_udp_create(&_sock_udp, &local, NULL, 0);
+
+    if (ret < 0) {
         puts("Could not create socket");
-        return;
+        return ret;
     }
+    else {
+        sock_udp_set_cb(&_sock_udp, _sock_udp_handler, NULL);
+        return ret;
+    }
+}
 
-    sock_udp_set_cb(&_sock_udp, _sock_udp_handler, NULL);
+void udp_cli_init(void)
+{
+    memset(&_sock_udp, 0, sizeof(sock_udp_t));
 }
 
 static int udp_send(char *addr_str, char *port_str, char *data,
@@ -179,7 +187,7 @@ int udp_cmd(int argc, char **argv)
     }
     else if (strcmp(argv[1], "server") == 0) {
         if (argc < 3) {
-            printf("Usage: %s server [start|show]\n", argv[0]);
+            printf("Usage: %s server [start|show|stop]\n", argv[0]);
             return 1;
         }
         if (strcmp(argv[2], "start") == 0) {
@@ -187,17 +195,33 @@ int udp_cmd(int argc, char **argv)
                 printf("Usage %s server start <port>\n", argv[0]);
                 return 1;
             }
+            /* check if server is already running */
+            if (_sock_udp.next != 0) {
+                sock_udp_ep_t local;
+                sock_udp_get_local(&_sock_udp, &local);
+                printf("Error: server already running on port %" PRIu16 "\n",
+                    local.port);
+                return 1;
+            }
+            /* create sock */
             uint16_t port = atoi(argv[3]);
-            sock_udp_ep_t local;
-            sock_udp_get_local(&_sock_udp, &local);
-            local.port = port;
-            printf("Set UDP server port to %" PRIu16 "\n", port);
+            _sock_udp_create(port);
+            return 0;
+        }
+        else if (strcmp(argv[2], "stop") == 0) {
+            sock_udp_close(&_sock_udp);
+            memset(&_sock_udp, 0, sizeof(sock_udp_t));
             return 0;
         }
         else if (strcmp(argv[2], "show") == 0) {
-            sock_udp_ep_t local;
-            sock_udp_get_local(&_sock_udp, &local);
-            printf("Udp port: %i\n", local.port);
+            if (_sock_udp.next != 0) {
+                sock_udp_ep_t local;
+                sock_udp_get_local(&_sock_udp, &local);
+                printf("Udp port: %i\n", local.port);
+            }
+            else {
+                puts("No udp server running");
+            }
         }
         else {
             puts("Error: invalid command");
