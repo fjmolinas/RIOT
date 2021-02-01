@@ -17,23 +17,26 @@
  * @}
  */
 
-#ifndef DPL_DPL_CPUTIME_H
-#define DPL_DPL_CPUTIME_H
+#ifndef MYNEWT_CPUTIME_H
+#define MYNEWT_CPUTIME_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#include "mynewt/cputime.h"
+#include <stdint.h>
+
+#include "xtimer.h"
+#include "hal/hal_timer.h"
 
 /**
  * Returns the low 32 bits of cputime.
  *
  * @return uint32_t The lower 32 bits of cputime
  */
-static inline uint32_t dpl_cputime_get32(void)
+static inline uint32_t mynewt_cputime_get32(void)
 {
-    return mynewt_cputime_get32();
+    return xtimer_now().ticks32;
 }
 
 /**
@@ -43,9 +46,9 @@ static inline uint32_t dpl_cputime_get32(void)
  *
  * @return uint32_t The number of ticks corresponding to 'usecs'
  */
-static inline uint32_t dpl_cputime_usecs_to_ticks(uint32_t usecs)
+static inline uint32_t mynewt_cputime_usecs_to_ticks(uint32_t usecs)
 {
-    return mynewt_cputime_usecs_to_ticks(usecs);
+    return xtimer_ticks_from_usec(usecs).ticks32;
 }
 
 /**
@@ -55,9 +58,10 @@ static inline uint32_t dpl_cputime_usecs_to_ticks(uint32_t usecs)
  *
  * @return uint32_t The number of microseconds corresponding to 'ticks'
  */
-static inline uint32_t dpl_cputime_ticks_to_usecs(uint32_t ticks)
+static inline uint32_t mynewt_cputime_ticks_to_usecs(uint32_t ticks)
 {
-    return mynewt_cputime_usecs_to_ticks(ticks);
+    xtimer_ticks32_t val = {.ticks32 = ticks};
+    return xtimer_usec_from_ticks(val);
 }
 
 /**
@@ -65,9 +69,10 @@ static inline uint32_t dpl_cputime_ticks_to_usecs(uint32_t ticks)
  *
  * @param ticks The number of ticks to wait.
  */
-static inline void dpl_cputime_delay_ticks(uint32_t ticks)
+static inline void mynewt_cputime_delay_ticks(uint32_t ticks)
 {
-    mynewt_cputime_delay_ticks(ticks);
+    xtimer_ticks32_t val = {.ticks32 = ticks};
+    xtimer_tsleep32((xtimer_ticks32_t) val);
 }
 
 /**
@@ -75,9 +80,9 @@ static inline void dpl_cputime_delay_ticks(uint32_t ticks)
  *
  * @param usecs The number of usecs to wait.
  */
-static inline void dpl_cputime_delay_usecs(uint32_t usecs)
+static inline void mynewt_cputime_delay_usecs(uint32_t usecs)
 {
-    mynewt_cputime_delay_usecs(usecs);
+    xtimer_usleep(usecs);
 }
 
 /**
@@ -87,10 +92,11 @@ static inline void dpl_cputime_delay_usecs(uint32_t usecs)
  * @param fp    The timer callback function. Cannot be NULL.
  * @param arg   Pointer to data object to pass to timer.
  */
-static inline void dpl_cputime_timer_init(struct hal_timer2 *timer, hal_timer_cb fp,
+static inline void mynewt_cputime_timer_init(struct hal_timer2 *timer, hal_timer_cb fp,
         void *arg)
 {
-    mynewt_cpu_timer_init(timer, fp, arg);
+    timer->timer.callback = fp;
+    timer->timer.arg = arg;
 }
 
 /**
@@ -101,14 +107,15 @@ static inline void dpl_cputime_timer_init(struct hal_timer2 *timer, hal_timer_cb
  *
  * @param timer     Pointer to timer to start. Cannot be NULL.
  * @param cputime   The cputime at which the timer should expire.
- *time
+ *
  * @return int 0 on success; EINVAL if timer already started or timer struct
  *         invalid
  *
  */
-static inline int dpl_cputime_timer_start(struct hal_timer2 *timer, uint32_t cputime)
+static inline int mynewt_cputime_timer_start(struct hal_timer2 *timer, uint32_t cputime)
 {
-    return mynewt_cputime_timer_start(timer, cputime);
+    xtimer_set(&timer->timer, xtimer_now_usec() + cputime);
+    return 0;
 }
 
 /**
@@ -123,9 +130,15 @@ static inline int dpl_cputime_timer_start(struct hal_timer2 *timer, uint32_t cpu
  * @return int 0 on success; EINVAL if timer already started or timer struct
  *         invalid
  */
-static inline int dpl_cputime_timer_relative(struct hal_timer2 *timer, uint32_t usecs)
+static inline int mynewt_cputime_timer_relative(struct hal_timer2 *timer, uint32_t usecs)
 {
-    return mynewt_cputime_timer_relative(timer, usecs);
+    uint32_t now = xtimer_now_usec();
+    if (now > usecs) {
+        xtimer_set(&timer->timer, now);
+    } else {
+        xtimer_set(&timer->timer, 0);
+    }
+    return 0;
 }
 
 /**
@@ -137,13 +150,13 @@ static inline int dpl_cputime_timer_relative(struct hal_timer2 *timer, uint32_t 
  *
  * @param timer Pointer to cputimer to stop. Cannot be NULL.
  */
-static inline void dpl_cputime_timer_stop(struct hal_timer2 *timer)
+static inline void mynewt_cputime_timer_stop(struct hal_timer2 *timer)
 {
-    mynewt_cputime_timer_stop(timer);
+    xtimer_remove(&timer->timer);
 }
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DPL_DPL_CPUTIME_H */
+#endif /* MYNEWT_CPUTIME_H */

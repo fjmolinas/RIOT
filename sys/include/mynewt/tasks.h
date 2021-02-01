@@ -17,10 +17,13 @@
  * @}
  */
 
-#ifndef DPL_DPL_TASKS_H
-#define DPL_DPL_TASKS_H
+#ifndef MYNEWT_TASKS_H
+#define MYNEWT_TASKS_H
 
-#include "mynewt/tasks.h"
+#include "mynewt_types.h"
+
+#include "sched.h"
+#include "thread.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,12 +32,14 @@ extern "C" {
 /**
  * @brief dpl task wrapper
  */
-typedef mynewt_task_t dpl_task_t;
+struct mynewt_task {
+    kernel_pid_t pid;   /**< the process id */
+};
 
 /**
  * @brief dpl task function
  */
-typedef mynewt_task_func_t dpl_task_func_t;
+typedef thread_task_func_t mynewt_task_func_t;
 
 /**
  * @brief Initialize a task.
@@ -55,42 +60,31 @@ typedef mynewt_task_func_t dpl_task_func_t;
  *
  * @return 0 on success, non-zero on failure.
  */
-static inline int dpl_task_init(struct dpl_task *t, const char *name, dpl_task_func_t func,
-                  void *arg, uint8_t prio, dpl_time_t sanity_itvl,
-                  dpl_stack_t *stack_bottom, uint16_t stack_size)
-{
-    return mynewt_task_init(t, name, func, arg, prio, sanity_itvl, stack_bottom, stack_size);
-}
+int mynewt_task_init(struct mynewt_task *t, const char *name, mynewt_task_func_t func,
+                  void *arg, uint8_t prio, mynewt_time_t sanity_itvl,
+                  mynewt_stack_t *stack_bottom, uint16_t stack_size);
+
 /**
  * @brief removes specified task
  *
  * NOTE: This interface is currently experimental and not ready for common use
  */
-static inline int dpl_task_remove(struct dpl_task *t)
-{
-    return mynewt_task_remove(t);
-}
+int mynewt_task_remove(struct mynewt_task *t);
 
 /**
  * @brief Return the number of tasks initialized.
  *
  * @return number of tasks initialized
  */
-static inline uint8_t dpl_task_count(void)
-{
-    return mynewt_task_count();
-}
+uint8_t mynewt_task_count(void);
 
 /**
  * @brief   Lets current thread yield.
  */
-static inline void dpl_task_yield(void)
-{
-    return mynewt_task_yield();
-}
+void mynewt_task_yield(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DPL_DPL_TASKS_H */
+#endif /* MYNEWT_TASKS_H */

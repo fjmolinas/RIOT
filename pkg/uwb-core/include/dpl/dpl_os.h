@@ -20,12 +20,7 @@
 #ifndef DPL_DPL_OS_H
 #define DPL_DPL_OS_H
 
-#include <assert.h>
-#include <stdint.h>
-#include <stdatomic.h>
-
-#include "irq.h"
-#include "dpl/dpl_types.h"
+#include "mynewt/os.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -35,20 +30,15 @@ extern "C" {
  * @name    Entering and exiting critical section defines
  * @{
  */
-#define DPL_ENTER_CRITICAL(_sr) (_sr = dpl_hw_enter_critical())
-#define DPL_EXIT_CRITICAL(_sr) (dpl_hw_exit_critical(_sr))
-#define DPL_ASSERT_CRITICAL() assert(dpl_hw_is_in_critical())
+#define DPL_ENTER_CRITICAL(_sr) (_sr = mynewt_hw_enter_critical())
+#define DPL_EXIT_CRITICAL(_sr) (mynewt_hw_exit_critical(_sr))
+#define DPL_ASSERT_CRITICAL() assert(mynewt_hw_is_in_critical())
 /** @} */
-
-/**
- * @brief   variable to check if ISR are disabled
- */
-extern atomic_uint dpl_in_critical;
 
 /**
  * @brief   CPU status register
  */
-typedef uint32_t dpl_sr_t;
+typedef mynewt_sr_t dpl_sr_t;
 
 /**
  * @brief   Disable ISRs
@@ -57,10 +47,7 @@ typedef uint32_t dpl_sr_t;
  */
 static inline uint32_t dpl_hw_enter_critical(void)
 {
-    uint32_t ctx = irq_disable();
-    unsigned int count = atomic_load(&dpl_in_critical);
-    atomic_store(&dpl_in_critical, count + 1);
-    return ctx;
+    return mynewt_hw_enter_critical();
 }
 
 /**
@@ -70,9 +57,7 @@ static inline uint32_t dpl_hw_enter_critical(void)
  */
 static inline void dpl_hw_exit_critical(uint32_t ctx)
 {
-    unsigned int count = atomic_load(&dpl_in_critical);
-    atomic_store(&dpl_in_critical, count - 1);
-    irq_restore((unsigned)ctx);
+    mynewt_hw_exit_critical(ctx);
 }
 
 /**
@@ -82,12 +67,7 @@ static inline void dpl_hw_exit_critical(uint32_t ctx)
  */
 static inline bool dpl_hw_is_in_critical(void)
 {
-    /*
-     * XXX Currently RIOT does not support an API for finding out if interrupts
-     *     are currently disabled, hence in a critical section in this context.
-     *     So for now, we use this global variable to keep this state for us.
-     */
-    return (atomic_load(&dpl_in_critical) > 0);
+    return mynewt_hw_is_in_critical();
 }
 
 #ifdef __cplusplus

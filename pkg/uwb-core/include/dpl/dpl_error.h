@@ -24,29 +24,12 @@
 extern "C" {
 #endif
 
-/**
- * @brief DPL error types
- */
-enum dpl_error {
-    DPL_OK = 0,
-    DPL_ENOMEM = 1,
-    DPL_EINVAL = 2,
-    DPL_INVALID_PARAM = 3,
-    DPL_MEM_NOT_ALIGNED = 4,
-    DPL_BAD_MUTEX = 5,
-    DPL_TIMEOUT = 6,
-    DPL_ERR_IN_ISR = 7,
-    DPL_ERR_PRIV = 8,
-    DPL_OS_NOT_STARTED = 9,
-    DPL_ENOENT = 10,
-    DPL_EBUSY = 11,
-    DPL_ERROR = 12,
-};
+#include "mynewt/error.h"
 
 /**
- * @brief   dep error type
+ * @brief dpl error type
  */
-typedef enum dpl_error dpl_error_t;
+typedef mynewt_error_t dpl_error_t;
 
 #ifdef __cplusplus
 }

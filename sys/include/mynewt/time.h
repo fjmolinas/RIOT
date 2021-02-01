@@ -17,10 +17,10 @@
  * @}
  */
 
-#ifndef DPL_DPL_TIME_H
-#define DPL_DPL_TIME_H
+#ifndef MYNEWT_TIME_H
+#define MYNEWT_TIME_H
 
-#include "mynewt/time.h"
+#include "xtimer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,16 +29,16 @@ extern "C" {
 /**
  * @brief DPL ticks per seconds
  */
-#define DPL_TICKS_PER_SEC (MYNEWT_TICKS_PER_SEC)
+#define MYNEWT_TICKS_PER_SEC (XTIMER_HZ)
 
 /**
  * @brief Returns the low 32 bits of cputime.
  *
  * @return uint32_t The lower 32 bits of cputime
  */
-static inline dpl_time_t dpl_time_get(void)
+static inline mynewt_time_t mynewt_time_get(void)
 {
-    return mynewt_time_get();
+    return xtimer_now().ticks32;
 }
 
 /**
@@ -47,11 +47,12 @@ static inline dpl_time_t dpl_time_get(void)
  * @param[in]   ms          The number of milliseconds to convert to ticks
  * @param[out]  out_ticks   The number of ticks corresponding to 'ms'
  *
- * @return dpl_error_t  DPL_OK - no error
+ * @return mynewt_error_t  MYNEWT_OK - no error
  */
-static inline dpl_error_t dpl_time_ms_to_ticks(uint32_t ms, dpl_time_t *out_ticks)
+static inline mynewt_error_t mynewt_time_ms_to_ticks(uint32_t ms, mynewt_time_t *out_ticks)
 {
-    return mynewt_time_ms_to_ticks(ms, out_ticks);
+    *out_ticks = xtimer_ticks_from_usec(ms * US_PER_MS).ticks32;
+    return MYNEWT_OK;
 }
 
 /**
@@ -60,11 +61,13 @@ static inline dpl_error_t dpl_time_ms_to_ticks(uint32_t ms, dpl_time_t *out_tick
  * @param[in]   ticks   The number of ticks to convert to milliseconds.
  * @param[out]  out_ms  The converted milliseconds from 'ticks'
  *
- * @return dpl_error_t  DPL_OK - no error
+ * @return mynewt_error_t  MYNEWT_OK - no error
  */
-static inline dpl_error_t  dpl_time_ticks_to_ms(dpl_time_t ticks, uint32_t *out_ms)
+static inline mynewt_error_t  mynewt_time_ticks_to_ms(mynewt_time_t ticks, uint32_t *out_ms)
 {
-    return mynewt_time_ms_to_ticks(ticks, out_ms);
+    xtimer_ticks32_t val = {.ticks32 = ticks};
+    *out_ms = xtimer_usec_from_ticks(val) * US_PER_MS;
+    return MYNEWT_OK;
 }
 
 /**
@@ -74,9 +77,9 @@ static inline dpl_error_t  dpl_time_ticks_to_ms(dpl_time_t ticks, uint32_t *out_
  *
  * @return  uint32_t    The number of ticks corresponding to 'ms'
  */
-static inline dpl_time_t dpl_time_ms_to_ticks32(uint32_t ms)
+static inline mynewt_time_t mynewt_time_ms_to_ticks32(uint32_t ms)
 {
-    return mynewt_time_ms_to_ticks(ms);
+    return xtimer_ticks_from_usec(ms * US_PER_MS).ticks32;
 }
 
 /**
@@ -86,9 +89,10 @@ static inline dpl_time_t dpl_time_ms_to_ticks32(uint32_t ms)
  *
  * @return  uint32_t    The number of milliseconds corresponding to 'ticks'
  */
-static inline dpl_time_t dpl_time_ticks_to_ms32(dpl_time_t ticks)
+static inline mynewt_time_t mynewt_time_ticks_to_ms32(mynewt_time_t ticks)
 {
-    return mynewt_time_ms_to_ticks(ticks);
+    xtimer_ticks32_t val = {.ticks32 = ticks};
+    return xtimer_usec_from_ticks(val) * US_PER_MS;
 }
 
 /**
@@ -96,13 +100,14 @@ static inline dpl_time_t dpl_time_ticks_to_ms32(dpl_time_t ticks)
  *
  * @param[in]   ticks   The number of ticks to wait.
  */
-static inline void dpl_time_delay(dpl_time_t ticks)
+static inline void mynewt_time_delay(mynewt_time_t ticks)
 {
-    return mynewt_time_ms_to_ticks(ticks);
+    xtimer_ticks32_t val = {.ticks32 = ticks};
+    xtimer_tsleep32((xtimer_ticks32_t) val);
 }
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DPL_DPL_TIME_H */
+#endif /* MYNEWT_TIME_H */

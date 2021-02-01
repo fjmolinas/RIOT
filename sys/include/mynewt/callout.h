@@ -20,22 +20,35 @@
  * @}
  */
 
-#ifndef DPL_DPL_CALLOUT_H
-#define DPL_DPL_CALLOUT_H
+#ifndef MYNEWT_CALLOUT_H
+#define MYNEWT_CALLOUT_H
 
-#include "mynewt/callout.h"
+#include "xtimer.h"
+
+#include "mynewt/types.h"
+#include "mynewt/eventq.h"
+#include "mynewt/error.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 /**
+ * @brief   callout structure
+ */
+struct mynewt_callout {
+    xtimer_t timer;         /**< timer */
+    struct mynewt_event c_e;   /**< callout event */
+    struct mynewt_eventq *c_q; /**< callout event queue */
+};
+
+/**
  * @brief   Initialize a callout.
  *
  * Callouts are used to schedule events in the future onto an event
- * queue. Callout timers are scheduled using the dpl_callout_reset()
+ * queue. Callout timers are scheduled using the mynewt_callout_reset()
  * function.  When the timer expires, an event is posted to the event
- * queue specified in dpl_callout_init(). The event argument given here
+ * queue specified in mynewt_callout_init(). The event argument given here
  * is posted in the ev_arg field of that event.
  *
  * @param[out]  c       callout to initialize
@@ -43,11 +56,8 @@ extern "C" {
  * @param[in]   e_cb    callback function
  * @param[in]   e_arg   callback function argument
  */
-static inline void dpl_callout_init(struct dpl_callout *c, struct dpl_eventq *q,
-                      dpl_event_fn *e_cb, void *e_arg)
-{
-    mynewt_callout_init(c, q, e_cb, e_arg);
-}
+void mynewt_callout_init(struct mynewt_callout *c, struct mynewt_eventq *q,
+                      mynewt_event_fn *e_cb, void *e_arg);
 
 /**
  * @brief   Reset the callout to fire off in 'ticks' ticks.
@@ -57,22 +67,17 @@ static inline void dpl_callout_init(struct dpl_callout *c, struct dpl_eventq *q,
  *
  * @return 0 on success, non-zero on failure
  */
-static inline dpl_error_t dpl_callout_reset(struct dpl_callout *c, dpl_time_t ticks)
-{
-    return mynewt_callout_reset(c, ticks);
-}
+mynewt_error_t mynewt_callout_reset(struct mynewt_callout *c, mynewt_time_t ticks);
+
 /**
  * @brief   Stops the callout from firing.
  *
  * @param[in]   c   the callout to stop
  */
-static inline void dpl_callout_stop(struct dpl_callout *c)
-{
-    mynewt_callout_stop(c);
-}
+void mynewt_callout_stop(struct mynewt_callout *c);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DPL_DPL_CALLOUT_H */
+#endif /* MYNEWT_CALLOUT_H */

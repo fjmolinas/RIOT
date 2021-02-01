@@ -2,6 +2,7 @@ USEMODULE += uwb-dw1000_hal
 DEFAULT_MODULE += auto_init_uwb-dw1000
 
 USEMODULE += xtimer
+USEMODULE += mynewt
 
 FEATURES_REQUIRED += periph_gpio_irq
 FEATURES_REQUIRED += periph_spi

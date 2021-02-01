@@ -20,32 +20,32 @@
 #include <stdio.h>
 
 #include "irq.h"
-#include "dpl/dpl_sem.h"
+#include "mynewt/sem.h"
 
-dpl_error_t dpl_sem_init(struct dpl_sem *sem, uint16_t tokens)
+mynewt_error_t mynewt_sem_init(struct mynewt_sem *sem, uint16_t tokens)
 {
     if (!sem) {
-        return DPL_INVALID_PARAM;
+        return mynewt_INVALID_PARAM;
     }
 
     sema_create(&sem->sema, tokens);
-    return DPL_OK;
+    return MYNEWT_OK;
 }
 
-dpl_error_t dpl_sem_release(struct dpl_sem *sem)
+mynewt_error_t mynewt_sem_release(struct mynewt_sem *sem)
 {
     int ret;
 
     if (!sem) {
-        return DPL_INVALID_PARAM;
+        return mynewt_INVALID_PARAM;
     }
 
     ret = sema_post(&sem->sema);
 
-    return (ret) ? DPL_ERROR : DPL_OK;
+    return (ret) ? mynewt_ERROR : MYNEWT_OK;
 }
 
-uint16_t dpl_sem_get_count(struct dpl_sem *sem)
+uint16_t mynewt_sem_get_count(struct mynewt_sem *sem)
 {
     unsigned state = irq_disable();
     unsigned int value = sem->sema.value;
@@ -53,8 +53,8 @@ uint16_t dpl_sem_get_count(struct dpl_sem *sem)
     return value;
 }
 
-dpl_error_t dpl_sem_pend(struct dpl_sem *sem, dpl_time_t timeout)
+mynewt_error_t mynewt_sem_pend(struct mynewt_sem *sem, mynewt_time_t timeout)
 {
     int ret = sema_wait_timed(&sem->sema, timeout);
-    return (ret) ? DPL_ERROR : DPL_OK;
+    return (ret) ? mynewt_ERROR : MYNEWT_OK;
 }

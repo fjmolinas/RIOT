@@ -17,8 +17,8 @@
  * @}
  */
 
-#include "dpl/dpl_error.h"
-#include "dpl/dpl_tasks.h"
+#include "mynewt/error.h"
+#include "mynewt/tasks.h"
 #include "thread.h"
 
 #ifndef LOG_LEVEL
@@ -30,9 +30,9 @@
 extern "C" {
 #endif
 
-int dpl_task_init(struct dpl_task *t, const char *name, dpl_task_func_t func,
-                  void *arg, uint8_t prio, dpl_time_t sanity_itvl,
-                  dpl_stack_t *stack_bottom, uint16_t stack_size)
+int mynewt_task_init(struct mynewt_task *t, const char *name, mynewt_task_func_t func,
+                  void *arg, uint8_t prio, mynewt_time_t sanity_itvl,
+                  mynewt_stack_t *stack_bottom, uint16_t stack_size)
 {
     (void) sanity_itvl;
 
@@ -44,21 +44,21 @@ int dpl_task_init(struct dpl_task *t, const char *name, dpl_task_func_t func,
 
     t->pid = pid;
 
-    return (pid) ? DPL_ERROR : DPL_OK;;
+    return (pid) ? mynewt_ERROR : MYNEWT_OK;;
 }
 
-int dpl_task_remove(struct dpl_task *t)
+int mynewt_task_remove(struct mynewt_task *t)
 {
     thread_zombify();
     return thread_kill_zombie(t->pid);
 }
 
-uint8_t dpl_task_count(void)
+uint8_t mynewt_task_count(void)
 {
     return sched_num_threads;
 }
 
-void dpl_task_yield(void)
+void mynewt_task_yield(void)
 {
     thread_yield();
 }

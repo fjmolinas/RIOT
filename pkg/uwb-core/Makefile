@@ -3,6 +3,9 @@ PKG_URL=https://github.com/Decawave/uwb-core
 PKG_VERSION=8ffba63755a932a89d841872ce5bdf35b9c78777
 PKG_LICENSE=Apache-2.0
 
+
+PKG_SOURCE_LOCAL ?= /home/francisco/workspace/decawave/uwb-core
+
 include $(RIOTBASE)/pkg/pkg.mk
 
 CFLAGS += -Wno-implicit-int

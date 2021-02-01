@@ -17,10 +17,13 @@
  * @}
  */
 
-#ifndef DPL_DPL_MUTEX_H
-#define DPL_DPL_MUTEX_H
+#ifndef MYNEWT_MUTEX_H
+#define MYNEWT_MUTEX_H
 
-#include "mynewt/mutex.h"
+#include "mynewt_types.h"
+#include "mynewt_error.h"
+
+#include "mutex.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -29,17 +32,16 @@ extern "C" {
 /**
  * @brief dpl mutex wrapper
  */
-typedef mynewt_mutex_t dpl_mutex_t;
+struct mynewt_mutex {
+    mutex_t mutex;  /**< the mutex */
+};
 
 /**
  * @brief Initializes a mutex object.
  *
  * @param[out]  mu  pre-allocated mutex structure, must not be NULL.
  */
-dpl_error_t dpl_mutex_init(struct dpl_mutex *mu)
-{
-    return mynewt_mutex_init(mu);
-}
+mynewt_error_t mynewt_mutex_init(struct mynewt_mutex *mu);
 
 /**
  * @brief Pend (wait) for a mutex.
@@ -49,30 +51,24 @@ dpl_error_t dpl_mutex_init(struct dpl_mutex *mu)
  *                A timeout of 0 means do not wait if not available.
  *                A timeout of OS_TIMEOUT_NEVER means wait forever.
  *
- * @return dpl_error_t
- *      DPL_INVALID_PARM    mutex passed in was NULL
- *      DPL_OK              no error
+ * @return mynewt_error_t
+ *      mynewt_INVALID_PARM    mutex passed in was NULL
+ *      MYNEWT_OK              no error
  */
-dpl_error_t dpl_mutex_pend(struct dpl_mutex *mu, dpl_time_t timeout)
-{
-    return mynewt_mutex_pend(mu, timeout);
-}
+mynewt_error_t mynewt_mutex_pend(struct mynewt_mutex *mu, mynewt_time_t timeout);
 
 /**
  *
  * @brief Release a mutex.
  *
- * @return dpl_error_t
- *      DPL_INVALID_PARM    mutex was NULL
- *      DPL_OK              no error
+ * @return mynewt_error_t
+ *      mynewt_INVALID_PARM    mutex was NULL
+ *      MYNEWT_OK              no error
  */
-dpl_error_t dpl_mutex_release(struct dpl_mutex *mu)
-{
-    return mynewt_mutex_release(mu);
-}
+mynewt_error_t mynewt_mutex_release(struct mynewt_mutex *mu);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DPL_DPL_MUTEX_H */
+#endif /* MYNEWT_MUTEX_H */

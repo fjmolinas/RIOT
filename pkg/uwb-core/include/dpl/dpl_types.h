@@ -23,6 +23,8 @@
 #include <stdint.h>
 #include <math.h>
 
+#include "mynewt/types.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -38,26 +40,55 @@ extern "C" {
  * @name    Macro to wait forever on events and mutexes
  * @{
  */
-#define DPL_TIMEOUT_NEVER   (UINT32_MAX)
-#define DPL_WAIT_FOREVER    (DPL_TIMEOUT_NEVER)
+#define DPL_TIMEOUT_NEVER   (MYNEWT_TIMEOUT_NEVER)
+#define DPL_WAIT_FOREVER    (MYNEWT_WAIT_FOREVER)
 /** @} */
 
 /**
  * @name    Decawave porting layer (DPL) stack alignment requirement
  * @{
  */
-#define DPL_STACK_ALIGNMENT (4)
+#define DPL_STACK_ALIGNMENT (MYNEWT_STACK_ALIGNMENT)
 /** @} */
 
 /**
  * @brief dpl time type
  */
-typedef uint32_t dpl_time_t;
+typedef mynewt_time_t dpl_time_t;
 
 /**
  * @brief dpl stack buffer type
  */
-typedef char dpl_stack_t;
+typedef mynewt_stack_t dpl_stack_t;
+
+/*
+ * This allows to cast between dpl_* and os_* structs to make DPL for Mynewt
+ * just a shim layer on top of kernel/os.
+ */
+
+struct dpl_event {
+    struct mynewt_event ev;
+};
+
+struct dpl_eventq {
+    struct mynewt_eventq evq;
+};
+
+struct dpl_callout {
+    struct mynewt_callout co;
+};
+
+struct dpl_mutex {
+    struct mynewt_mutex mu;
+};
+
+struct dpl_sem {
+    struct mynewt_sem sem;
+};
+
+struct dpl_task {
+    struct mynewt_task t;
+};
 
 /**
  * @brief dpl float 32 type

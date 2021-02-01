@@ -17,12 +17,15 @@
  * @}
  */
 
-#ifndef DPL_DPL_SEM_H
-#define DPL_DPL_SEM_H
+#ifndef MYNEWT_SEM_H
+#define MYNEWT_SEM_H
 
 #include <stdint.h>
 
-#include "mynewt/sem.h"
+#include "mynewt_types.h"
+#include "mynewt_error.h"
+
+#include "sema.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,7 +34,9 @@ extern "C" {
 /**
  * @brief dpl semaphore wrapper
  */
-typedef mynewt_sem_t dpl_sem_t;
+struct mynewt_sem {
+    sema_t sema;    /**< the semaphore */
+};
 
 /**
  * @brief Initialize a semaphore
@@ -39,14 +44,11 @@ typedef mynewt_sem_t dpl_sem_t;
  * @param[in]   sem     pointer to semaphore
  * @param[in]   tokens  # of tokens the semaphore should contain initially.
  *
- * @return dpl_error_t
- *      DPL_INVALID_PARM     Semaphore passed in was NULL.
- *      DPL_OK               no error.
+ * @return mynewt_error_t
+ *      MYNEWT_INVALID_PARM     Semaphore passed in was NULL.
+ *      MYNEWT_OK               no error.
  */
-static inline dpl_error_t dpl_sem_init(struct dpl_sem *sem, uint16_t tokens)
-{
-    return mynewt_sem_init(sem, tokens);
-}
+mynewt_error_t mynewt_sem_init(struct mynewt_sem *sem, uint16_t tokens);
 
 /**
  * @brief Pend (wait) for a semaphore.
@@ -54,43 +56,34 @@ static inline dpl_error_t dpl_sem_init(struct dpl_sem *sem, uint16_t tokens)
  * @param[in]   sem     pointer to semaphore.
  * @param[in]   timeout timeout, in os ticks.
  *                A timeout of 0 means do not wait if not available.
- *                A timeout of DPL_TIMEOUT_NEVER means wait forever.
+ *                A timeout of MYNEWT_TIMEOUT_NEVER means wait forever.
  *
  *
- * @return dpl_error_t
- *      DPL_INVALID_PARM     semaphore passed in was NULL.
- *      DPL_TIMEOUT          semaphore was owned by another task and timeout=0
- *      DPL_OK               no error
+ * @return mynewt_error_t
+ *      MYNEWT_INVALID_PARM     semaphore passed in was NULL.
+ *      MYNEWT_TIMEOUT          semaphore was owned by another task and timeout=0
+ *      MYNEWT_OK               no error
  */
-static inline dpl_error_t dpl_sem_pend(struct dpl_sem *sem, dpl_time_t timeout)
-{
-    return mynewt_sem_pend(sem, timeout);
-}
+mynewt_error_t mynewt_sem_pend(struct mynewt_sem *sem, mynewt_time_t timeout);
 
 /**
  * @brief Release a semaphore.
  *
  * @param[in]   sem     pointer to the semaphore to be released
  *
- * @return dpl_error_t
- *      DPL_INVALID_PARM    semaphore passed in was NULL.
- *      DPL_OK              no error
+ * @return mynewt_error_t
+ *      MYNEWT_INVALID_PARM    semaphore passed in was NULL.
+ *      MYNEWT_OK              no error
  */
-static inline dpl_error_t dpl_sem_release(struct dpl_sem *sem)
-{
-    return mynewt_sem_release(sem);
-}
+mynewt_error_t mynewt_sem_release(struct mynewt_sem *sem);
 
 /**
  * @brief Get current semaphore's count
  */
-statuc inline int16_t dpl_sem_get_count(struct dpl_sem *sem)
-{
-    return mynewt_sem_get_count(sem);
-}
+uint16_t mynewt_sem_get_count(struct mynewt_sem *sem);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DPL_DPL_SEM_H */
+#endif /* MYNEWT_SEM_H */

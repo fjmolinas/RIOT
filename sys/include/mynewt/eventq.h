@@ -17,12 +17,13 @@
  * @}
  */
 
-#ifndef DPL_DPL_EVENTQ_H
-#define DPL_DPL_EVENTQ_H
+#ifndef MYNEWT_EVENTQ_H
+#define MYNEWT_EVENTQ_H
 
-#include <dpl/dpl_types.h>
+#include <mynewt/types.h>
 
-#include "mynewt/eventq.h"
+#include "uwb_core.h"
+#include "event/callback.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,17 +32,24 @@ extern "C" {
 /**
  * @brief dpl event wrapper
  */
-typedef mynewt_event_t dpl_event_t;
+struct mynewt_event
+{
+    event_callback_t e; /**< the event callback */
+    void *arg;          /**< the event argument */
+};
 
 /**
  * @brief dpl event queue wrapper
  */
-typedef mynewt_eventq_t dpl_eventq_t;
+struct mynewt_eventq
+{
+    event_queue_t q;    /**< the event queue */
+};
 
 /**
  * @brief dpl event callback function
  */
-typedef mynewt_event_fn dpl_event_fn;
+typedef void mynewt_event_fn(struct mynewt_event *ev);
 
 /**
  * @brief   Init a event
@@ -50,10 +58,16 @@ typedef mynewt_event_fn dpl_event_fn;
  * @param[in]   fn      event callback function
  * @param[in]   arg     event argument
  */
-static inline void dpl_event_init(struct dpl_event *ev, dpl_event_fn * fn,
+static inline void mynewt_event_init(struct mynewt_event *ev, mynewt_event_fn * fn,
                                  void *arg)
 {
-    mynewt_event_init(ev, fn, arg);
+    /*
+     * Need to clear list_node manually since init function below does not do
+     * this.
+     */
+    ev->e.super.list_node.next = NULL;
+    event_callback_init(&ev->e, (void(*)(void *))fn, ev);
+    ev->arg = arg;
 }
 
 /**
@@ -63,9 +77,9 @@ static inline void dpl_event_init(struct dpl_event *ev, dpl_event_fn * fn,
  *
  * @return  true if event is queues, false otherwise
  */
-static inline bool dpl_event_is_queued(struct dpl_event *ev)
+static inline bool mynewt_event_is_queued(struct mynewt_event *ev)
 {
-    return mynewt_event_is_queued(ev);
+    return (ev->e.super.list_node.next != NULL);
 }
 
 /**
@@ -73,9 +87,9 @@ static inline bool dpl_event_is_queued(struct dpl_event *ev)
  *
  * @param[in]   ev      event to run
  */
-static inline void *dpl_event_get_arg(struct dpl_event *ev)
+static inline void *mynewt_event_get_arg(struct mynewt_event *ev)
 {
-    mynewt_event_get_arg(ev);
+    return ev->arg;
 }
 
 /**
@@ -84,9 +98,9 @@ static inline void *dpl_event_get_arg(struct dpl_event *ev)
  * @param[in]   ev      event
  * @param[in]   arg     arg to set event
  */
-static inline void dpl_event_set_arg(struct dpl_event *ev, void *arg)
+static inline void mynewt_event_set_arg(struct mynewt_event *ev, void *arg)
 {
-    mynewt_event_set_arg(ev, arg);
+    ev->arg = arg;
 }
 
 /**
@@ -94,9 +108,9 @@ static inline void dpl_event_set_arg(struct dpl_event *ev, void *arg)
  *
  * @param[in]   ev      event to run
  */
-static inline void dpl_event_run(struct dpl_event *ev)
+static inline void mynewt_event_run(struct mynewt_event *ev)
 {
-   mynewt_event_set_arg(ev);
+    ev->e.super.handler(&ev->e.super);
 }
 
 /**
@@ -104,9 +118,9 @@ static inline void dpl_event_run(struct dpl_event *ev)
  *
  * @param[in]   evq     The event queue to initialize
  */
-static inline void dpl_eventq_init(struct dpl_eventq *evq)
+static inline void mynewt_eventq_init(struct mynewt_eventq *evq)
 {
-    mynewt_eventq_init(evq);
+    event_queue_init_detached(&evq->q);
 }
 
 /**
@@ -114,9 +128,9 @@ static inline void dpl_eventq_init(struct dpl_eventq *evq)
  *
  * @param[in]   evq     the event queue to check
  */
-static inline int dpl_eventq_inited(struct dpl_eventq *evq)
+static inline int mynewt_eventq_inited(struct mynewt_eventq *evq)
 {
-    return mynewt_eventq_inited(evq);
+    return evq->q.waiter != NULL;
 }
 
 /**
@@ -126,7 +140,7 @@ static inline int dpl_eventq_inited(struct dpl_eventq *evq)
  *
  * @param[in]   evq     the event queue to deinit
  */
-static inline void dpl_eventq_deinit(struct dpl_eventq *evq)
+static inline void mynewt_eventq_deinit(struct mynewt_eventq *evq)
 {
     (void) evq;
     /* Can't deinit an eventq in RIOT */
@@ -139,9 +153,13 @@ static inline void dpl_eventq_deinit(struct dpl_eventq *evq)
  *
  * @return  the event from the queue
  */
-static inline struct dpl_event * dpl_eventq_get(struct dpl_eventq *evq)
+static inline struct mynewt_event * mynewt_eventq_get(struct mynewt_eventq *evq)
 {
-    return mynewt_eventq_get(evq);
+    if (evq->q.waiter == NULL) {
+        event_queue_claim(&evq->q);
+    }
+
+    return (struct mynewt_event *) event_wait(&evq->q);
 }
 
 /**
@@ -149,9 +167,13 @@ static inline struct dpl_event * dpl_eventq_get(struct dpl_eventq *evq)
  *
  * @return  event from the queue, or NULL if none available.
  */
-static inline struct dpl_event * dpl_eventq_get_no_wait(struct dpl_eventq *evq)
+static inline struct mynewt_event * mynewt_eventq_get_no_wait(struct mynewt_eventq *evq)
 {
-    return mynewt_eventq_get_no_wait(evq);
+    if (evq->q.waiter == NULL) {
+        event_queue_claim(&evq->q);
+    }
+
+    return (struct mynewt_event *) event_get(&evq->q);
 }
 
 /**
@@ -160,9 +182,9 @@ static inline struct dpl_event * dpl_eventq_get_no_wait(struct dpl_eventq *evq)
  * @param[in]   evq     event queue
  * @param[in]   ev      event to put in queue
  */
-static inline void dpl_eventq_put(struct dpl_eventq *evq, struct dpl_event *ev)
+static inline void mynewt_eventq_put(struct mynewt_eventq *evq, struct mynewt_event *ev)
 {
-    mynewt_eventq_post(evq, ev);
+    event_post(&evq->q, &ev->e.super);
 }
 
 /**
@@ -171,9 +193,9 @@ static inline void dpl_eventq_put(struct dpl_eventq *evq, struct dpl_event *ev)
  * @param[in]   evq     event queue to remove the event from
  * @param[in]   ev      event to remove from the queue
  */
-static inline void dpl_eventq_remove(struct dpl_eventq *evq, struct dpl_event *ev)
+static inline void mynewt_eventq_remove(struct mynewt_eventq *evq, struct mynewt_event *ev)
 {
-    mynewt_eventq_remove(evq, ev);
+    event_cancel(&evq->q, &ev->e.super);
 }
 
 /**
@@ -181,9 +203,10 @@ static inline void dpl_eventq_remove(struct dpl_eventq *evq, struct dpl_event *e
  *
  * @param[in]   evq     The event queue to pull the item off.
  */
-static inline void dpl_eventq_run(struct dpl_eventq *evq)
+static inline void mynewt_eventq_run(struct mynewt_eventq *evq)
 {
-    mynewt_eventq_run(evq);
+    struct mynewt_event *ev = mynewt_eventq_get(evq);
+    mynewt_event_run(ev);
 }
 
 /**
@@ -193,9 +216,9 @@ static inline void dpl_eventq_run(struct dpl_eventq *evq)
  *
  * @return      true    if empty, false otherwise
  */
-static inline bool dpl_eventq_is_empty(struct dpl_eventq *evq)
+static inline bool mynewt_eventq_is_empty(struct mynewt_eventq *evq)
 {
-    return mynewt_eventq_is_empty(evq);
+    return clist_count(&(evq->q.event_list)) == 0;
 }
 
 /**
@@ -206,13 +229,13 @@ static inline bool dpl_eventq_is_empty(struct dpl_eventq *evq)
  *
  * @return  the default event queue.
  */
-static inline struct dpl_eventq * dpl_eventq_dflt_get(void)
+static inline struct mynewt_eventq * mynewt_eventq_dflt_get(void)
 {
-    return mynewt_eventq_dflt_get();
+    return (struct mynewt_eventq*) uwb_core_get_eventq();
 }
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* DPL_DPL_EVENTQ_H */
+#endif /* MYNEWT_EVENTQ_H */

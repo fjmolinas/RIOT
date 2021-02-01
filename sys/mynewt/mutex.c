@@ -18,33 +18,33 @@
  */
 
 #include "mutex.h"
-#include "dpl/dpl_mutex.h"
+#include "mynewt/mutex.h"
 
-dpl_error_t dpl_mutex_init(struct dpl_mutex *mu)
+mynewt_error_t mynewt_mutex_init(struct mynewt_mutex *mu)
 {
     if (!mu) {
-        return DPL_INVALID_PARAM;
+        return mynewt_INVALID_PARAM;
     }
     mutex_init(&mu->mutex);
-    return DPL_OK;
+    return MYNEWT_OK;
 }
 
-dpl_error_t dpl_mutex_release(struct dpl_mutex *mu)
+mynewt_error_t mynewt_mutex_release(struct mynewt_mutex *mu)
 {
     if (!mu) {
-        return DPL_INVALID_PARAM;
+        return mynewt_INVALID_PARAM;
     }
 
     mutex_unlock(&mu->mutex);
-    return DPL_OK;
+    return MYNEWT_OK;
 }
 
-dpl_error_t dpl_mutex_pend(struct dpl_mutex *mu, uint32_t timeout)
+mynewt_error_t mynewt_mutex_pend(struct mynewt_mutex *mu, uint32_t timeout)
 {
-    int rc = DPL_OK;
+    int rc = MYNEWT_OK;
 
     if (!mu) {
-        return DPL_INVALID_PARAM;
+        return mynewt_INVALID_PARAM;
     }
 
     if (!timeout) {
