@@ -34,7 +34,7 @@ typedef xtimer_callback_t hal_timer_cb;
 /**
  * @brief   The HAL timer structure.
  */
-struct hal_timer2 {
+struct hal_dpl_timer {
     xtimer_t timer;     /**< the timer */
 };
 

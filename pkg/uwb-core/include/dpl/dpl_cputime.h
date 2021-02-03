@@ -87,7 +87,7 @@ static inline void dpl_cputime_delay_usecs(uint32_t usecs)
  * @param fp    The timer callback function. Cannot be NULL.
  * @param arg   Pointer to data object to pass to timer.
  */
-static inline void dpl_cputime_timer_init(struct hal_timer2 *timer, hal_timer_cb fp,
+static inline void dpl_cputime_timer_init(struct hal_dpl_timer *timer, hal_timer_cb fp,
         void *arg)
 {
     mynewt_cputime_timer_init(timer, fp, arg);
@@ -106,7 +106,7 @@ static inline void dpl_cputime_timer_init(struct hal_timer2 *timer, hal_timer_cb
  *         invalid
  *
  */
-static inline int dpl_cputime_timer_start(struct hal_timer2 *timer, uint32_t cputime)
+static inline int dpl_cputime_timer_start(struct hal_dpl_timer *timer, uint32_t cputime)
 {
     return mynewt_cputime_timer_start(timer, cputime);
 }
@@ -123,7 +123,7 @@ static inline int dpl_cputime_timer_start(struct hal_timer2 *timer, uint32_t cpu
  * @return int 0 on success; EINVAL if timer already started or timer struct
  *         invalid
  */
-static inline int dpl_cputime_timer_relative(struct hal_timer2 *timer, uint32_t usecs)
+static inline int dpl_cputime_timer_relative(struct hal_dpl_timer *timer, uint32_t usecs)
 {
     return mynewt_cputime_timer_relative(timer, usecs);
 }
@@ -137,7 +137,7 @@ static inline int dpl_cputime_timer_relative(struct hal_timer2 *timer, uint32_t 
  *
  * @param timer Pointer to cputimer to stop. Cannot be NULL.
  */
-static inline void dpl_cputime_timer_stop(struct hal_timer2 *timer)
+static inline void dpl_cputime_timer_stop(struct hal_dpl_timer *timer)
 {
     mynewt_cputime_timer_stop(timer);
 }

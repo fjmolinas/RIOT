@@ -1,0 +1,57 @@
+From bb02c075cfa2f6d09aea2091e62a820bee3577f7 Mon Sep 17 00:00:00 2001
+From: Francisco Molina <femolina@uc.cl>
+Date: Wed, 3 Feb 2021 16:47:43 +0100
+Subject: [PATCH 10/10] hal: rename hal_timer to avoid nimble conflict
+
+---
+ lib/tdma/include/tdma/tdma.h          | 4 ++--
+ lib/uwb_ccp/include/uwb_ccp/uwb_ccp.h | 4 ++--
+ 2 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/lib/tdma/include/tdma/tdma.h b/lib/tdma/include/tdma/tdma.h
+index 2a231f1..92cfccd 100644
+--- a/lib/tdma/include/tdma/tdma.h
++++ b/lib/tdma/include/tdma/tdma.h
+@@ -36,7 +36,7 @@ extern "C" {
+ #endif
+ 
+ #include <dpl/dpl.h>
+-#include <hal/hal_timer.h>
++#include <hal/hal_dpl_timer.h>
+ #include <stats/stats.h>
+ #include <uwb/uwb.h>
+ #include <uwb/uwb_ftypes.h>
+@@ -65,7 +65,7 @@ typedef struct _tdma_slot_t{
+     uint16_t idx;                      //!< Slot number
+     uint32_t cputime_slot_start;       //!< When this slot should start
+     struct _tdma_instance_t * parent;  //!< Pointer to _tdma_instance_t
+-    struct hal_timer timer;            //!< Timer
++    struct hal_dpl_timer timer;            //!< Timer
+     struct dpl_event event;            //!< Structure of event
+     void * arg;                        //!< Optional argument
+ }tdma_slot_t;
+diff --git a/lib/uwb_ccp/include/uwb_ccp/uwb_ccp.h b/lib/uwb_ccp/include/uwb_ccp/uwb_ccp.h
+index 803b186..fcc0285 100644
+--- a/lib/uwb_ccp/include/uwb_ccp/uwb_ccp.h
++++ b/lib/uwb_ccp/include/uwb_ccp/uwb_ccp.h
+@@ -38,7 +38,7 @@ extern "C" {
+ #endif
+ 
+ #include <dpl/dpl.h>
+-#include <hal/hal_timer.h>
++#include <hal/hal_dpl_timer.h>
+ #include <uwb/uwb.h>
+ #include <uwb/uwb_ftypes.h>
+ 
+@@ -181,7 +181,7 @@ struct uwb_ccp_instance {
+     uint16_t idx;                                   //!< Circular buffer index pointer
+     uint8_t seq_num;                                //!< Clock Master reported sequence number
+     uint8_t missed_frames;                          //!< Num missed ccp-frames since last sync
+-    struct hal_timer timer;                         //!< Timer structure
++    struct hal_dpl_timer timer;                         //!< Timer structure
+     struct dpl_eventq eventq;                       //!< Event queues
+     struct dpl_event timer_event;                   //!< Event callback
+     struct dpl_task task_str;                       //!< Task structure
+-- 
+2.28.0
+

@@ -64,11 +64,16 @@
 
 /*** @decawave-uwb-core/sys/uwbcfg */
 #include "dpl_syscfg/syscfg_uwbcfg.h"
+#endif
 
 #if IS_USED(MODULE_UWB_DW1000)
 /*** @decawave-uwb-dw1000/hw/drivers/uwb/uwb_dw1000 */
 #include "syscfg_uwb_dw1000.h"
 #endif
+
+#if IS_USED(MODULE_NIMBLE)
+/*** @mynewt-nimble */
+#include "syscfg_nimble.h"
 #endif
 
 #ifdef __cplusplus

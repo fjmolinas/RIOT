@@ -27,7 +27,7 @@ extern "C" {
 #include <stdint.h>
 
 #include "xtimer.h"
-#include "hal/hal_timer.h"
+#include "hal/hal_dpl_timer.h"
 
 /**
  * Returns the low 32 bits of cputime.
@@ -92,7 +92,7 @@ static inline void mynewt_cputime_delay_usecs(uint32_t usecs)
  * @param fp    The timer callback function. Cannot be NULL.
  * @param arg   Pointer to data object to pass to timer.
  */
-static inline void mynewt_cputime_timer_init(struct hal_timer2 *timer, hal_timer_cb fp,
+static inline void mynewt_cputime_timer_init(struct hal_dpl_timer *timer, hal_timer_cb fp,
         void *arg)
 {
     timer->timer.callback = fp;
@@ -112,7 +112,7 @@ static inline void mynewt_cputime_timer_init(struct hal_timer2 *timer, hal_timer
  *         invalid
  *
  */
-static inline int mynewt_cputime_timer_start(struct hal_timer2 *timer, uint32_t cputime)
+static inline int mynewt_cputime_timer_start(struct hal_dpl_timer *timer, uint32_t cputime)
 {
     xtimer_set(&timer->timer, xtimer_now_usec() + cputime);
     return 0;
@@ -130,7 +130,7 @@ static inline int mynewt_cputime_timer_start(struct hal_timer2 *timer, uint32_t 
  * @return int 0 on success; EINVAL if timer already started or timer struct
  *         invalid
  */
-static inline int mynewt_cputime_timer_relative(struct hal_timer2 *timer, uint32_t usecs)
+static inline int mynewt_cputime_timer_relative(struct hal_dpl_timer *timer, uint32_t usecs)
 {
     uint32_t now = xtimer_now_usec();
     if (now > usecs) {
@@ -150,7 +150,7 @@ static inline int mynewt_cputime_timer_relative(struct hal_timer2 *timer, uint32
  *
  * @param timer Pointer to cputimer to stop. Cannot be NULL.
  */
-static inline void mynewt_cputime_timer_stop(struct hal_timer2 *timer)
+static inline void mynewt_cputime_timer_stop(struct hal_dpl_timer *timer)
 {
     xtimer_remove(&timer->timer);
 }

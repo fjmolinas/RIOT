@@ -1,0 +1,991 @@
+From 3d0f2bf6c88827acad0e39a1b45bb96e01a69e81 Mon Sep 17 00:00:00 2001
+From: Francisco Molina <femolina@uc.cl>
+Date: Wed, 3 Feb 2021 16:49:31 +0100
+Subject: [PATCH] treewide: hacks to avoid uwb-core conflicts
+
+---
+ nimble/controller/include/controller/ble_ll.h              | 2 +-
+ nimble/controller/include/controller/ble_ll_conn.h         | 2 +-
+ nimble/controller/src/ble_ll.c                             | 4 ++--
+ nimble/controller/src/ble_ll_adv.c                         | 2 +-
+ nimble/controller/src/ble_ll_conn.c                        | 2 +-
+ nimble/controller/src/ble_ll_conn_hci.c                    | 2 +-
+ nimble/controller/src/ble_ll_dtm.c                         | 4 ++--
+ nimble/controller/src/ble_ll_hci.c                         | 2 +-
+ nimble/controller/src/ble_ll_rand.c                        | 2 +-
+ nimble/controller/src/ble_ll_resolv.c                      | 2 +-
+ nimble/controller/src/ble_ll_scan.c                        | 2 +-
+ nimble/controller/src/ble_ll_sched.c                       | 2 +-
+ nimble/controller/src/ble_ll_sync.c                        | 2 +-
+ nimble/controller/src/ble_ll_whitelist.c                   | 2 +-
+ nimble/controller/test/src/ble_ll_test.c                   | 2 +-
+ nimble/drivers/dialog_cmac/src/ble_phy.c                   | 2 +-
+ nimble/drivers/native/src/ble_hw.c                         | 2 +-
+ nimble/drivers/native/src/ble_phy.c                        | 2 +-
+ nimble/drivers/nrf51/src/ble_hw.c                          | 2 +-
+ nimble/drivers/nrf51/src/ble_phy.c                         | 2 +-
+ nimble/drivers/nrf52/src/ble_hw.c                          | 2 +-
+ nimble/drivers/nrf52/src/ble_phy.c                         | 2 +-
+ nimble/drivers/nrf5340/src/ble_hw.c                        | 2 +-
+ nimble/drivers/nrf5340/src/ble_phy.c                       | 2 +-
+ nimble/host/src/ble_att_cmd.c                              | 2 +-
+ nimble/host/src/ble_att_priv.h                             | 2 +-
+ nimble/host/src/ble_att_svr.c                              | 2 +-
+ nimble/host/src/ble_gap_priv.h                             | 2 +-
+ nimble/host/src/ble_gatt_priv.h                            | 2 +-
+ nimble/host/src/ble_hs.c                                   | 2 +-
+ nimble/host/src/ble_hs_conn.c                              | 2 +-
+ nimble/host/src/ble_hs_hci.c                               | 2 +-
+ nimble/host/src/ble_hs_hci_cmd.c                           | 2 +-
+ nimble/host/src/ble_hs_hci_evt.c                           | 2 +-
+ nimble/host/src/ble_hs_log.c                               | 2 +-
+ nimble/host/src/ble_hs_misc.c                              | 2 +-
+ nimble/host/src/ble_hs_periodic_sync.c                     | 2 +-
+ nimble/host/src/ble_hs_priv.h                              | 2 +-
+ nimble/host/src/ble_hs_pvcy.c                              | 2 +-
+ nimble/host/src/ble_l2cap.c                                | 2 +-
+ nimble/host/src/ble_l2cap_priv.h                           | 2 +-
+ nimble/host/src/ble_monitor.c                              | 2 +-
+ nimble/host/test/src/ble_hs_test.c                         | 2 +-
+ nimble/host/test/src/ble_hs_test_util.c                    | 2 +-
+ nimble/host/test/src/ble_os_test.c                         | 2 +-
+ nimble/include/nimble/ble.h                                | 2 +-
+ nimble/transport/da1469x/cmac_driver/src/cmac_host.c       | 2 +-
+ nimble/transport/dialog_cmac/cmac_driver/src/cmac_host.c   | 2 +-
+ nimble/transport/dialog_cmac/cmac_driver/src/cmac_mbox.c   | 2 +-
+ nimble/transport/dialog_cmac/cmac_driver/src/cmac_rand.c   | 2 +-
+ nimble/transport/dialog_cmac/cmac_driver/src/cmac_shared.c | 2 +-
+ nimble/transport/emspi/src/ble_hci_emspi.c                 | 2 +-
+ nimble/transport/ram/src/ble_hci_ram.c                     | 2 +-
+ nimble/transport/socket/src/ble_hci_socket.c               | 6 +++---
+ nimble/transport/uart/src/ble_hci_uart.c                   | 2 +-
+ nimble/transport/usb/src/ble_hci_usb.c                     | 2 +-
+ porting/nimble/include/os/{os.h => os2.h}                  | 0
+ porting/nimble/include/os/os_cputime.h                     | 2 +-
+ porting/nimble/include/os/os_error.h                       | 2 +-
+ porting/nimble/include/os/os_mbuf.h                        | 2 +-
+ porting/nimble/include/os/os_mempool.h                     | 2 +-
+ porting/nimble/include/{stats => stats2}/stats.h           | 0
+ porting/nimble/include/{syscfg => syscfg3}/syscfg.h        | 0
+ porting/nimble/src/hal_timer.c                             | 2 +-
+ porting/nimble/src/mem.c                                   | 2 +-
+ porting/nimble/src/nimble_port.c                           | 2 +-
+ porting/nimble/src/os_mbuf.c                               | 2 +-
+ porting/nimble/src/os_mempool.c                            | 2 +-
+ porting/nimble/src/os_msys_init.c                          | 2 +-
+ porting/npl/mynewt/include/nimble/nimble_npl_os.h          | 2 +-
+ porting/npl/riot/include/{syscfg => syscfg_2}/syscfg.h     | 0
+ 71 files changed, 71 insertions(+), 71 deletions(-)
+ rename porting/nimble/include/os/{os.h => os2.h} (100%)
+ rename porting/nimble/include/{stats => stats2}/stats.h (100%)
+ rename porting/nimble/include/{syscfg => syscfg3}/syscfg.h (100%)
+ rename porting/npl/riot/include/{syscfg => syscfg_2}/syscfg.h (100%)
+
+diff --git a/nimble/controller/include/controller/ble_ll.h b/nimble/controller/include/controller/ble_ll.h
+index 1c43e69f..c2270d91 100644
+--- a/nimble/controller/include/controller/ble_ll.h
++++ b/nimble/controller/include/controller/ble_ll.h
+@@ -20,7 +20,7 @@
+ #ifndef H_BLE_LL_
+ #define H_BLE_LL_
+ 
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #include "os/os_cputime.h"
+ #include "nimble/nimble_opt.h"
+ #include "nimble/nimble_npl.h"
+diff --git a/nimble/controller/include/controller/ble_ll_conn.h b/nimble/controller/include/controller/ble_ll_conn.h
+index d7db6878..eca963f5 100644
+--- a/nimble/controller/include/controller/ble_ll_conn.h
++++ b/nimble/controller/include/controller/ble_ll_conn.h
+@@ -20,7 +20,7 @@
+ #ifndef H_BLE_LL_CONN_
+ #define H_BLE_LL_CONN_
+ 
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/ble.h"
+ #include "nimble/hci_common.h"
+ #include "nimble/nimble_npl.h"
+diff --git a/nimble/controller/src/ble_ll.c b/nimble/controller/src/ble_ll.c
+index a5c48978..9864093a 100644
+--- a/nimble/controller/src/ble_ll.c
++++ b/nimble/controller/src/ble_ll.c
+@@ -23,9 +23,9 @@
+ #include <string.h>
+ #include "sysinit/sysinit.h"
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "os/os_cputime.h"
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+ #include "nimble/hci_common.h"
+diff --git a/nimble/controller/src/ble_ll_adv.c b/nimble/controller/src/ble_ll_adv.c
+index 72c4e7d6..7ed008af 100644
+--- a/nimble/controller/src/ble_ll_adv.c
++++ b/nimble/controller/src/ble_ll_adv.c
+@@ -21,7 +21,7 @@
+ #include <string.h>
+ #include <assert.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "os/os_cputime.h"
+ #include "ble/xcvr.h"
+ #include "nimble/ble.h"
+diff --git a/nimble/controller/src/ble_ll_conn.c b/nimble/controller/src/ble_ll_conn.c
+index b8352f4a..7565089d 100644
+--- a/nimble/controller/src/ble_ll_conn.c
++++ b/nimble/controller/src/ble_ll_conn.c
+@@ -22,7 +22,7 @@
+ #include <string.h>
+ #include <assert.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "os/os_cputime.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+diff --git a/nimble/controller/src/ble_ll_conn_hci.c b/nimble/controller/src/ble_ll_conn_hci.c
+index 9936b9d3..b9c3ecc1 100644
+--- a/nimble/controller/src/ble_ll_conn_hci.c
++++ b/nimble/controller/src/ble_ll_conn_hci.c
+@@ -21,7 +21,7 @@
+ #include <string.h>
+ #include <assert.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+ #include "nimble/hci_common.h"
+diff --git a/nimble/controller/src/ble_ll_dtm.c b/nimble/controller/src/ble_ll_dtm.c
+index de3b168b..1cfab88b 100644
+--- a/nimble/controller/src/ble_ll_dtm.c
++++ b/nimble/controller/src/ble_ll_dtm.c
+@@ -23,8 +23,8 @@
+ #if MYNEWT_VAL(BLE_LL_DTM)
+ 
+ #include <assert.h>
+-#include "os/os.h"
+-#include "stats/stats.h"
++#include "os/os2.h"
++#include "stats2/stats.h"
+ #include "controller/ble_ll.h"
+ #include "controller/ble_phy.h"
+ #include "controller/ble_ll_sched.h"
+diff --git a/nimble/controller/src/ble_ll_hci.c b/nimble/controller/src/ble_ll_hci.c
+index a3da98d9..cb3d98fe 100644
+--- a/nimble/controller/src/ble_ll_hci.c
++++ b/nimble/controller/src/ble_ll_hci.c
+@@ -20,7 +20,7 @@
+ #include <assert.h>
+ #include <string.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+ #include "nimble/hci_common.h"
+diff --git a/nimble/controller/src/ble_ll_rand.c b/nimble/controller/src/ble_ll_rand.c
+index 8aa71271..485e3f9e 100644
+--- a/nimble/controller/src/ble_ll_rand.c
++++ b/nimble/controller/src/ble_ll_rand.c
+@@ -24,7 +24,7 @@
+ #include <assert.h>
+ #include <string.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+ #include "controller/ble_hw.h"
+diff --git a/nimble/controller/src/ble_ll_resolv.c b/nimble/controller/src/ble_ll_resolv.c
+index 02af9304..dec1ff0a 100644
+--- a/nimble/controller/src/ble_ll_resolv.c
++++ b/nimble/controller/src/ble_ll_resolv.c
+@@ -20,7 +20,7 @@
+ #include <assert.h>
+ #include <string.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+ #include "controller/ble_ll.h"
+diff --git a/nimble/controller/src/ble_ll_scan.c b/nimble/controller/src/ble_ll_scan.c
+index 0cbcb376..2db69bb0 100644
+--- a/nimble/controller/src/ble_ll_scan.c
++++ b/nimble/controller/src/ble_ll_scan.c
+@@ -22,7 +22,7 @@
+ #include <string.h>
+ #include <assert.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "os/os_cputime.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+diff --git a/nimble/controller/src/ble_ll_sched.c b/nimble/controller/src/ble_ll_sched.c
+index d01f10ed..dc453efa 100644
+--- a/nimble/controller/src/ble_ll_sched.c
++++ b/nimble/controller/src/ble_ll_sched.c
+@@ -20,7 +20,7 @@
+ #include <stdlib.h>
+ #include <assert.h>
+ #include <string.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "os/os_cputime.h"
+ #include "ble/xcvr.h"
+ #include "controller/ble_phy.h"
+diff --git a/nimble/controller/src/ble_ll_sync.c b/nimble/controller/src/ble_ll_sync.c
+index df806082..bfe16062 100644
+--- a/nimble/controller/src/ble_ll_sync.c
++++ b/nimble/controller/src/ble_ll_sync.c
+@@ -39,7 +39,7 @@
+ 
+ #include "ble_ll_conn_priv.h"
+ 
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ 
+ #if MYNEWT_VAL(BLE_LL_CFG_FEAT_LL_PERIODIC_ADV)
+ 
+diff --git a/nimble/controller/src/ble_ll_whitelist.c b/nimble/controller/src/ble_ll_whitelist.c
+index 04ec6428..3a207a10 100644
+--- a/nimble/controller/src/ble_ll_whitelist.c
++++ b/nimble/controller/src/ble_ll_whitelist.c
+@@ -20,7 +20,7 @@
+ #include <assert.h>
+ #include <string.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+ #include "ble/xcvr.h"
+diff --git a/nimble/controller/test/src/ble_ll_test.c b/nimble/controller/test/src/ble_ll_test.c
+index ee089afe..2f5f9681 100644
+--- a/nimble/controller/test/src/ble_ll_test.c
++++ b/nimble/controller/test/src/ble_ll_test.c
+@@ -20,7 +20,7 @@
+ #include "sysinit/sysinit.h"
+ #include "syscfg/syscfg.h"
+ #include "controller/ble_ll_test.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "testutil/testutil.h"
+ #include "ble_ll_csa2_test.h"
+ 
+diff --git a/nimble/drivers/dialog_cmac/src/ble_phy.c b/nimble/drivers/dialog_cmac/src/ble_phy.c
+index d5767c56..a43c30d3 100644
+--- a/nimble/drivers/dialog_cmac/src/ble_phy.c
++++ b/nimble/drivers/dialog_cmac/src/ble_phy.c
+@@ -31,7 +31,7 @@
+ #include "cmac_driver/cmac_shared.h"
+ #include "controller/ble_phy.h"
+ #include "controller/ble_ll.h"
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #include "CMAC.h"
+ #include "ble_hw_priv.h"
+ #include "ble_rf_priv.h"
+diff --git a/nimble/drivers/native/src/ble_hw.c b/nimble/drivers/native/src/ble_hw.c
+index 8aa29d32..a1975245 100644
+--- a/nimble/drivers/native/src/ble_hw.c
++++ b/nimble/drivers/native/src/ble_hw.c
+@@ -23,7 +23,7 @@
+ #include <stdlib.h>
+ #include <stdbool.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+ #include "controller/ble_hw.h"
+diff --git a/nimble/drivers/native/src/ble_phy.c b/nimble/drivers/native/src/ble_phy.c
+index f9ab0fcb..6e7a5d96 100644
+--- a/nimble/drivers/native/src/ble_phy.c
++++ b/nimble/drivers/native/src/ble_phy.c
+@@ -21,7 +21,7 @@
+ #include <string.h>
+ #include <assert.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "ble/xcvr.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+diff --git a/nimble/drivers/nrf51/src/ble_hw.c b/nimble/drivers/nrf51/src/ble_hw.c
+index 3c7296b8..b008e6e6 100644
+--- a/nimble/drivers/nrf51/src/ble_hw.c
++++ b/nimble/drivers/nrf51/src/ble_hw.c
+@@ -21,7 +21,7 @@
+ #include <assert.h>
+ #include <string.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "ble/xcvr.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+diff --git a/nimble/drivers/nrf51/src/ble_phy.c b/nimble/drivers/nrf51/src/ble_phy.c
+index b7e63297..ad0e5040 100644
+--- a/nimble/drivers/nrf51/src/ble_phy.c
++++ b/nimble/drivers/nrf51/src/ble_phy.c
+@@ -21,7 +21,7 @@
+ #include <string.h>
+ #include <assert.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "ble/xcvr.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+diff --git a/nimble/drivers/nrf52/src/ble_hw.c b/nimble/drivers/nrf52/src/ble_hw.c
+index 82e6d17e..9d8bdf9a 100644
+--- a/nimble/drivers/nrf52/src/ble_hw.c
++++ b/nimble/drivers/nrf52/src/ble_hw.c
+@@ -21,7 +21,7 @@
+ #include <assert.h>
+ #include <string.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "ble/xcvr.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+diff --git a/nimble/drivers/nrf52/src/ble_phy.c b/nimble/drivers/nrf52/src/ble_phy.c
+index 2f6ce08e..37e62a1d 100644
+--- a/nimble/drivers/nrf52/src/ble_phy.c
++++ b/nimble/drivers/nrf52/src/ble_phy.c
+@@ -21,7 +21,7 @@
+ #include <string.h>
+ #include <assert.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "ble/xcvr.h"
+ #include "nimble/ble.h"
+ #include "nimble/nimble_opt.h"
+diff --git a/nimble/drivers/nrf5340/src/ble_hw.c b/nimble/drivers/nrf5340/src/ble_hw.c
+index bbe61697..ac2735b4 100644
+--- a/nimble/drivers/nrf5340/src/ble_hw.c
++++ b/nimble/drivers/nrf5340/src/ble_hw.c
+@@ -21,7 +21,7 @@
+ #include <assert.h>
+ #include <string.h>
+ #include <syscfg/syscfg.h>
+-#include <os/os.h>
++#include <os/os2.h>
+ #include <nimble/ble.h>
+ #include <nimble/nimble_opt.h>
+ #include <controller/ble_hw.h>
+diff --git a/nimble/drivers/nrf5340/src/ble_phy.c b/nimble/drivers/nrf5340/src/ble_phy.c
+index e07bbaa1..a3f39072 100644
+--- a/nimble/drivers/nrf5340/src/ble_phy.c
++++ b/nimble/drivers/nrf5340/src/ble_phy.c
+@@ -21,7 +21,7 @@
+ #include <string.h>
+ #include <assert.h>
+ #include <syscfg/syscfg.h>
+-#include <os/os.h>
++#include <os/os2.h>
+ #include <nimble/ble.h>
+ #include <nimble/nimble_opt.h>
+ #include <nimble/nimble_npl.h>
+diff --git a/nimble/host/src/ble_att_cmd.c b/nimble/host/src/ble_att_cmd.c
+index 81b070f9..cb422821 100644
+--- a/nimble/host/src/ble_att_cmd.c
++++ b/nimble/host/src/ble_att_cmd.c
+@@ -19,7 +19,7 @@
+ 
+ #include <errno.h>
+ #include <string.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/ble.h"
+ #include "ble_hs_priv.h"
+ #include "host/ble_att.h"
+diff --git a/nimble/host/src/ble_att_priv.h b/nimble/host/src/ble_att_priv.h
+index a2a9f979..cc15807d 100644
+--- a/nimble/host/src/ble_att_priv.h
++++ b/nimble/host/src/ble_att_priv.h
+@@ -21,7 +21,7 @@
+ #define H_BLE_ATT_PRIV_
+ 
+ #include <inttypes.h>
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #include "host/ble_att.h"
+ #include "host/ble_uuid.h"
+ #include "nimble/nimble_npl.h"
+diff --git a/nimble/host/src/ble_att_svr.c b/nimble/host/src/ble_att_svr.c
+index be61e4b8..a8440f5e 100644
+--- a/nimble/host/src/ble_att_svr.c
++++ b/nimble/host/src/ble_att_svr.c
+@@ -20,7 +20,7 @@
+ #include <stdlib.h>
+ #include <string.h>
+ #include <errno.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/ble.h"
+ #include "host/ble_uuid.h"
+ #include "ble_hs_priv.h"
+diff --git a/nimble/host/src/ble_gap_priv.h b/nimble/host/src/ble_gap_priv.h
+index 499823bc..01bbfb8d 100644
+--- a/nimble/host/src/ble_gap_priv.h
++++ b/nimble/host/src/ble_gap_priv.h
+@@ -22,7 +22,7 @@
+ 
+ #include <inttypes.h>
+ #include "syscfg/syscfg.h"
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #include "host/ble_gap.h"
+ #ifdef __cplusplus
+ extern "C" {
+diff --git a/nimble/host/src/ble_gatt_priv.h b/nimble/host/src/ble_gatt_priv.h
+index 4a59635b..8620e3fa 100644
+--- a/nimble/host/src/ble_gatt_priv.h
++++ b/nimble/host/src/ble_gatt_priv.h
+@@ -21,7 +21,7 @@
+ #define H_BLE_GATT_PRIV_
+ 
+ #include "syscfg/syscfg.h"
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #include "host/ble_gatt.h"
+ #ifdef __cplusplus
+ extern "C" {
+diff --git a/nimble/host/src/ble_hs.c b/nimble/host/src/ble_hs.c
+index 731e8155..4b1a839d 100644
+--- a/nimble/host/src/ble_hs.c
++++ b/nimble/host/src/ble_hs.c
+@@ -22,7 +22,7 @@
+ #include <string.h>
+ #include "sysinit/sysinit.h"
+ #include "syscfg/syscfg.h"
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #include "nimble/ble_hci_trans.h"
+ #include "ble_hs_priv.h"
+ #include "ble_monitor_priv.h"
+diff --git a/nimble/host/src/ble_hs_conn.c b/nimble/host/src/ble_hs_conn.c
+index ea89460c..7157ca9e 100644
+--- a/nimble/host/src/ble_hs_conn.c
++++ b/nimble/host/src/ble_hs_conn.c
+@@ -20,7 +20,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "host/ble_hs_id.h"
+ #include "ble_hs_priv.h"
+ 
+diff --git a/nimble/host/src/ble_hs_hci.c b/nimble/host/src/ble_hs_hci.c
+index ac472a9e..09e053c1 100644
+--- a/nimble/host/src/ble_hs_hci.c
++++ b/nimble/host/src/ble_hs_hci.c
+@@ -20,7 +20,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <stdio.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "mem/mem.h"
+ #include "nimble/ble_hci_trans.h"
+ #include "host/ble_monitor.h"
+diff --git a/nimble/host/src/ble_hs_hci_cmd.c b/nimble/host/src/ble_hs_hci_cmd.c
+index a0fd1cea..f2ffa6fe 100644
+--- a/nimble/host/src/ble_hs_hci_cmd.c
++++ b/nimble/host/src/ble_hs_hci_cmd.c
+@@ -21,7 +21,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <stdio.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/hci_common.h"
+ #include "nimble/ble_hci_trans.h"
+ #include "host/ble_monitor.h"
+diff --git a/nimble/host/src/ble_hs_hci_evt.c b/nimble/host/src/ble_hs_hci_evt.c
+index e8ba7119..04375294 100644
+--- a/nimble/host/src/ble_hs_hci_evt.c
++++ b/nimble/host/src/ble_hs_hci_evt.c
+@@ -20,7 +20,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include <stdio.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/hci_common.h"
+ #include "nimble/ble_hci_trans.h"
+ #include "host/ble_gap.h"
+diff --git a/nimble/host/src/ble_hs_log.c b/nimble/host/src/ble_hs_log.c
+index 7ec69469..3e35ba54 100644
+--- a/nimble/host/src/ble_hs_log.c
++++ b/nimble/host/src/ble_hs_log.c
+@@ -17,7 +17,7 @@
+  * under the License.
+  */
+ 
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "host/ble_hs.h"
+ 
+ struct log ble_hs_log;
+diff --git a/nimble/host/src/ble_hs_misc.c b/nimble/host/src/ble_hs_misc.c
+index dfb46b74..3509df24 100644
+--- a/nimble/host/src/ble_hs_misc.c
++++ b/nimble/host/src/ble_hs_misc.c
+@@ -19,7 +19,7 @@
+ 
+ #include <assert.h>
+ #include <stdlib.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "ble_hs_priv.h"
+ 
+ const uint8_t ble_hs_misc_null_addr[6];
+diff --git a/nimble/host/src/ble_hs_periodic_sync.c b/nimble/host/src/ble_hs_periodic_sync.c
+index dad53513..c9a31f0d 100644
+--- a/nimble/host/src/ble_hs_periodic_sync.c
++++ b/nimble/host/src/ble_hs_periodic_sync.c
+@@ -20,7 +20,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "host/ble_hs_id.h"
+ #include "ble_hs_priv.h"
+ 
+diff --git a/nimble/host/src/ble_hs_priv.h b/nimble/host/src/ble_hs_priv.h
+index 538d07a9..ae9eb73d 100644
+--- a/nimble/host/src/ble_hs_priv.h
++++ b/nimble/host/src/ble_hs_priv.h
+@@ -45,7 +45,7 @@
+ #include "host/ble_hs.h"
+ #include "host/ble_monitor.h"
+ #include "nimble/nimble_opt.h"
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #ifdef __cplusplus
+ extern "C" {
+ #endif
+diff --git a/nimble/host/src/ble_hs_pvcy.c b/nimble/host/src/ble_hs_pvcy.c
+index dc09b51b..81c1d6ca 100644
+--- a/nimble/host/src/ble_hs_pvcy.c
++++ b/nimble/host/src/ble_hs_pvcy.c
+@@ -19,7 +19,7 @@
+ #include <inttypes.h>
+ #include <stdio.h>
+ #include <string.h>
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #include "ble_hs_priv.h"
+ 
+ static uint8_t ble_hs_pvcy_started;
+diff --git a/nimble/host/src/ble_l2cap.c b/nimble/host/src/ble_l2cap.c
+index 0d9f082d..d6df5a10 100644
+--- a/nimble/host/src/ble_l2cap.c
++++ b/nimble/host/src/ble_l2cap.c
+@@ -20,7 +20,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/ble.h"
+ #include "nimble/hci_common.h"
+ #include "ble_hs_priv.h"
+diff --git a/nimble/host/src/ble_l2cap_priv.h b/nimble/host/src/ble_l2cap_priv.h
+index e3409743..7ea95493 100644
+--- a/nimble/host/src/ble_l2cap_priv.h
++++ b/nimble/host/src/ble_l2cap_priv.h
+@@ -23,7 +23,7 @@
+ #include "ble_l2cap_coc_priv.h"
+ #include "host/ble_l2cap.h"
+ #include <inttypes.h>
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #include "os/queue.h"
+ #include "os/os_mbuf.h"
+ #ifdef __cplusplus
+diff --git a/nimble/host/src/ble_monitor.c b/nimble/host/src/ble_monitor.c
+index e6db48b8..517de709 100644
+--- a/nimble/host/src/ble_monitor.c
++++ b/nimble/host/src/ble_monitor.c
+@@ -28,7 +28,7 @@
+ #include <stdarg.h>
+ #include <stdio.h>
+ #include <inttypes.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "log/log.h"
+ #if MYNEWT_VAL(BLE_MONITOR_UART)
+ #include "uart/uart.h"
+diff --git a/nimble/host/test/src/ble_hs_test.c b/nimble/host/test/src/ble_hs_test.c
+index adf99423..60d0bc4b 100644
+--- a/nimble/host/test/src/ble_hs_test.c
++++ b/nimble/host/test/src/ble_hs_test.c
+@@ -19,7 +19,7 @@
+ 
+ #include "sysinit/sysinit.h"
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nimble/hci_common.h"
+ #include "testutil/testutil.h"
+ #include "ble_hs_test_util.h"
+diff --git a/nimble/host/test/src/ble_hs_test_util.c b/nimble/host/test/src/ble_hs_test_util.c
+index 5ee17e76..5c10aa7f 100644
+--- a/nimble/host/test/src/ble_hs_test_util.c
++++ b/nimble/host/test/src/ble_hs_test_util.c
+@@ -20,7 +20,7 @@
+ #include <string.h>
+ #include <errno.h>
+ #include "sysinit/sysinit.h"
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ #include "testutil/testutil.h"
+ #include "nimble/ble.h"
+ #include "nimble/hci_common.h"
+diff --git a/nimble/host/test/src/ble_os_test.c b/nimble/host/test/src/ble_os_test.c
+index fa57571b..9c689409 100644
+--- a/nimble/host/test/src/ble_os_test.c
++++ b/nimble/host/test/src/ble_os_test.c
+@@ -18,7 +18,7 @@
+  */
+ 
+ #include <string.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "testutil/testutil.h"
+ #include "nimble/hci_common.h"
+ #include "nimble/ble_hci_trans.h"
+diff --git a/nimble/include/nimble/ble.h b/nimble/include/nimble/ble.h
+index 248e8ae8..d39aeb4c 100644
+--- a/nimble/include/nimble/ble.h
++++ b/nimble/include/nimble/ble.h
+@@ -23,7 +23,7 @@
+ #include <inttypes.h>
+ #include <string.h>
+ #include "syscfg/syscfg.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+diff --git a/nimble/transport/da1469x/cmac_driver/src/cmac_host.c b/nimble/transport/da1469x/cmac_driver/src/cmac_host.c
+index 0bfb715e..1e64b2ca 100644
+--- a/nimble/transport/da1469x/cmac_driver/src/cmac_host.c
++++ b/nimble/transport/da1469x/cmac_driver/src/cmac_host.c
+@@ -21,7 +21,7 @@
+ #include <stdbool.h>
+ #include <stdint.h>
+ #include <string.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "mcu/cmsis_nvic.h"
+ #include "mcu/da1469x_lpclk.h"
+ #include "mcu/da1469x_hal.h"
+diff --git a/nimble/transport/dialog_cmac/cmac_driver/src/cmac_host.c b/nimble/transport/dialog_cmac/cmac_driver/src/cmac_host.c
+index df81c582..3643acf5 100644
+--- a/nimble/transport/dialog_cmac/cmac_driver/src/cmac_host.c
++++ b/nimble/transport/dialog_cmac/cmac_driver/src/cmac_host.c
+@@ -23,7 +23,7 @@
+ #include <string.h>
+ #include "syscfg/syscfg.h"
+ #include "sysflash/sysflash.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "mcu/mcu.h"
+ #include "mcu/cmsis_nvic.h"
+ #include "mcu/da1469x_hal.h"
+diff --git a/nimble/transport/dialog_cmac/cmac_driver/src/cmac_mbox.c b/nimble/transport/dialog_cmac/cmac_driver/src/cmac_mbox.c
+index 9594dbe9..cffc077c 100644
+--- a/nimble/transport/dialog_cmac/cmac_driver/src/cmac_mbox.c
++++ b/nimble/transport/dialog_cmac/cmac_driver/src/cmac_mbox.c
+@@ -25,7 +25,7 @@
+ #include "syscfg/syscfg.h"
+ #include "mcu/mcu.h"
+ #include "os/os_arch.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ 
+ #ifndef min
+ #define min(_a, _b)     ((_a) < (_b) ? (_a) : (_b))
+diff --git a/nimble/transport/dialog_cmac/cmac_driver/src/cmac_rand.c b/nimble/transport/dialog_cmac/cmac_driver/src/cmac_rand.c
+index 67a315f9..2b59b0b4 100644
+--- a/nimble/transport/dialog_cmac/cmac_driver/src/cmac_rand.c
++++ b/nimble/transport/dialog_cmac/cmac_driver/src/cmac_rand.c
+@@ -24,7 +24,7 @@
+ #include "syscfg/syscfg.h"
+ #include "mcu/mcu.h"
+ #include "os/os_arch.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ 
+ #if MYNEWT_VAL(BLE_HOST)
+ int
+diff --git a/nimble/transport/dialog_cmac/cmac_driver/src/cmac_shared.c b/nimble/transport/dialog_cmac/cmac_driver/src/cmac_shared.c
+index 24640ca4..0c7009aa 100644
+--- a/nimble/transport/dialog_cmac/cmac_driver/src/cmac_shared.c
++++ b/nimble/transport/dialog_cmac/cmac_driver/src/cmac_shared.c
+@@ -28,7 +28,7 @@
+ #include "mcu/mcu.h"
+ #include <cmac_driver/cmac_shared.h>
+ #include "os/os_arch.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ 
+ #ifndef min
+ #define min(_a, _b)     ((_a) < (_b) ? (_a) : (_b))
+diff --git a/nimble/transport/emspi/src/ble_hci_emspi.c b/nimble/transport/emspi/src/ble_hci_emspi.c
+index 61fe96b2..5062d81b 100644
+--- a/nimble/transport/emspi/src/ble_hci_emspi.c
++++ b/nimble/transport/emspi/src/ble_hci_emspi.c
+@@ -26,7 +26,7 @@
+ #include "syscfg/syscfg.h"
+ #include "os/os_cputime.h"
+ #include "bsp/bsp.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "mem/mem.h"
+ #include "hal/hal_gpio.h"
+ #include "hal/hal_spi.h"
+diff --git a/nimble/transport/ram/src/ble_hci_ram.c b/nimble/transport/ram/src/ble_hci_ram.c
+index 3f10e9df..8e13ab09 100644
+--- a/nimble/transport/ram/src/ble_hci_ram.c
++++ b/nimble/transport/ram/src/ble_hci_ram.c
+@@ -22,7 +22,7 @@
+ #include <stddef.h>
+ #include "syscfg/syscfg.h"
+ #include "sysinit/sysinit.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "mem/mem.h"
+ #include "nimble/ble.h"
+ #include "nimble/ble_hci_trans.h"
+diff --git a/nimble/transport/socket/src/ble_hci_socket.c b/nimble/transport/socket/src/ble_hci_socket.c
+index 44de8fed..8a5ae39d 100644
+--- a/nimble/transport/socket/src/ble_hci_socket.c
++++ b/nimble/transport/socket/src/ble_hci_socket.c
+@@ -75,10 +75,10 @@ struct sockaddr_hci {
+ #include <sys/ioctl.h>
+ 
+ #include "sysinit/sysinit.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "mem/mem.h"
+ 
+-#include "stats/stats.h"
++#include "stats2/stats.h"
+ 
+ /* BLE */
+ #include "nimble/ble.h"
+@@ -646,7 +646,7 @@ ble_hci_sock_config(void)
+         goto err;
+     }
+ 
+-    /* 
++    /*
+      * HCI User Channel requires exclusive access to the device.
+      * The device has to be down at the time of binding.
+      */
+diff --git a/nimble/transport/uart/src/ble_hci_uart.c b/nimble/transport/uart/src/ble_hci_uart.c
+index cbb6dd42..3d983cad 100644
+--- a/nimble/transport/uart/src/ble_hci_uart.c
++++ b/nimble/transport/uart/src/ble_hci_uart.c
+@@ -26,7 +26,7 @@
+ #include "syscfg/syscfg.h"
+ #include "os/os_cputime.h"
+ #include "bsp/bsp.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "mem/mem.h"
+ #include "hal/hal_gpio.h"
+ #include "hal/hal_uart.h"
+diff --git a/nimble/transport/usb/src/ble_hci_usb.c b/nimble/transport/usb/src/ble_hci_usb.c
+index 55c91f22..f5467de9 100644
+--- a/nimble/transport/usb/src/ble_hci_usb.c
++++ b/nimble/transport/usb/src/ble_hci_usb.c
+@@ -21,7 +21,7 @@
+ #include <stddef.h>
+ #include "syscfg/syscfg.h"
+ #include "sysinit/sysinit.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "mem/mem.h"
+ 
+ #include "nimble/ble.h"
+diff --git a/porting/nimble/include/os/os.h b/porting/nimble/include/os/os2.h
+similarity index 100%
+rename from porting/nimble/include/os/os.h
+rename to porting/nimble/include/os/os2.h
+diff --git a/porting/nimble/include/os/os_cputime.h b/porting/nimble/include/os/os_cputime.h
+index 20124b57..72e5eb45 100644
+--- a/porting/nimble/include/os/os_cputime.h
++++ b/porting/nimble/include/os/os_cputime.h
+@@ -33,7 +33,7 @@ extern "C" {
+ 
+ #include "syscfg/syscfg.h"
+ #include "hal/hal_timer.h"
+-#include "os/os.h"
++#include "os/os2.h"
+ 
+ /*
+  * NOTE: these definitions allow one to override the cputime frequency used.
+diff --git a/porting/nimble/include/os/os_error.h b/porting/nimble/include/os/os_error.h
+index 15cc6228..356a4af9 100644
+--- a/porting/nimble/include/os/os_error.h
++++ b/porting/nimble/include/os/os_error.h
+@@ -20,7 +20,7 @@
+ #ifndef H_OS_ERROR_
+ #define H_OS_ERROR_
+ 
+-#include "os/os.h"
++#include "os/os2.h"
+ 
+ enum os_error {
+     OS_OK = 0,
+diff --git a/porting/nimble/include/os/os_mbuf.h b/porting/nimble/include/os/os_mbuf.h
+index f3857fe4..5cc8d5fa 100644
+--- a/porting/nimble/include/os/os_mbuf.h
++++ b/porting/nimble/include/os/os_mbuf.h
+@@ -29,7 +29,7 @@
+ #ifndef _OS_MBUF_H
+ #define _OS_MBUF_H
+ 
+-#include "os/os.h"
++#include "os/os2.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+diff --git a/porting/nimble/include/os/os_mempool.h b/porting/nimble/include/os/os_mempool.h
+index c69fb3da..786bd15e 100644
+--- a/porting/nimble/include/os/os_mempool.h
++++ b/porting/nimble/include/os/os_mempool.h
+@@ -29,7 +29,7 @@
+ #define _OS_MEMPOOL_H_
+ 
+ #include <stdbool.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "os/queue.h"
+ 
+ #ifdef __cplusplus
+diff --git a/porting/nimble/include/stats/stats.h b/porting/nimble/include/stats2/stats.h
+similarity index 100%
+rename from porting/nimble/include/stats/stats.h
+rename to porting/nimble/include/stats2/stats.h
+diff --git a/porting/nimble/include/syscfg/syscfg.h b/porting/nimble/include/syscfg3/syscfg.h
+similarity index 100%
+rename from porting/nimble/include/syscfg/syscfg.h
+rename to porting/nimble/include/syscfg3/syscfg.h
+diff --git a/porting/nimble/src/hal_timer.c b/porting/nimble/src/hal_timer.c
+index c67986a8..5dd235f5 100644
+--- a/porting/nimble/src/hal_timer.c
++++ b/porting/nimble/src/hal_timer.c
+@@ -21,7 +21,7 @@
+ #include <stdint.h>
+ #include <assert.h>
+ #include <errno.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "nrfx.h"
+ #include "hal/hal_timer.h"
+ 
+diff --git a/porting/nimble/src/mem.c b/porting/nimble/src/mem.c
+index 1fea7df4..40c9417d 100644
+--- a/porting/nimble/src/mem.c
++++ b/porting/nimble/src/mem.c
+@@ -18,7 +18,7 @@
+  */
+ 
+ #include <stdlib.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "mem/mem.h"
+ 
+ /**
+diff --git a/porting/nimble/src/nimble_port.c b/porting/nimble/src/nimble_port.c
+index 06b5f6df..a4db79b2 100644
+--- a/porting/nimble/src/nimble_port.c
++++ b/porting/nimble/src/nimble_port.c
+@@ -18,7 +18,7 @@
+  */
+ 
+ #include <stddef.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "sysinit/sysinit.h"
+ #include "host/ble_hs.h"
+ #include "nimble/nimble_port.h"
+diff --git a/porting/nimble/src/os_mbuf.c b/porting/nimble/src/os_mbuf.c
+index 92ea935f..a9a6b0ac 100644
+--- a/porting/nimble/src/os_mbuf.c
++++ b/porting/nimble/src/os_mbuf.c
+@@ -33,7 +33,7 @@
+  *
+  */
+ 
+-#include "os/os.h"
++#include "os/os2.h"
+ 
+ #include <assert.h>
+ #include <stddef.h>
+diff --git a/porting/nimble/src/os_mempool.c b/porting/nimble/src/os_mempool.c
+index 6a9d2185..ac838dfa 100644
+--- a/porting/nimble/src/os_mempool.c
++++ b/porting/nimble/src/os_mempool.c
+@@ -17,7 +17,7 @@
+  * under the License.
+  */
+ 
+-#include "os/os.h"
++#include "os/os2.h"
+ 
+ #include <string.h>
+ #include <assert.h>
+diff --git a/porting/nimble/src/os_msys_init.c b/porting/nimble/src/os_msys_init.c
+index 4d42d184..72908014 100644
+--- a/porting/nimble/src/os_msys_init.c
++++ b/porting/nimble/src/os_msys_init.c
+@@ -18,7 +18,7 @@
+  */
+ 
+ #include <assert.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ #include "mem/mem.h"
+ 
+ #if MYNEWT_VAL(MSYS_1_BLOCK_COUNT) > 0
+diff --git a/porting/npl/mynewt/include/nimble/nimble_npl_os.h b/porting/npl/mynewt/include/nimble/nimble_npl_os.h
+index 8d8ccda3..4e1884b7 100644
+--- a/porting/npl/mynewt/include/nimble/nimble_npl_os.h
++++ b/porting/npl/mynewt/include/nimble/nimble_npl_os.h
+@@ -23,7 +23,7 @@
+ #include <stdint.h>
+ #include <string.h>
+ #include <assert.h>
+-#include "os/os.h"
++#include "os/os2.h"
+ 
+ #ifdef __cplusplus
+ extern "C" {
+diff --git a/porting/npl/riot/include/syscfg/syscfg.h b/porting/npl/riot/include/syscfg_2/syscfg.h
+similarity index 100%
+rename from porting/npl/riot/include/syscfg/syscfg.h
+rename to porting/npl/riot/include/syscfg_2/syscfg.h
+-- 
+2.28.0
+
