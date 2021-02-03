@@ -20,7 +20,7 @@
 #ifndef MYNEWT_TASKS_H
 #define MYNEWT_TASKS_H
 
-#include "mynewt_types.h"
+#include "mynewt/types.h"
 
 #include "sched.h"
 #include "thread.h"

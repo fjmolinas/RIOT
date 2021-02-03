@@ -25,7 +25,7 @@
 mynewt_error_t mynewt_sem_init(struct mynewt_sem *sem, uint16_t tokens)
 {
     if (!sem) {
-        return mynewt_INVALID_PARAM;
+        return MYNEWT_INVALID_PARAM;
     }
 
     sema_create(&sem->sema, tokens);
@@ -37,12 +37,12 @@ mynewt_error_t mynewt_sem_release(struct mynewt_sem *sem)
     int ret;
 
     if (!sem) {
-        return mynewt_INVALID_PARAM;
+        return MYNEWT_INVALID_PARAM;
     }
 
     ret = sema_post(&sem->sema);
 
-    return (ret) ? mynewt_ERROR : MYNEWT_OK;
+    return (ret) ? MYNEWT_ERROR : MYNEWT_OK;
 }
 
 uint16_t mynewt_sem_get_count(struct mynewt_sem *sem)
@@ -56,5 +56,5 @@ uint16_t mynewt_sem_get_count(struct mynewt_sem *sem)
 mynewt_error_t mynewt_sem_pend(struct mynewt_sem *sem, mynewt_time_t timeout)
 {
     int ret = sema_wait_timed(&sem->sema, timeout);
-    return (ret) ? mynewt_ERROR : MYNEWT_OK;
+    return (ret) ? MYNEWT_ERROR : MYNEWT_OK;
 }

@@ -57,7 +57,7 @@ static inline uint32_t dpl_cputime_usecs_to_ticks(uint32_t usecs)
  */
 static inline uint32_t dpl_cputime_ticks_to_usecs(uint32_t ticks)
 {
-    return mynewt_cputime_usecs_to_ticks(ticks);
+    return mynewt_cputime_ticks_to_usecs(ticks);
 }
 
 /**
@@ -90,7 +90,7 @@ static inline void dpl_cputime_delay_usecs(uint32_t usecs)
 static inline void dpl_cputime_timer_init(struct hal_timer2 *timer, hal_timer_cb fp,
         void *arg)
 {
-    mynewt_cpu_timer_init(timer, fp, arg);
+    mynewt_cputime_timer_init(timer, fp, arg);
 }
 
 /**

@@ -29,16 +29,19 @@ extern "C" {
 /**
  * @brief dpl mutex wrapper
  */
-typedef mynewt_mutex_t dpl_mutex_t;
+struct dpl_mutex {
+    struct mynewt_mutex mu;
+};
+
 
 /**
  * @brief Initializes a mutex object.
  *
  * @param[out]  mu  pre-allocated mutex structure, must not be NULL.
  */
-dpl_error_t dpl_mutex_init(struct dpl_mutex *mu)
+static inline dpl_error_t dpl_mutex_init(struct dpl_mutex *mu)
 {
-    return mynewt_mutex_init(mu);
+    return (dpl_error_t) mynewt_mutex_init(&mu->mu);
 }
 
 /**
@@ -53,9 +56,9 @@ dpl_error_t dpl_mutex_init(struct dpl_mutex *mu)
  *      DPL_INVALID_PARM    mutex passed in was NULL
  *      DPL_OK              no error
  */
-dpl_error_t dpl_mutex_pend(struct dpl_mutex *mu, dpl_time_t timeout)
+static inline dpl_error_t dpl_mutex_pend(struct dpl_mutex *mu, dpl_time_t timeout)
 {
-    return mynewt_mutex_pend(mu, timeout);
+    return (dpl_error_t) mynewt_mutex_pend(&mu->mu, timeout);
 }
 
 /**
@@ -66,9 +69,9 @@ dpl_error_t dpl_mutex_pend(struct dpl_mutex *mu, dpl_time_t timeout)
  *      DPL_INVALID_PARM    mutex was NULL
  *      DPL_OK              no error
  */
-dpl_error_t dpl_mutex_release(struct dpl_mutex *mu)
+static inline dpl_error_t dpl_mutex_release(struct dpl_mutex *mu)
 {
-    return mynewt_mutex_release(mu);
+    return (dpl_error_t) mynewt_mutex_release(&mu->mu);
 }
 
 #ifdef __cplusplus

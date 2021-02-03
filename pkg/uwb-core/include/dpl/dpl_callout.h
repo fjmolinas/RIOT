@@ -30,6 +30,13 @@ extern "C" {
 #endif
 
 /**
+ * @brief dpl callout wrapper
+ */
+struct dpl_callout {
+    struct mynewt_callout co;
+};
+
+/**
  * @brief   Initialize a callout.
  *
  * Callouts are used to schedule events in the future onto an event
@@ -46,7 +53,7 @@ extern "C" {
 static inline void dpl_callout_init(struct dpl_callout *c, struct dpl_eventq *q,
                       dpl_event_fn *e_cb, void *e_arg)
 {
-    mynewt_callout_init(c, q, e_cb, e_arg);
+    mynewt_callout_init(&c->co, &q->evq, (mynewt_event_fn *) e_cb, e_arg);
 }
 
 /**
@@ -59,7 +66,7 @@ static inline void dpl_callout_init(struct dpl_callout *c, struct dpl_eventq *q,
  */
 static inline dpl_error_t dpl_callout_reset(struct dpl_callout *c, dpl_time_t ticks)
 {
-    return mynewt_callout_reset(c, ticks);
+    return (dpl_error_t) mynewt_callout_reset(&c->co, ticks);
 }
 /**
  * @brief   Stops the callout from firing.
@@ -68,7 +75,7 @@ static inline dpl_error_t dpl_callout_reset(struct dpl_callout *c, dpl_time_t ti
  */
 static inline void dpl_callout_stop(struct dpl_callout *c)
 {
-    mynewt_callout_stop(c);
+    mynewt_callout_stop(&c->co);
 }
 
 #ifdef __cplusplus

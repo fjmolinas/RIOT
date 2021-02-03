@@ -42,32 +42,32 @@
 
 #if IS_USED(MODULE_UWB_CORE)
 /*** @decawave-uwb-core/hw/drivers/uwb */
-#include "sycfg/syscfg_uwb.h"
+#include "dpl_syscfg/syscfg_uwb.h"
 
 /*** @decawave-uwb-core/lib/twr_ds */
-#include "sycfg/syscfg_twr_ds.h"
+#include "dpl_syscfg/syscfg_twr_ds.h"
 
 /*** @decawave-uwb-core/lib/twr_ds_ext */
-#include "sycfg/syscfg_twr_ds_ext.h"
+#include "dpl_syscfg/syscfg_twr_ds_ext.h"
 
 /*** @decawave-uwb-core/lib/twr_ss */
-#include "sycfg/syscfg_twr_ss.h"
+#include "dpl_syscfg/syscfg_twr_ss.h"
 
 /*** @decawave-uwb-core/lib/twr_ss_ack */
-#include "sycfg/syscfg_twr_ss_ack.h"
+#include "dpl_syscfg/syscfg_twr_ss_ack.h"
 
 /*** @decawave-uwb-core/lib/twr_ss_ext */
-#include "sycfg/syscfg_twr_ss_ext.h"
+#include "dpl_syscfg/syscfg_twr_ss_ext.h"
 
 /*** @decawave-uwb-core/lib/uwb_rng */
-#include "sycfg/syscfg_uwb_rng.h"
+#include "dpl_syscfg/syscfg_uwb_rng.h"
 
 /*** @decawave-uwb-core/sys/uwbcfg */
-#include "sycfg/syscfg_uwbcfg.h"
+#include "dpl_syscfg/syscfg_uwbcfg.h"
 
 #if IS_USED(MODULE_UWB_DW1000)
 /*** @decawave-uwb-dw1000/hw/drivers/uwb/uwb_dw1000 */
-#include "sycfg/syscfg_uwb_dw1000.h"
+#include "syscfg_uwb_dw1000.h"
 #endif
 #endif
 

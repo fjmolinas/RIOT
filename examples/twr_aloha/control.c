@@ -155,7 +155,7 @@ static void _slot_complete_cb(struct dpl_event *ev)
  */
 static void uwb_ev_cb(struct dpl_event *ev)
 {
-    struct uwb_rng_instance *rng = (struct uwb_rng_instance *)ev->arg;
+    struct uwb_rng_instance *rng = (struct uwb_rng_instance *)ev->ev.arg;
     struct uwb_dev *inst = rng->dev_inst;
 
     if (inst->role & UWB_ROLE_ANCHOR) {

@@ -44,7 +44,7 @@ int mynewt_task_init(struct mynewt_task *t, const char *name, mynewt_task_func_t
 
     t->pid = pid;
 
-    return (pid) ? mynewt_ERROR : MYNEWT_OK;;
+    return (pid) ? MYNEWT_ERROR : MYNEWT_OK;;
 }
 
 int mynewt_task_remove(struct mynewt_task *t)

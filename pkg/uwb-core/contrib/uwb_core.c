@@ -35,7 +35,7 @@ static char _stack_uwb_core[UWB_CORE_STACKSIZE];
 
 static event_queue_t _queue;
 
-atomic_uint dpl_in_critical = 0;
+atomic_uint mynewt_in_critical = 0;
 
 static void *_uwb_core_thread(void *arg)
 {

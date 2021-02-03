@@ -92,6 +92,9 @@ endif
 ifneq (,$(filter log_%,$(USEMODULE)))
   DIRS += log
 endif
+ifneq (,$(filter mynewt,$(USEMODULE)))
+  DIRS += mynewt
+endif
 ifneq (,$(filter nanocoap,$(USEMODULE)))
   DIRS += net/application_layer/nanocoap
 endif

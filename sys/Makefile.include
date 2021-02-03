@@ -73,6 +73,10 @@ ifneq (,$(filter log_%,$(USEMODULE)))
   include $(RIOTBASE)/sys/log/Makefile.include
 endif
 
+ifneq (,$(filter mynewt,$(USEMODULE)))
+  include $(RIOTBASE)/sys/mynewt/Makefile.include
+endif
+
 ifneq (,$(filter newlib,$(USEMODULE)))
   include $(RIOTMAKE)/libc/newlib.mk
 endif

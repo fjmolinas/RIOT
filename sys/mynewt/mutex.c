@@ -23,7 +23,7 @@
 mynewt_error_t mynewt_mutex_init(struct mynewt_mutex *mu)
 {
     if (!mu) {
-        return mynewt_INVALID_PARAM;
+        return MYNEWT_INVALID_PARAM;
     }
     mutex_init(&mu->mutex);
     return MYNEWT_OK;
@@ -32,7 +32,7 @@ mynewt_error_t mynewt_mutex_init(struct mynewt_mutex *mu)
 mynewt_error_t mynewt_mutex_release(struct mynewt_mutex *mu)
 {
     if (!mu) {
-        return mynewt_INVALID_PARAM;
+        return MYNEWT_INVALID_PARAM;
     }
 
     mutex_unlock(&mu->mutex);
@@ -44,7 +44,7 @@ mynewt_error_t mynewt_mutex_pend(struct mynewt_mutex *mu, uint32_t timeout)
     int rc = MYNEWT_OK;
 
     if (!mu) {
-        return mynewt_INVALID_PARAM;
+        return MYNEWT_INVALID_PARAM;
     }
 
     if (!timeout) {

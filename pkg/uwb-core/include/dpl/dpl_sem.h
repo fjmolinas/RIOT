@@ -31,7 +31,9 @@ extern "C" {
 /**
  * @brief dpl semaphore wrapper
  */
-typedef mynewt_sem_t dpl_sem_t;
+struct dpl_sem {
+    struct mynewt_sem sem;
+};
 
 /**
  * @brief Initialize a semaphore
@@ -45,7 +47,7 @@ typedef mynewt_sem_t dpl_sem_t;
  */
 static inline dpl_error_t dpl_sem_init(struct dpl_sem *sem, uint16_t tokens)
 {
-    return mynewt_sem_init(sem, tokens);
+    return (dpl_error_t) mynewt_sem_init(&sem->sem, tokens);
 }
 
 /**
@@ -64,7 +66,7 @@ static inline dpl_error_t dpl_sem_init(struct dpl_sem *sem, uint16_t tokens)
  */
 static inline dpl_error_t dpl_sem_pend(struct dpl_sem *sem, dpl_time_t timeout)
 {
-    return mynewt_sem_pend(sem, timeout);
+    return (dpl_error_t) mynewt_sem_pend(&sem->sem, timeout);
 }
 
 /**
@@ -78,15 +80,15 @@ static inline dpl_error_t dpl_sem_pend(struct dpl_sem *sem, dpl_time_t timeout)
  */
 static inline dpl_error_t dpl_sem_release(struct dpl_sem *sem)
 {
-    return mynewt_sem_release(sem);
+    return (dpl_error_t) mynewt_sem_release(&sem->sem);
 }
 
 /**
  * @brief Get current semaphore's count
  */
-statuc inline int16_t dpl_sem_get_count(struct dpl_sem *sem)
+static inline int16_t dpl_sem_get_count(struct dpl_sem *sem)
 {
-    return mynewt_sem_get_count(sem);
+    return mynewt_sem_get_count(&sem->sem);
 }
 
 #ifdef __cplusplus

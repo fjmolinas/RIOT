@@ -22,8 +22,8 @@
 
 #include <stdint.h>
 
-#include "mynewt_types.h"
-#include "mynewt_error.h"
+#include "mynewt/types.h"
+#include "mynewt/error.h"
 
 #include "sema.h"
 

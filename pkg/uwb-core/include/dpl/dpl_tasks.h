@@ -29,7 +29,9 @@ extern "C" {
 /**
  * @brief dpl task wrapper
  */
-typedef mynewt_task_t dpl_task_t;
+struct dpl_task {
+    struct mynewt_task t;
+};
 
 /**
  * @brief dpl task function
@@ -59,7 +61,7 @@ static inline int dpl_task_init(struct dpl_task *t, const char *name, dpl_task_f
                   void *arg, uint8_t prio, dpl_time_t sanity_itvl,
                   dpl_stack_t *stack_bottom, uint16_t stack_size)
 {
-    return mynewt_task_init(t, name, func, arg, prio, sanity_itvl, stack_bottom, stack_size);
+    return mynewt_task_init(&t->t, name, func, arg, prio, sanity_itvl, stack_bottom, stack_size);
 }
 /**
  * @brief removes specified task
@@ -68,7 +70,7 @@ static inline int dpl_task_init(struct dpl_task *t, const char *name, dpl_task_f
  */
 static inline int dpl_task_remove(struct dpl_task *t)
 {
-    return mynewt_task_remove(t);
+    return mynewt_task_remove(&t->t);
 }
 
 /**

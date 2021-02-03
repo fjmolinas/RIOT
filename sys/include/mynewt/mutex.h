@@ -20,8 +20,8 @@
 #ifndef MYNEWT_MUTEX_H
 #define MYNEWT_MUTEX_H
 
-#include "mynewt_types.h"
-#include "mynewt_error.h"
+#include "mynewt/types.h"
+#include "mynewt/error.h"
 
 #include "mutex.h"
 

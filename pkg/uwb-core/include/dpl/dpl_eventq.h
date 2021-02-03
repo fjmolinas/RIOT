@@ -31,17 +31,21 @@ extern "C" {
 /**
  * @brief dpl event wrapper
  */
-typedef mynewt_event_t dpl_event_t;
+struct dpl_event {
+    struct mynewt_event ev;
+};
 
 /**
  * @brief dpl event queue wrapper
  */
-typedef mynewt_eventq_t dpl_eventq_t;
+struct dpl_eventq {
+    struct mynewt_eventq evq;
+};
 
 /**
  * @brief dpl event callback function
  */
-typedef mynewt_event_fn dpl_event_fn;
+typedef void dpl_event_fn(struct dpl_event *ev);
 
 /**
  * @brief   Init a event
@@ -53,7 +57,7 @@ typedef mynewt_event_fn dpl_event_fn;
 static inline void dpl_event_init(struct dpl_event *ev, dpl_event_fn * fn,
                                  void *arg)
 {
-    mynewt_event_init(ev, fn, arg);
+    mynewt_event_init(&ev->ev, (mynewt_event_fn*) fn, arg);
 }
 
 /**
@@ -65,7 +69,7 @@ static inline void dpl_event_init(struct dpl_event *ev, dpl_event_fn * fn,
  */
 static inline bool dpl_event_is_queued(struct dpl_event *ev)
 {
-    return mynewt_event_is_queued(ev);
+    return mynewt_event_is_queued(&ev->ev);
 }
 
 /**
@@ -75,7 +79,7 @@ static inline bool dpl_event_is_queued(struct dpl_event *ev)
  */
 static inline void *dpl_event_get_arg(struct dpl_event *ev)
 {
-    mynewt_event_get_arg(ev);
+    return mynewt_event_get_arg(&ev->ev);
 }
 
 /**
@@ -86,7 +90,7 @@ static inline void *dpl_event_get_arg(struct dpl_event *ev)
  */
 static inline void dpl_event_set_arg(struct dpl_event *ev, void *arg)
 {
-    mynewt_event_set_arg(ev, arg);
+    mynewt_event_set_arg(&ev->ev, arg);
 }
 
 /**
@@ -96,7 +100,7 @@ static inline void dpl_event_set_arg(struct dpl_event *ev, void *arg)
  */
 static inline void dpl_event_run(struct dpl_event *ev)
 {
-   mynewt_event_set_arg(ev);
+   mynewt_event_run(&ev->ev);
 }
 
 /**
@@ -106,7 +110,7 @@ static inline void dpl_event_run(struct dpl_event *ev)
  */
 static inline void dpl_eventq_init(struct dpl_eventq *evq)
 {
-    mynewt_eventq_init(evq);
+    mynewt_eventq_init(&evq->evq);
 }
 
 /**
@@ -116,7 +120,7 @@ static inline void dpl_eventq_init(struct dpl_eventq *evq)
  */
 static inline int dpl_eventq_inited(struct dpl_eventq *evq)
 {
-    return mynewt_eventq_inited(evq);
+    return mynewt_eventq_inited(&evq->evq);
 }
 
 /**
@@ -141,7 +145,7 @@ static inline void dpl_eventq_deinit(struct dpl_eventq *evq)
  */
 static inline struct dpl_event * dpl_eventq_get(struct dpl_eventq *evq)
 {
-    return mynewt_eventq_get(evq);
+    return (struct dpl_event *) mynewt_eventq_get(&evq->evq);
 }
 
 /**
@@ -151,7 +155,7 @@ static inline struct dpl_event * dpl_eventq_get(struct dpl_eventq *evq)
  */
 static inline struct dpl_event * dpl_eventq_get_no_wait(struct dpl_eventq *evq)
 {
-    return mynewt_eventq_get_no_wait(evq);
+    return (struct dpl_event *) mynewt_eventq_get_no_wait(&evq->evq);
 }
 
 /**
@@ -162,7 +166,7 @@ static inline struct dpl_event * dpl_eventq_get_no_wait(struct dpl_eventq *evq)
  */
 static inline void dpl_eventq_put(struct dpl_eventq *evq, struct dpl_event *ev)
 {
-    mynewt_eventq_post(evq, ev);
+    mynewt_eventq_put(&evq->evq, &ev->ev);
 }
 
 /**
@@ -173,7 +177,7 @@ static inline void dpl_eventq_put(struct dpl_eventq *evq, struct dpl_event *ev)
  */
 static inline void dpl_eventq_remove(struct dpl_eventq *evq, struct dpl_event *ev)
 {
-    mynewt_eventq_remove(evq, ev);
+    mynewt_eventq_remove(&evq->evq, &ev->ev);
 }
 
 /**
@@ -183,7 +187,7 @@ static inline void dpl_eventq_remove(struct dpl_eventq *evq, struct dpl_event *e
  */
 static inline void dpl_eventq_run(struct dpl_eventq *evq)
 {
-    mynewt_eventq_run(evq);
+    mynewt_eventq_run(&evq->evq);
 }
 
 /**
@@ -195,7 +199,7 @@ static inline void dpl_eventq_run(struct dpl_eventq *evq)
  */
 static inline bool dpl_eventq_is_empty(struct dpl_eventq *evq)
 {
-    return mynewt_eventq_is_empty(evq);
+    return mynewt_eventq_is_empty(&evq->evq);
 }
 
 /**
@@ -208,7 +212,7 @@ static inline bool dpl_eventq_is_empty(struct dpl_eventq *evq)
  */
 static inline struct dpl_eventq * dpl_eventq_dflt_get(void)
 {
-    return mynewt_eventq_dflt_get();
+    return (struct dpl_eventq *) mynewt_eventq_dflt_get();
 }
 
 #ifdef __cplusplus

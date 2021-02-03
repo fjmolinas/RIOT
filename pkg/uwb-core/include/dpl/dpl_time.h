@@ -51,7 +51,7 @@ static inline dpl_time_t dpl_time_get(void)
  */
 static inline dpl_error_t dpl_time_ms_to_ticks(uint32_t ms, dpl_time_t *out_ticks)
 {
-    return mynewt_time_ms_to_ticks(ms, out_ticks);
+    return (dpl_error_t) mynewt_time_ms_to_ticks(ms, out_ticks);
 }
 
 /**
@@ -64,7 +64,7 @@ static inline dpl_error_t dpl_time_ms_to_ticks(uint32_t ms, dpl_time_t *out_tick
  */
 static inline dpl_error_t  dpl_time_ticks_to_ms(dpl_time_t ticks, uint32_t *out_ms)
 {
-    return mynewt_time_ms_to_ticks(ticks, out_ms);
+    return (dpl_error_t) mynewt_time_ticks_to_ms(ticks, out_ms);
 }
 
 /**
@@ -76,7 +76,7 @@ static inline dpl_error_t  dpl_time_ticks_to_ms(dpl_time_t ticks, uint32_t *out_
  */
 static inline dpl_time_t dpl_time_ms_to_ticks32(uint32_t ms)
 {
-    return mynewt_time_ms_to_ticks(ms);
+    return mynewt_time_ms_to_ticks32(ms);
 }
 
 /**
@@ -88,7 +88,7 @@ static inline dpl_time_t dpl_time_ms_to_ticks32(uint32_t ms)
  */
 static inline dpl_time_t dpl_time_ticks_to_ms32(dpl_time_t ticks)
 {
-    return mynewt_time_ms_to_ticks(ticks);
+    return mynewt_time_ticks_to_ms32(ticks);
 }
 
 /**
@@ -98,7 +98,7 @@ static inline dpl_time_t dpl_time_ticks_to_ms32(dpl_time_t ticks)
  */
 static inline void dpl_time_delay(dpl_time_t ticks)
 {
-    return mynewt_time_ms_to_ticks(ticks);
+    return mynewt_time_delay(ticks);
 }
 
 #ifdef __cplusplus
