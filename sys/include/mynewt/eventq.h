@@ -22,7 +22,6 @@
 
 #include <mynewt/types.h>
 
-#include "uwb_core.h"
 #include "event/callback.h"
 
 #ifdef __cplusplus
@@ -219,19 +218,6 @@ static inline void mynewt_eventq_run(struct mynewt_eventq *evq)
 static inline bool mynewt_eventq_is_empty(struct mynewt_eventq *evq)
 {
     return clist_count(&(evq->q.event_list)) == 0;
-}
-
-/**
- * @brief   Retrieves the default event queue.
- *
- * As there is no default event queue in RIOT, uwb-core will start and
- * handle a default event queue.
- *
- * @return  the default event queue.
- */
-static inline struct mynewt_eventq * mynewt_eventq_dflt_get(void)
-{
-    return (struct mynewt_eventq*) uwb_core_get_eventq();
 }
 
 #ifdef __cplusplus

@@ -23,6 +23,7 @@
 #include <dpl/dpl_types.h>
 
 #include "mynewt/eventq.h"
+#include "uwb_core.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -212,7 +213,7 @@ static inline bool dpl_eventq_is_empty(struct dpl_eventq *evq)
  */
 static inline struct dpl_eventq * dpl_eventq_dflt_get(void)
 {
-    return (struct dpl_eventq *) mynewt_eventq_dflt_get();
+    return (struct dpl_eventq *) uwb_core_get_eventq();
 }
 
 #ifdef __cplusplus
