@@ -5,6 +5,483 @@
 #ifndef SYSCFG_NIMBLE_H
 #define SYSCFG_NIMBLE_H
 
+/*** @apache-mynewt-core/compiler/arm-none-eabi-m4 */
+#ifndef MYNEWT_VAL_HARDFLOAT
+#define MYNEWT_VAL_HARDFLOAT (0)
+#endif
+
+/*** @apache-mynewt-core/hw/bsp/nordic_pca10056 */
+#ifndef MYNEWT_VAL_BSP_NRF52840
+#define MYNEWT_VAL_BSP_NRF52840 (1)
+#endif
+
+#ifndef MYNEWT_VAL_SOFT_PWM
+#define MYNEWT_VAL_SOFT_PWM (0)
+#endif
+
+/*** @apache-mynewt-core/hw/hal */
+#ifndef MYNEWT_VAL_HAL_ENABLE_SOFTWARE_BREAKPOINTS
+#define MYNEWT_VAL_HAL_ENABLE_SOFTWARE_BREAKPOINTS (1)
+#endif
+
+#ifndef MYNEWT_VAL_HAL_FLASH_VERIFY_BUF_SZ
+#define MYNEWT_VAL_HAL_FLASH_VERIFY_BUF_SZ (16)
+#endif
+
+#ifndef MYNEWT_VAL_HAL_FLASH_VERIFY_ERASES
+#define MYNEWT_VAL_HAL_FLASH_VERIFY_ERASES (0)
+#endif
+
+#ifndef MYNEWT_VAL_HAL_FLASH_VERIFY_WRITES
+#define MYNEWT_VAL_HAL_FLASH_VERIFY_WRITES (0)
+#endif
+
+#ifndef MYNEWT_VAL_HAL_SYSTEM_RESET_CB
+#define MYNEWT_VAL_HAL_SYSTEM_RESET_CB (0)
+#endif
+
+/*** @apache-mynewt-core/hw/mcu/nordic/nrf52xxx */
+#ifndef MYNEWT_VAL_ADC_0
+#define MYNEWT_VAL_ADC_0 (0)
+#endif
+
+#ifndef MYNEWT_VAL_ADC_0_REFMV_0
+#define MYNEWT_VAL_ADC_0_REFMV_0 (0)
+#endif
+
+#ifndef MYNEWT_VAL_CRYPTO
+#define MYNEWT_VAL_CRYPTO (0)
+#endif
+
+#ifndef MYNEWT_VAL_GPIO_AS_PIN_RESET
+#define MYNEWT_VAL_GPIO_AS_PIN_RESET (0)
+#endif
+
+#ifndef MYNEWT_VAL_I2C_0
+#define MYNEWT_VAL_I2C_0 (0)
+#endif
+
+#ifndef MYNEWT_VAL_I2C_0_FREQ_KHZ
+#define MYNEWT_VAL_I2C_0_FREQ_KHZ (100)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_I2C_0_PIN_SCL
+#define MYNEWT_VAL_I2C_0_PIN_SCL (27)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_I2C_0_PIN_SDA
+#define MYNEWT_VAL_I2C_0_PIN_SDA (26)
+#endif
+
+#ifndef MYNEWT_VAL_I2C_1
+#define MYNEWT_VAL_I2C_1 (0)
+#endif
+
+#ifndef MYNEWT_VAL_I2C_1_FREQ_KHZ
+#define MYNEWT_VAL_I2C_1_FREQ_KHZ (100)
+#endif
+
+#undef MYNEWT_VAL_I2C_1_PIN_SCL
+
+#undef MYNEWT_VAL_I2C_1_PIN_SDA
+
+#ifndef MYNEWT_VAL_MCU_BUS_DRIVER_I2C_USE_TWIM
+#define MYNEWT_VAL_MCU_BUS_DRIVER_I2C_USE_TWIM (0)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_MCU_DCDC_ENABLED
+#define MYNEWT_VAL_MCU_DCDC_ENABLED (1)
+#endif
+
+#ifndef MYNEWT_VAL_MCU_DEBUG_IGNORE_BKPT
+#define MYNEWT_VAL_MCU_DEBUG_IGNORE_BKPT (0)
+#endif
+
+#ifndef MYNEWT_VAL_MCU_FLASH_MIN_WRITE_SIZE
+#define MYNEWT_VAL_MCU_FLASH_MIN_WRITE_SIZE (1)
+#endif
+
+#ifndef MYNEWT_VAL_MCU_GPIO_USE_PORT_EVENT
+#define MYNEWT_VAL_MCU_GPIO_USE_PORT_EVENT (0)
+#endif
+
+#ifndef MYNEWT_VAL_MCU_I2C_RECOVERY_DELAY_USEC
+#define MYNEWT_VAL_MCU_I2C_RECOVERY_DELAY_USEC (100)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_MCU_LFCLK_SOURCE__LFRC
+#define MYNEWT_VAL_MCU_LFCLK_SOURCE__LFRC (0)
+#endif
+#ifndef MYNEWT_VAL_MCU_LFCLK_SOURCE__LFSYNTH
+#define MYNEWT_VAL_MCU_LFCLK_SOURCE__LFSYNTH (0)
+#endif
+#ifndef MYNEWT_VAL_MCU_LFCLK_SOURCE__LFXO
+#define MYNEWT_VAL_MCU_LFCLK_SOURCE__LFXO (1)
+#endif
+#ifndef MYNEWT_VAL_MCU_LFCLK_SOURCE
+#define MYNEWT_VAL_MCU_LFCLK_SOURCE (1)
+#endif
+
+#ifndef MYNEWT_VAL_MCU_NRF52832
+#define MYNEWT_VAL_MCU_NRF52832 (0)
+#endif
+
+#ifndef MYNEWT_VAL_MCU_NRF52840
+#define MYNEWT_VAL_MCU_NRF52840 (0)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_MCU_TARGET__nRF52810
+#define MYNEWT_VAL_MCU_TARGET__nRF52810 (0)
+#endif
+#ifndef MYNEWT_VAL_MCU_TARGET__nRF52811
+#define MYNEWT_VAL_MCU_TARGET__nRF52811 (0)
+#endif
+#ifndef MYNEWT_VAL_MCU_TARGET__nRF52832
+#define MYNEWT_VAL_MCU_TARGET__nRF52832 (0)
+#endif
+#ifndef MYNEWT_VAL_MCU_TARGET__nRF52840
+#define MYNEWT_VAL_MCU_TARGET__nRF52840 (1)
+#endif
+#ifndef MYNEWT_VAL_MCU_TARGET
+#define MYNEWT_VAL_MCU_TARGET (1)
+#endif
+
+#ifndef MYNEWT_VAL_NFC_PINS_AS_GPIO
+#define MYNEWT_VAL_NFC_PINS_AS_GPIO (1)
+#endif
+
+#ifndef MYNEWT_VAL_OS_TICKS_PER_SEC
+#define MYNEWT_VAL_OS_TICKS_PER_SEC (128)
+#endif
+
+#ifndef MYNEWT_VAL_PWM_0
+#define MYNEWT_VAL_PWM_0 (0)
+#endif
+
+#ifndef MYNEWT_VAL_PWM_1
+#define MYNEWT_VAL_PWM_1 (0)
+#endif
+
+#ifndef MYNEWT_VAL_PWM_2
+#define MYNEWT_VAL_PWM_2 (0)
+#endif
+
+#ifndef MYNEWT_VAL_PWM_3
+#define MYNEWT_VAL_PWM_3 (0)
+#endif
+
+#ifndef MYNEWT_VAL_QSPI_ADDRMODE
+#define MYNEWT_VAL_QSPI_ADDRMODE (0)
+#endif
+
+#ifndef MYNEWT_VAL_QSPI_DPMCONFIG
+#define MYNEWT_VAL_QSPI_DPMCONFIG (0)
+#endif
+
+#ifndef MYNEWT_VAL_QSPI_ENABLE
+#define MYNEWT_VAL_QSPI_ENABLE (0)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_QSPI_FLASH_PAGE_SIZE
+#define MYNEWT_VAL_QSPI_FLASH_PAGE_SIZE (256)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_QSPI_FLASH_SECTOR_COUNT
+#define MYNEWT_VAL_QSPI_FLASH_SECTOR_COUNT (4096)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_QSPI_FLASH_SECTOR_SIZE
+#define MYNEWT_VAL_QSPI_FLASH_SECTOR_SIZE (4096)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_QSPI_PIN_CS
+#define MYNEWT_VAL_QSPI_PIN_CS (17)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_QSPI_PIN_DIO0
+#define MYNEWT_VAL_QSPI_PIN_DIO0 (20)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_QSPI_PIN_DIO1
+#define MYNEWT_VAL_QSPI_PIN_DIO1 (21)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_QSPI_PIN_DIO2
+#define MYNEWT_VAL_QSPI_PIN_DIO2 (22)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_QSPI_PIN_DIO3
+#define MYNEWT_VAL_QSPI_PIN_DIO3 (23)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_QSPI_PIN_SCK
+#define MYNEWT_VAL_QSPI_PIN_SCK (19)
+#endif
+
+#ifndef MYNEWT_VAL_QSPI_READOC
+#define MYNEWT_VAL_QSPI_READOC (0)
+#endif
+
+#ifndef MYNEWT_VAL_QSPI_SCK_DELAY
+#define MYNEWT_VAL_QSPI_SCK_DELAY (0)
+#endif
+
+#ifndef MYNEWT_VAL_QSPI_SCK_FREQ
+#define MYNEWT_VAL_QSPI_SCK_FREQ (0)
+#endif
+
+#ifndef MYNEWT_VAL_QSPI_SPI_MODE
+#define MYNEWT_VAL_QSPI_SPI_MODE (0)
+#endif
+
+#ifndef MYNEWT_VAL_QSPI_WRITEOC
+#define MYNEWT_VAL_QSPI_WRITEOC (0)
+#endif
+
+#ifndef MYNEWT_VAL_SPI_0_MASTER
+#define MYNEWT_VAL_SPI_0_MASTER (0)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_SPI_0_MASTER_PIN_MISO
+#define MYNEWT_VAL_SPI_0_MASTER_PIN_MISO (47)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_SPI_0_MASTER_PIN_MOSI
+#define MYNEWT_VAL_SPI_0_MASTER_PIN_MOSI (46)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_SPI_0_MASTER_PIN_SCK
+#define MYNEWT_VAL_SPI_0_MASTER_PIN_SCK (45)
+#endif
+
+#ifndef MYNEWT_VAL_SPI_0_SLAVE
+#define MYNEWT_VAL_SPI_0_SLAVE (0)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_SPI_0_SLAVE_PIN_MISO
+#define MYNEWT_VAL_SPI_0_SLAVE_PIN_MISO (47)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_SPI_0_SLAVE_PIN_MOSI
+#define MYNEWT_VAL_SPI_0_SLAVE_PIN_MOSI (46)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_SPI_0_SLAVE_PIN_SCK
+#define MYNEWT_VAL_SPI_0_SLAVE_PIN_SCK (45)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_SPI_0_SLAVE_PIN_SS
+#define MYNEWT_VAL_SPI_0_SLAVE_PIN_SS (44)
+#endif
+
+#ifndef MYNEWT_VAL_SPI_1_MASTER
+#define MYNEWT_VAL_SPI_1_MASTER (0)
+#endif
+
+#undef MYNEWT_VAL_SPI_1_MASTER_PIN_MISO
+
+#undef MYNEWT_VAL_SPI_1_MASTER_PIN_MOSI
+
+#undef MYNEWT_VAL_SPI_1_MASTER_PIN_SCK
+
+#ifndef MYNEWT_VAL_SPI_1_SLAVE
+#define MYNEWT_VAL_SPI_1_SLAVE (0)
+#endif
+
+#undef MYNEWT_VAL_SPI_1_SLAVE_PIN_MISO
+
+#undef MYNEWT_VAL_SPI_1_SLAVE_PIN_MOSI
+
+#undef MYNEWT_VAL_SPI_1_SLAVE_PIN_SCK
+
+#undef MYNEWT_VAL_SPI_1_SLAVE_PIN_SS
+
+#ifndef MYNEWT_VAL_SPI_2_MASTER
+#define MYNEWT_VAL_SPI_2_MASTER (0)
+#endif
+
+#undef MYNEWT_VAL_SPI_2_MASTER_PIN_MISO
+
+#undef MYNEWT_VAL_SPI_2_MASTER_PIN_MOSI
+
+#undef MYNEWT_VAL_SPI_2_MASTER_PIN_SCK
+
+#ifndef MYNEWT_VAL_SPI_2_SLAVE
+#define MYNEWT_VAL_SPI_2_SLAVE (0)
+#endif
+
+#undef MYNEWT_VAL_SPI_2_SLAVE_PIN_MISO
+
+#undef MYNEWT_VAL_SPI_2_SLAVE_PIN_MOSI
+
+#undef MYNEWT_VAL_SPI_2_SLAVE_PIN_SCK
+
+#undef MYNEWT_VAL_SPI_2_SLAVE_PIN_SS
+
+#ifndef MYNEWT_VAL_SPI_3_MASTER
+#define MYNEWT_VAL_SPI_3_MASTER (0)
+#endif
+
+#undef MYNEWT_VAL_SPI_3_MASTER_PIN_MISO
+
+#undef MYNEWT_VAL_SPI_3_MASTER_PIN_MOSI
+
+#undef MYNEWT_VAL_SPI_3_MASTER_PIN_SCK
+
+#ifndef MYNEWT_VAL_TEMP
+#define MYNEWT_VAL_TEMP (0)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_TIMER_0
+#define MYNEWT_VAL_TIMER_0 (0)
+#endif
+
+#ifndef MYNEWT_VAL_TIMER_1
+#define MYNEWT_VAL_TIMER_1 (0)
+#endif
+
+#ifndef MYNEWT_VAL_TIMER_2
+#define MYNEWT_VAL_TIMER_2 (0)
+#endif
+
+#ifndef MYNEWT_VAL_TIMER_3
+#define MYNEWT_VAL_TIMER_3 (0)
+#endif
+
+#ifndef MYNEWT_VAL_TIMER_4
+#define MYNEWT_VAL_TIMER_4 (0)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_TIMER_5
+#define MYNEWT_VAL_TIMER_5 (1)
+#endif
+
+#ifndef MYNEWT_VAL_TRNG
+#define MYNEWT_VAL_TRNG (0)
+#endif
+
+#ifndef MYNEWT_VAL_UART_0
+#define MYNEWT_VAL_UART_0 (1)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_UART_0_PIN_CTS
+#define MYNEWT_VAL_UART_0_PIN_CTS (7)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_UART_0_PIN_RTS
+#define MYNEWT_VAL_UART_0_PIN_RTS (5)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_UART_0_PIN_RX
+#define MYNEWT_VAL_UART_0_PIN_RX (8)
+#endif
+
+/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_UART_0_PIN_TX
+#define MYNEWT_VAL_UART_0_PIN_TX (6)
+#endif
+
+#ifndef MYNEWT_VAL_UART_1
+#define MYNEWT_VAL_UART_1 (0)
+#endif
+
+#ifndef MYNEWT_VAL_UART_1_PIN_CTS
+#define MYNEWT_VAL_UART_1_PIN_CTS (-1)
+#endif
+
+#ifndef MYNEWT_VAL_UART_1_PIN_RTS
+#define MYNEWT_VAL_UART_1_PIN_RTS (-1)
+#endif
+
+#undef MYNEWT_VAL_UART_1_PIN_RX
+
+#undef MYNEWT_VAL_UART_1_PIN_TX
+
+/* Overridden by @apache-mynewt-nimble/porting/targets/riot (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
+#ifndef MYNEWT_VAL_XTAL_32768
+#define MYNEWT_VAL_XTAL_32768 (1)
+#endif
+
+#ifndef MYNEWT_VAL_XTAL_32768_SYNTH
+#define MYNEWT_VAL_XTAL_32768_SYNTH (0)
+#endif
+
+#ifndef MYNEWT_VAL_XTAL_RC
+#define MYNEWT_VAL_XTAL_RC (0)
+#endif
+
+/*** @apache-mynewt-core/kernel/os */
+#ifndef MYNEWT_VAL_FLOAT_USER
+#define MYNEWT_VAL_FLOAT_USER (0)
+#endif
+
+/* Overridden by @apache-mynewt-nimble/porting/targets/riot (defined by @apache-mynewt-core/kernel/os) */
+#ifndef MYNEWT_VAL_MSYS_1_BLOCK_COUNT
+#define MYNEWT_VAL_MSYS_1_BLOCK_COUNT (5)
+#endif
+
+/* Overridden by @apache-mynewt-nimble/porting/targets/riot (defined by @apache-mynewt-core/kernel/os) */
+#ifndef MYNEWT_VAL_MSYS_1_BLOCK_SIZE
+#define MYNEWT_VAL_MSYS_1_BLOCK_SIZE (88)
+#endif
+
+#ifndef MYNEWT_VAL_MSYS_1_SANITY_MIN_COUNT
+#define MYNEWT_VAL_MSYS_1_SANITY_MIN_COUNT (0)
+#endif
+
+#ifndef MYNEWT_VAL_MSYS_2_BLOCK_COUNT
+#define MYNEWT_VAL_MSYS_2_BLOCK_COUNT (0)
+#endif
+
+#ifndef MYNEWT_VAL_MSYS_2_BLOCK_SIZE
+#define MYNEWT_VAL_MSYS_2_BLOCK_SIZE (0)
+#endif
+
+#ifndef MYNEWT_VAL_MSYS_2_SANITY_MIN_COUNT
+#define MYNEWT_VAL_MSYS_2_SANITY_MIN_COUNT (0)
+#endif
+
+#ifndef MYNEWT_VAL_MSYS_SANITY_TIMEOUT
+#define MYNEWT_VAL_MSYS_SANITY_TIMEOUT (60000)
+#endif
+
+#ifndef MYNEWT_VAL_OS_ASSERT_CB
+#define MYNEWT_VAL_OS_ASSERT_CB (0)
+#endif
+
+#ifndef MYNEWT_VAL_OS_CLI
+#define MYNEWT_VAL_OS_CLI (0)
+#endif
+
+#ifndef MYNEWT_VAL_OS_COREDUMP
+#define MYNEWT_VAL_OS_COREDUMP (0)
+#endif
 
 /* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/kernel/os) */
 #ifndef MYNEWT_VAL_OS_CPUTIME_FREQ
@@ -140,39 +617,35 @@
 #define MYNEWT_VAL_WATCHDOG_INTERVAL (30000)
 #endif
 
-
-/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
-#ifndef MYNEWT_VAL_TIMER_0
-#define MYNEWT_VAL_TIMER_0 (0)
+/*** @apache-mynewt-core/libc/baselibc */
+#ifndef MYNEWT_VAL_BASELIBC_ASSERT_FILE_LINE
+#define MYNEWT_VAL_BASELIBC_ASSERT_FILE_LINE (0)
 #endif
 
-#ifndef MYNEWT_VAL_TIMER_1
-#define MYNEWT_VAL_TIMER_1 (0)
+#ifndef MYNEWT_VAL_BASELIBC_PRESENT
+#define MYNEWT_VAL_BASELIBC_PRESENT (1)
 #endif
 
-#ifndef MYNEWT_VAL_TIMER_2
-#define MYNEWT_VAL_TIMER_2 (0)
+/*** @apache-mynewt-core/sys/console/stub */
+#ifndef MYNEWT_VAL_CONSOLE_UART_BAUD
+#define MYNEWT_VAL_CONSOLE_UART_BAUD (115200)
 #endif
 
-#ifndef MYNEWT_VAL_TIMER_3
-#define MYNEWT_VAL_TIMER_3 (0)
+#ifndef MYNEWT_VAL_CONSOLE_UART_DEV
+#define MYNEWT_VAL_CONSOLE_UART_DEV ("uart0")
 #endif
 
-#ifndef MYNEWT_VAL_TIMER_4
-#define MYNEWT_VAL_TIMER_4 (0)
+#ifndef MYNEWT_VAL_CONSOLE_UART_FLOW_CONTROL
+#define MYNEWT_VAL_CONSOLE_UART_FLOW_CONTROL (UART_FLOW_CTL_NONE)
 #endif
 
-/* Overridden by @apache-mynewt-core/hw/bsp/nordic_pca10056 (defined by @apache-mynewt-core/hw/mcu/nordic/nrf52xxx) */
-#ifndef MYNEWT_VAL_TIMER_5
-#define MYNEWT_VAL_TIMER_5 (1)
+/*** @apache-mynewt-core/sys/flash_map */
+#ifndef MYNEWT_VAL_FLASH_MAP_MAX_AREAS
+#define MYNEWT_VAL_FLASH_MAP_MAX_AREAS (10)
 #endif
 
-#ifndef MYNEWT_VAL_TRNG
-#define MYNEWT_VAL_TRNG (0)
-#endif
-
-#ifndef MYNEWT_VAL_UART_0
-#define MYNEWT_VAL_UART_0 (1)
+#ifndef MYNEWT_VAL_FLASH_MAP_SYSINIT_STAGE
+#define MYNEWT_VAL_FLASH_MAP_SYSINIT_STAGE (2)
 #endif
 
 /*** @apache-mynewt-core/sys/log/common */
@@ -241,6 +714,46 @@
 
 #ifndef MYNEWT_VAL_MFG_SYSINIT_STAGE
 #define MYNEWT_VAL_MFG_SYSINIT_STAGE (100)
+#endif
+
+/*** @apache-mynewt-core/sys/sys */
+#ifndef MYNEWT_VAL_DEBUG_PANIC_ENABLED
+#define MYNEWT_VAL_DEBUG_PANIC_ENABLED (1)
+#endif
+
+/*** @apache-mynewt-core/sys/sysdown */
+#ifndef MYNEWT_VAL_SYSDOWN_CONSTRAIN_DOWN
+#define MYNEWT_VAL_SYSDOWN_CONSTRAIN_DOWN (1)
+#endif
+
+#ifndef MYNEWT_VAL_SYSDOWN_PANIC_FILE_LINE
+#define MYNEWT_VAL_SYSDOWN_PANIC_FILE_LINE (0)
+#endif
+
+#ifndef MYNEWT_VAL_SYSDOWN_PANIC_MESSAGE
+#define MYNEWT_VAL_SYSDOWN_PANIC_MESSAGE (0)
+#endif
+
+#ifndef MYNEWT_VAL_SYSDOWN_TIMEOUT_MS
+#define MYNEWT_VAL_SYSDOWN_TIMEOUT_MS (10000)
+#endif
+
+/*** @apache-mynewt-core/sys/sysinit */
+#ifndef MYNEWT_VAL_SYSINIT_CONSTRAIN_INIT
+#define MYNEWT_VAL_SYSINIT_CONSTRAIN_INIT (1)
+#endif
+
+#ifndef MYNEWT_VAL_SYSINIT_PANIC_FILE_LINE
+#define MYNEWT_VAL_SYSINIT_PANIC_FILE_LINE (0)
+#endif
+
+#ifndef MYNEWT_VAL_SYSINIT_PANIC_MESSAGE
+#define MYNEWT_VAL_SYSINIT_PANIC_MESSAGE (0)
+#endif
+
+/*** @apache-mynewt-core/util/rwlock */
+#ifndef MYNEWT_VAL_RWLOCK_DEBUG
+#define MYNEWT_VAL_RWLOCK_DEBUG (0)
 #endif
 
 /*** @apache-mynewt-nimble/nimble */
@@ -1013,8 +1526,46 @@
 #define MYNEWT_VAL_BLE_TRANS_RAM_SYSINIT_STAGE (100)
 #endif
 
+/*** newt */
+#ifndef MYNEWT_VAL_APP_NAME
+#define MYNEWT_VAL_APP_NAME ("dummy_app")
+#endif
+
+#ifndef MYNEWT_VAL_APP_dummy_app
+#define MYNEWT_VAL_APP_dummy_app (1)
+#endif
+
+#ifndef MYNEWT_VAL_ARCH_NAME
+#define MYNEWT_VAL_ARCH_NAME ("cortex_m4")
+#endif
+
+#ifndef MYNEWT_VAL_ARCH_cortex_m4
+#define MYNEWT_VAL_ARCH_cortex_m4 (1)
+#endif
+
+#ifndef MYNEWT_VAL_BSP_NAME
+#define MYNEWT_VAL_BSP_NAME ("nordic_pca10056")
+#endif
+
+#ifndef MYNEWT_VAL_BSP_nordic_pca10056
+#define MYNEWT_VAL_BSP_nordic_pca10056 (1)
+#endif
+
 #ifndef MYNEWT_VAL_NEWT_FEATURE_LOGCFG
 #define MYNEWT_VAL_NEWT_FEATURE_LOGCFG (1)
 #endif
+
+#ifndef MYNEWT_VAL_NEWT_FEATURE_SYSDOWN
+#define MYNEWT_VAL_NEWT_FEATURE_SYSDOWN (1)
+#endif
+
+#ifndef MYNEWT_VAL_TARGET_NAME
+#define MYNEWT_VAL_TARGET_NAME ("riot")
+#endif
+
+#ifndef MYNEWT_VAL_TARGET_riot
+#define MYNEWT_VAL_TARGET_riot (1)
+#endif
+
 
 #endif /* SYSCFG_NIMBLE_H */
