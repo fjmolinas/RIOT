@@ -313,4 +313,4 @@ docker_run_make = \
 	@$(COLOR_ECHO) '$(COLOR_GREEN)Launching build container using image "$(DOCKER_IMAGE)".$(COLOR_RESET)'
 	$(call docker_run_make,$(DOCKER_MAKECMDGOALS),$(DOCKER_IMAGE),,$(DOCKER_MAKE_ARGS))
 
-include $(RIOTMAKE)/docker/dockertargets.inc.mk
+include $(RIOTMAKE)/docker/targets.inc.mk
