@@ -1,20 +1,6 @@
 # TODO
-#        - All code in this section move to common
-#        - docker common, refactoring
 #        - first document only in advanced-build-system-tricks until mature
 #        - We do not care for handling `clean` and other targets in parallel
-
-DOCKER_USER ?= $$(id -u)
-
-DOCKER_RUN_FLAGS ?= --rm --tty --user $(DOCKER_USER)
-
-docker_run_make = \
-	$(DOCKER) run $(DOCKER_RUN_FLAGS) \
-	$(DOCKER_VOLUMES_AND_ENV) \
-	$(DOCKER_ENVIRONMENT_CMDLINE) \
-	$3 \
-	-w '$(DOCKER_APPDIR)' '$2' \
-	make $(DOCKER_OVERRIDE_CMDLINE) $4 $1
 
 # currently the BOARD is not always passed to docker, we always want to
 DOCKER_ENVIRONMENT_CMDLINE += --env BOARD=$(BOARD)
@@ -40,32 +26,46 @@ DOCKER_TARGET_IMAGE ?= $(DOCKER_IMAGE)
 DOCKER_TARGET_GROUPS ?= dialout plugdev
 
 # TODO:
-#       - Add PROG_PORT, document how to find it
-#         PROG_PORT is needed for most BOARDS that do not have a BSL
-#       - migrate PORT_BSL AVRDUDE_PORT to PROG_PORT
+#       - Add PROG_DEV, document how to find it
+#         PROG_DEV is needed for most BOARDS that do not have a BSL
 #       - tap* should not be a PORT
-DOCKER_TARGET_PORT_VARS ?= PORT PROG_PORT PORT_BSL AVRDUDE_PORT
-DOCKER_TARGET_ENVIRONMENT += $(foreach var,$(DOCKER_TARGET_PORT_VARS),--env $(var)=$(realpath $($(var))))
+DOCKER_TARGET_PORT_VARS ?= PORT PROG_DEV
+DOCKER_TARGET_ENVIRONMENT += $(foreach var,$(DOCKER_TARGET_PORT_VARS),\
+                                           --env $(var)=$(realpath $($(var))))
+
 # TODO:
 #       - Add SERIAL_TERM, SERIAL_PROG
 #       - Migrate all SERIAL_* to SERIAL_TERM, SERIAL_PROG
 DOCKER_TARGET_SERIAL_VARS ?= SERIAL DEBUG_ADAPTER_ID JLINK_SERIAL
-DOCKER_TARGET_ENVIRONMENT += $(foreach var,$(DOCKER_TARGET_SERIAL_VARS),--env $(var)=$($(var)))
+DOCKER_TARGET_ENVIRONMENT += $(foreach var,$(DOCKER_TARGET_SERIAL_VARS),\
+                                           --env $(var)=$($(var)))
 
 # Export device variables for the target BOARD to docker
 DOCKER_TARGET_FLAGS += $(DOCKER_TARGET_ENVIRONMENT)
 
 # Need interactive for term
-DOCKER_TARGET_FLAGS += --interactive
+ifneq (,$(filter docker/%term docker/term% docker/test%,$(MAKECMDGOALS)))
+  DOCKER_TARGET_FLAGS += --interactive
+endif
 
-# HACK: if all /dev need to be mapped
-# DOCKER_TARGET_VOLUMES ?= $(call docker_volume,/dev,/dev)
-# DOCKER_TARGET_FLAGS += $(DOCKER_TARGET_VOLUMES)
+# If all /dev need to be mapped
+DOCKER_TARGET_MAP_ALL_DEV ?= 0
+ifneq (0,$(DOCKER_TARGET_MAP_ALL_DEV))
+  DOCKER_TARGET_VOLUMES ?= $(call docker_volume,/dev,/dev)
+endif
+DOCKER_TARGET_VOLUMES ?=
+DOCKER_TARGET_FLAGS += $(DOCKER_TARGET_VOLUMES)
 
-# --privileged can be added to succeed in any case without groups, /dev, device configuration
-# DOCKER_TARGET_FLAGS += --privileged
+# --privileged can be added to succeed in any case without groups,
+# /dev, device configuration
+DOCKER_TARGET_PRIVILEGED ?= 0
+ifneq (0,$(DOCKER_TARGET_PRIVILEGED))
+  DOCKER_TARGET_FLAGS += --privileged
+endif
 DOCKER_TARGET_FLAGS += $(addprefix --group-add ,$(DOCKER_TARGET_GROUPS))
-DOCKER_TARGET_FLAGS += $(foreach var,$(DOCKER_TARGET_PORT_VARS),$(call map_existing_device,$($(var))))
+# Map listed devices
+DOCKER_TARGET_FLAGS += $(foreach var,$(DOCKER_TARGET_PORT_VARS),\
+                                     $(call map_existing_device,$($(var))))
 map_existing_device = $(addprefix --device=,$(wildcard $1))
 
 # Allow setting make args from command line like '-j'
@@ -73,8 +73,9 @@ DOCKER_TARGET_MAKE_ARGS ?=
 
 .PHONY: docker/%
 
-# HACK: to separate multiple targets
+# Split multiple targets
 DOCKER_TARGET_TARGETS = $(subst $(DOCKER_TARGET_SEPARATOR), ,$*)
 
 docker/%:
-	$(call docker_run_make,$(DOCKER_TARGET_TARGETS),$(DOCKER_TARGET_IMAGE),$(DOCKER_TARGET_FLAGS),$(DOCKER_TARGET_MAKE_ARGS))
+	$(call docker_run_make,$(DOCKER_TARGET_TARGETS),$(DOCKER_TARGET_IMAGE),\
+                           $(DOCKER_TARGET_FLAGS),$(DOCKER_TARGET_MAKE_ARGS))
