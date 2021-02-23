@@ -1,0 +1,35 @@
+# Copyright (c) 2021 INRIA
+#
+# This file is subject to the terms and conditions of the GNU Lesser
+# General Public License v2.1. See the file LICENSE in the top level
+# directory for more details.
+#
+
+config PACKAGE_UWB_CORE
+    bool "uMorse - Morse code encoder"
+    select MODULE_UWB_CORE_DPL
+    select MODULE_UWB_CORE_CONTRIB
+    select MODULE_XTIMER
+    depends on MODULE_SEMA
+    depends on MODULE_FMT
+    depends on MODULE_EVENT_CALLBACK
+    depends on HAS_PERIPH_GPIO
+    select MODULE_PERIPH_GPIO
+    depends on HAS_PERIPH_GPIO_IRQ
+    select MODULE_PERIPH_GPIO_IRQ
+    depends on HAS_PERIPH_SPI
+    select MODULE_PERIPH_SPI
+    depends on !HAS_ARCH_NATIVE
+    depends on !HAS_ARCH_AVR8
+
+# missing TOOLCHAIN_BLACKLIST
+
+config MODULE_AUTO_INIT_UWB_CORE
+    bool "Auto-initialize the usb-core package"
+    default y
+    depends on MODULE_AUTO_INIT
+
+config MODULE_ZTIMER_PERIPH_RTC
+    bool "RTC peripheral"
+    depends on HAS_PERIPH_RTC
+    select MODULE_PERIPH_RTC
