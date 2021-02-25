@@ -17,6 +17,7 @@ IGNORE_MODULES  := openwsn_leds \
                    openwsn_sock_async \
                    openwsn_sock_udp \
                    openwsn_serial \
+                   openwsn_uart_cdc_acm \
                    openwsn_sctimer \
                    openwsn_sctimer_rtt \
                    openwsn_sctimer_ztimer \

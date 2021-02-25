@@ -58,6 +58,11 @@ void auto_init_usb(void)
     usb_cdc_acm_stdio_init(&usbus);
 #endif
 
+#ifdef MODULE_OPENWSN_UART_CDC_ACM
+    void uart_init_openwsn(usbus_t *usbus);
+    uart_init_openwsn(&usbus);
+#endif
+
 #ifdef MODULE_USBUS_CDC_ECM
     usbus_cdcecm_init(&usbus, &cdcecm);
 #endif

@@ -15,6 +15,7 @@ BOARD_WHITELIST = \
   iotlab-m3 \
   iotlab-a8-m3 \
   nrf52840-mdk \
+  nrf52840-mdk-dongle \
   nrf52840dk \
   nrf52840dongle \
   omote \
@@ -50,6 +51,9 @@ USEMODULE += openwsn_6lo_fragmentation
 
 ## Optional Module, but required for root nodes
 # USEMODULE += openwsn_serial
+# USB device vendor and product ID
+USB_VID ?= $(USB_VID_TESTING)
+USB_PID ?= $(USB_PID_TESTING)
 
 # Optional Modules
 USEMODULE += openwsn_leds

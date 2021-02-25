@@ -72,7 +72,7 @@ void board_init_openwsn(void)
 
     if (IS_USED(MODULE_OPENWSN_SERIAL)) {
         LOG_DEBUG("[openwsn/board]: uart init\n");
-        uart_init_openwsn();
+        // uart_init_openwsn();
     }
 }
 

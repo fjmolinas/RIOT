@@ -11,6 +11,7 @@ PSEUDOMODULES += openwsn_serial \
                  openwsn_sctimer_rtt \
                  openwsn_sctimer_ztimer \
                  openwsn_radio \
+                 openwsn_uart_cdc_acm \
                  #
 
 DIRS += $(RIOTBASE)/pkg/openwsn/contrib

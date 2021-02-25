@@ -75,7 +75,7 @@ extern "C" {
  * initialize a timer to set sw tx_isr.
  *
  */
-void    uart_init_openwsn(void);
+// void uart_init_openwsn(void);
 
 /**
  * @brief   OpenWSN uart tx callback type
