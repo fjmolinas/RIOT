@@ -17,8 +17,6 @@
  * @}
  */
 
-#include <stdatomic.h>
-
 #include "thread.h"
 #include "event.h"
 #include "event/callback.h"
@@ -35,7 +33,6 @@ static char _stack_uwb_core[UWB_CORE_STACKSIZE];
 
 static event_queue_t _queue;
 
-atomic_uint os_in_critical = 0;
 
 static void *_uwb_core_thread(void *arg)
 {
