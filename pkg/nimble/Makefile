@@ -37,7 +37,7 @@ nimble_riot_contrib:
 	"$(MAKE)" -C $(TDIR)/contrib/
 
 nimble_porting_nimble:
-	"$(MAKE)" -C $(PDIR)/porting/nimble/src/ -f $(RIOTBASE)/Makefile.base MODULE=$@
+	"$(MAKE)" -C $(PDIR)/porting/nimble/src/ -f $(TDIR)/nimble.porting_nimble.mk MODULE=$@
 
 nimble_npl_riot:
 	"$(MAKE)" -C $(PDIR)/porting/npl/riot/src/ -f $(RIOTBASE)/Makefile.base MODULE=$@
