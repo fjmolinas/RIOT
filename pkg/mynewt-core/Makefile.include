@@ -1,0 +1,6 @@
+INCLUDES += -I$(PKGDIRBASE)/mynewt-core/riot/include \
+            -I$(RIOTPKG)/mynewt-core/include \
+            #
+
+DIRS += $(RIOTPKG)/mynewt-core/contrib \
+        #
