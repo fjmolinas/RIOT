@@ -26,6 +26,10 @@
 #   include "clang_compat.h"
 #endif
 
+#if defined (MODULE_MYNEWT_CORE)
+#   include "mynewt_compat.h"
+#endif
+
 #ifdef __cplusplus
 extern "C" {
 #endif
