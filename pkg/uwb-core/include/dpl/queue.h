@@ -17,17 +17,17 @@
  * @}
  */
 
-#ifndef STATS_STATS_H
-#define STATS_STATS_H
+#ifndef DPL_DPL_H
+#define DPL_DPL_H
+
+#include "os/queue.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/* empty header */
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* STATS_STATS_H */
+#endif /* DPL_DPL_H */

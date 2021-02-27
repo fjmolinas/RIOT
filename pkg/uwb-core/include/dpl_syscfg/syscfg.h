@@ -36,33 +36,40 @@
 #define MYNEWT_VAL_CHOICE(_name, _val)          MYNEWT_VAL_ ## _name ## __ ## _val
 /** @} */
 
+#if IS_USED(MODULE_NIMBLE)
+/***  include nimble here later */
+#endif
 
+#if IS_USED(MODULE_UWB_CORE)
 /*** @decawave-uwb-core/hw/drivers/uwb */
-#include "syscfg_uwb.h"
+#include "sycfg/syscfg_uwb.h"
 
 /*** @decawave-uwb-core/lib/twr_ds */
-#include "syscfg_twr_ds.h"
+#include "sycfg/syscfg_twr_ds.h"
 
 /*** @decawave-uwb-core/lib/twr_ds_ext */
-#include "syscfg_twr_ds_ext.h"
+#include "sycfg/syscfg_twr_ds_ext.h"
 
 /*** @decawave-uwb-core/lib/twr_ss */
-#include "syscfg_twr_ss.h"
+#include "sycfg/syscfg_twr_ss.h"
 
 /*** @decawave-uwb-core/lib/twr_ss_ack */
-#include "syscfg_twr_ss_ack.h"
+#include "sycfg/syscfg_twr_ss_ack.h"
 
 /*** @decawave-uwb-core/lib/twr_ss_ext */
-#include "syscfg_twr_ss_ext.h"
+#include "sycfg/syscfg_twr_ss_ext.h"
 
 /*** @decawave-uwb-core/lib/uwb_rng */
-#include "syscfg_uwb_rng.h"
+#include "sycfg/syscfg_uwb_rng.h"
 
 /*** @decawave-uwb-core/sys/uwbcfg */
-#include "syscfg_uwbcfg.h"
+#include "sycfg/syscfg_uwbcfg.h"
 
+#if IS_USED(MODULE_UWB_DW1000)
 /*** @decawave-uwb-dw1000/hw/drivers/uwb/uwb_dw1000 */
-#include "syscfg_uwb_dw1000.h"
+#include "sycfg/syscfg_uwb_dw1000.h"
+#endif
+#endif
 
 #ifdef __cplusplus
 extern "C" {
