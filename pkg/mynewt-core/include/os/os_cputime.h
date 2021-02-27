@@ -17,8 +17,8 @@
  * @}
  */
 
-#ifndef OS_CPUTIME_H
-#define OS_CPUTIME_H
+#ifndef OS_OS_CPUTIME_H
+#define OS_OS_CPUTIME_H
 
 #ifdef __cplusplus
 extern "C" {
@@ -27,7 +27,26 @@ extern "C" {
 #include <stdint.h>
 
 #include "xtimer.h"
-#include "hal/hal_dpl_timer.h"
+#include "hal/hal_timer.h"
+
+/* Helpful macros to compare cputimes */
+/** evaluates to true if t1 is before t2 in time */
+#define CPUTIME_LT(__t1, __t2) ((int32_t)   ((__t1) - (__t2)) < 0)
+/** evaluates to true if t1 is after t2 in time */
+#define CPUTIME_GT(__t1, __t2) ((int32_t)   ((__t1) - (__t2)) > 0)
+/** evaluates to true if t1 is after t2 in time */
+#define CPUTIME_GEQ(__t1, __t2) ((int32_t)  ((__t1) - (__t2)) >= 0)
+/** evaluates to true if t1 is on or after t2 in time */
+#define CPUTIME_LEQ(__t1, __t2) ((int32_t)  ((__t1) - (__t2)) <= 0)
+
+/**
+ * Void function
+ */
+static inline int os_cputime_init(uint32_t clock_freq)
+{
+    (void) clock_freq;
+    return 0;
+}
 
 /**
  * Returns the low 32 bits of cputime.
@@ -92,7 +111,7 @@ static inline void os_cputime_delay_usecs(uint32_t usecs)
  * @param fp    The timer callback function. Cannot be NULL.
  * @param arg   Pointer to data object to pass to timer.
  */
-static inline void os_cputime_timer_init(struct hal_dpl_timer *timer, hal_timer_cb fp,
+static inline void os_cputime_timer_init(struct hal_timer *timer, hal_timer_cb fp,
         void *arg)
 {
     timer->timer.callback = fp;
@@ -112,7 +131,7 @@ static inline void os_cputime_timer_init(struct hal_dpl_timer *timer, hal_timer_
  *         invalid
  *
  */
-static inline int os_cputime_timer_start(struct hal_dpl_timer *timer, uint32_t cputime)
+static inline int os_cputime_timer_start(struct hal_timer *timer, uint32_t cputime)
 {
     xtimer_set(&timer->timer, xtimer_now_usec() + cputime);
     return 0;
@@ -130,7 +149,7 @@ static inline int os_cputime_timer_start(struct hal_dpl_timer *timer, uint32_t c
  * @return int 0 on success; EINVAL if timer already started or timer struct
  *         invalid
  */
-static inline int os_cputime_timer_relative(struct hal_dpl_timer *timer, uint32_t usecs)
+static inline int os_cputime_timer_relative(struct hal_timer *timer, uint32_t usecs)
 {
     uint32_t now = xtimer_now_usec();
     if (now > usecs) {
@@ -150,7 +169,7 @@ static inline int os_cputime_timer_relative(struct hal_dpl_timer *timer, uint32_
  *
  * @param timer Pointer to cputimer to stop. Cannot be NULL.
  */
-static inline void os_cputime_timer_stop(struct hal_dpl_timer *timer)
+static inline void os_cputime_timer_stop(struct hal_timer *timer)
 {
     xtimer_remove(&timer->timer);
 }
@@ -159,4 +178,4 @@ static inline void os_cputime_timer_stop(struct hal_dpl_timer *timer)
 }
 #endif
 
-#endif /* OS_CPUTIME_H */
+#endif /* OS_OS_CPUTIME_H */

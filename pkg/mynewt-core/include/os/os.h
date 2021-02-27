@@ -117,6 +117,7 @@ static inline bool os_hw_is_in_critical(void)
 #include "os/os_mbuf.h"
 #include "os/os_mempool.h"
 #include "os/os_trace_api.h"
+#include "os/os_cputime.h"
 
 #ifdef __cplusplus
 }

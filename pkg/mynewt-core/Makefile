@@ -13,7 +13,7 @@ MYNEWT_CORE_MODULES := mynewt-core_os \
                        mynewt-core_util \
                        #
 
-MYNEWT_CORE_PATH_util = util/mem
+MYNEWT_CORE_PATH_util = util/mem/src
 MYNEWT_CORE_PATH_os   = kernel/os/src
 
 all: $(filter $(MYNEWT_CORE_MODULES),$(USEMODULE))

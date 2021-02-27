@@ -7,39 +7,30 @@
  */
 
 /**
- * @ingroup     pkg_uwb_dw1000
+ * @ingroup     pkg_uwb_core
  * @{
  *
  * @file
- * @brief       Timer abstraction layer RIOT adaption
+ * @brief       uwb-core DPL (Decawave Porting Layer) error types
  *
  * @author      Francisco Molina <francois-xavier.molina@inria.fr>
  * @}
  */
 
-#ifndef HAL_HAL_TIMER_H
-#define HAL_HAL_TIMER_H
+#ifndef OS_MYNEWT_H
+#define OS_MYNEWT_H
 
-#include "xtimer.h"
+#include "syscfg/syscfg.h"
+#include "sysinit/sysinit.h"
+#include "os/os.h"
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-/**
- * @brief   HAL timer callback
- */
-typedef xtimer_callback_t hal_timer_cb;
-
-/**
- * @brief   The HAL timer structure.
- */
-struct hal_dpl_timer {
-    xtimer_t timer;     /**< the timer */
-};
-
 #ifdef __cplusplus
 }
 #endif
 
-#endif /* HAL_HAL_TIMER_H */
+#endif /* OS_MYNEWT_H */
+

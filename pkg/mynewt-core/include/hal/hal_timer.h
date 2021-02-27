@@ -1,0 +1,59 @@
+/*
+ * Copyright (C) 2020 Inria
+ *
+ * This file is subject to the terms and conditions of the GNU Lesser
+ * General Public License v2.1. See the file LICENSE in the top level
+ * directory for more details.
+ */
+
+/**
+ * @ingroup     pkg_uwb_dw1000
+ * @{
+ *
+ * @file
+ * @brief       Timer abstraction layer RIOT adaption
+ *
+ * @author      Francisco Molina <francois-xavier.molina@inria.fr>
+ * @}
+ */
+
+#ifndef HAL_HAL_TIMER_H
+#define HAL_HAL_TIMER_H
+
+#include "xtimer.h"
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/**
+ * @brief   HAL timer callback
+ */
+typedef xtimer_callback_t hal_timer_cb;
+
+/**
+ * @brief   The HAL timer structure.
+ */
+struct hal_timer {
+    xtimer_t timer;     /**< the timer */
+};
+
+/**
+ * Initialize a HW timer.
+ *
+ * @param timer_num The number of the HW timer to initialize
+ * @param cfg       Hardware specific timer configuration.  This is
+ *                  passed from BSP directly to the MCU specific driver.
+ */
+static inline int hal_timer_init(int timer_num, void *cfg)
+{
+    (void) timer_num;
+    (void) cfg;
+    return 0;
+}
+
+#ifdef __cplusplus
+}
+#endif
+
+#endif /* HAL_HAL_TIMER_H */
