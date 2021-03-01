@@ -5,7 +5,8 @@ ifneq (,$(filter openwsn_openstack,$(USEMODULE)))
   USEMODULE += openwsn_mac_high
   USEMODULE += openwsn_crosslayers
   USEMODULE += openwsn_drivers
-  USEMODULE += openwsn_sctimer
+  # USEMODULE += openwsn_sctimer
+  USEMODULE += openwsn_opentimers
   USEMODULE += openwsn_radio
 
   USEMODULE += openwsn_openweb
@@ -65,13 +66,13 @@ ifneq (,$(filter openwsn_radio_hal,$(USEMODULE)))
   DISABLE_MODULE += auto_init_gnrc_netif
 endif
 
-ifneq (,$(filter openwsn_sctimer,$(USEMODULE)))
-  ifeq (,$(filter openwsn_sctimer_ztimer,$(USEMODULE)))
-    USEMODULE += openwsn_sctimer_rtt
-  endif
-endif
+# ifneq (,$(filter openwsn_sctimer,$(USEMODULE)))
+#   ifeq (,$(filter openwsn_sctimer_ztimer,$(USEMODULE)))
+#     USEMODULE += openwsn_sctimer_rtt
+#   endif
+# endif
 
-ifneq (,$(filter openwsn_sctimer_ztimer,$(USEMODULE)))
+ifneq (,$(filter openwsn_opentimers,$(USEMODULE)))
   USEMODULE += ztimer_usec
   USEMODULE += ztimer_msec
   FEATURES_OPTIONAL += periph_rtt
@@ -80,9 +81,9 @@ ifneq (,$(filter openwsn_sctimer_ztimer,$(USEMODULE)))
   endif
 endif
 
-ifneq (,$(filter openwsn_sctimer_rtt,$(USEMODULE)))
-  FEATURES_REQUIRED += periph_rtt
-endif
+# ifneq (,$(filter openwsn_sctimer_rtt,$(USEMODULE)))
+#   FEATURES_REQUIRED += periph_rtt
+# endif
 
 ifneq (,$(filter openwsn_serial,$(USEMODULE)))
   USEMODULE += openwsn_drivers

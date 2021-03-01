@@ -6,7 +6,6 @@ PSEUDOMODULES += openwsn_serial \
                  openwsn_leds \
                  openwsn_sock \
                  openwsn_sock_async \
-                 openwsn_scheduler \
                  openwsn_sctimer \
                  openwsn_sctimer_rtt \
                  openwsn_sctimer_ztimer \
@@ -37,6 +36,11 @@ INCLUDES += -I$(PKGDIRBASE)/openwsn \
 ifneq (,$(filter openwsn_riotos,$(USEMODULE)))
   INCLUDES += -I$(RIOTBASE)/pkg/openwsn/scheduler
   DIRS += $(RIOTBASE)/pkg/openwsn/scheduler
+endif
+
+ifneq (,$(filter openwsn_opentimers,$(USEMODULE)))
+  INCLUDES += -I$(RIOTBASE)/pkg/openwsn/opentimers
+  DIRS += $(RIOTBASE)/pkg/openwsn/opentimers
 endif
 
 ifneq (,$(filter openwsn_sock_udp,$(USEMODULE)))

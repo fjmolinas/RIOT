@@ -21,9 +21,9 @@
 
 #include "leds.h"
 #include "debugpins.h"
-#include "sctimer.h"
 #include "idmanager.h"
 #include "eui64.h"
+#include "opentimers.h"
 
 #include "byteorder.h"
 
@@ -81,7 +81,7 @@ static void _hal_radio_cb(ieee802154_dev_t *dev, ieee802154_trx_ev_t status)
     (void)dev;
 
     debugpins_isr_set();
-    _txrx_event_capture_time = sctimer_readCounter();
+    _txrx_event_capture_time = opentimers_getValue();
     debugpins_isr_clr();
 
     switch (status) {
@@ -268,7 +268,7 @@ void radio_txNow(void)
         /* Trigger startFrame manually if no IEEE802154_CAP_IRQ_TX_START */
         if (!ieee802154_radio_has_irq_tx_start(openwsn_radio.dev)) {
             debugpins_isr_set();
-            _txrx_event_capture_time = sctimer_readCounter();
+            _txrx_event_capture_time = opentimers_getValue();
             debugpins_isr_clr();
             openwsn_radio.startFrame_cb(_txrx_event_capture_time);
         }

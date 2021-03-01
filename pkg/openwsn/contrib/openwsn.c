@@ -37,7 +37,7 @@
 #include "nrf802154.h"
 #endif
 
-#define LOG_LEVEL LOG_NONE
+#define LOG_LEVEL LOG_DEBUG
 #include "log.h"
 
 #define OPENWSN_SCHED_NAME            "openwsn"
