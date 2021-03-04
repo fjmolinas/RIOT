@@ -88,6 +88,10 @@ static ssize_t _bpf_submit_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, vo
 static ssize_t _bpf_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx)
 {
     (void)ctx;
+
+    bpf_mem_region_t mem_pdu;
+    bpf_mem_region_t mem_pkt;
+
     bpf_coap_ctx_t bpf_ctx = {
         .pkt = pdu,
         .buf = buf,
@@ -98,6 +102,9 @@ static ssize_t _bpf_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *ctx
     if (_locked) {
         return -1;
     }
+
+    bpf_add_region(&_bpf, &mem_pdu, pdu->hdr, 256, BPF_MEM_REGION_READ | BPF_MEM_REGION_WRITE);
+    bpf_add_region(&_bpf, &mem_pkt, pdu, sizeof(coap_pkt_t), BPF_MEM_REGION_READ | BPF_MEM_REGION_WRITE);
 
     bpf_setup(&_bpf);
     int64_t result = -1;
