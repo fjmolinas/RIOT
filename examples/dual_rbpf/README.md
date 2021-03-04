@@ -1,4 +1,4 @@
-# BPF example application for RIOT
+# Dual rBPF example application 
 
 ## About
 
