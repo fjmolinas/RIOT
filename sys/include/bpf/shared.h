@@ -24,8 +24,9 @@ union {                 \
 } __attribute__((aligned(8)))
 
 enum {
-    /* Aux helper functions */
-    BPF_FUNC_BPF_PRINTF = 0x1,
+    /* Aux helper functions (stdlib) */
+    BPF_FUNC_BPF_PRINTF = 0x01,
+    BPF_FUNC_BPF_MEMCPY = 0x02,
 
     /* Key/value store functions */
     BPF_FUNC_BPF_STORE_LOCAL = 0x10,
@@ -48,6 +49,11 @@ enum {
     BPF_FUNC_BPF_COAP_GET_PDU = 0x43,
 
     BPF_FUNC_BPF_FMT_S16_DFP = 0x50,
+    BPF_FUNC_BPF_FMT_U32_DEC = 0x51,
+
+    /* ZTIMER */
+    BPF_FUNC_BPF_ZTIMER_NOW = 0x60,
+    BPF_FUNC_BPF_ZTIMER_PERIODIC_WAKEUP = 0x61,
 };
 
 /* Helper structs */

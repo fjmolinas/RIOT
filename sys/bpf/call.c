@@ -26,6 +26,10 @@
 #include "saul_reg.h"
 #include "fmt.h"
 
+#ifdef MODULE_ZTIMER
+#include "ztimer.h"
+#endif
+
 uint32_t bpf_vm_printf(bpf_t *bpf, uint32_t fmt, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5)
 {
     (void)bpf;
@@ -65,6 +69,18 @@ uint32_t bpf_vm_fetch_global(bpf_t *bpf, uint32_t key, uint32_t value, uint32_t 
     (void)a4;
     (void)a5;
     return (uint32_t)bpf_store_fetch_global(key, (uint32_t*)(uintptr_t)value);
+}
+
+uint32_t bpf_vm_memcpy(bpf_t *bpf, uint32_t dest_p, uint32_t src_p, uint32_t size, uint32_t a4, uint32_t a5)
+{
+    (void)bpf;
+    (void)a4;
+    (void)a5;
+
+    void *dest = (void *)(uintptr_t)dest_p;
+    const void *src = (const void *)(uintptr_t)src_p;
+
+    return (uintptr_t) memcpy(dest, src, size);
 }
 
 uint32_t bpf_vm_now_ms(bpf_t *bpf, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5)
@@ -180,5 +196,45 @@ uint32_t bpf_vm_fmt_s16_dfp(bpf_t *bpf, uint32_t out_p, uint32_t val, uint32_t f
     char *out = (char*)(intptr_t)out_p;
     size_t res = fmt_s16_dfp(out, (int16_t)val, (int)fp_digits);
     return (uint32_t)res;
+}
+
+uint32_t bpf_vm_fmt_u32_dec(bpf_t *bpf, uint32_t out_p, uint32_t val, uint32_t a3, uint32_t a4, uint32_t a5)
+{
+    (void)bpf;
+    (void)a3;
+    (void)a4;
+    (void)a5;
+
+    char *out = (char*)(intptr_t)out_p;
+    size_t res = fmt_u32_dec(out, (uint32_t)val);
+    return (uint32_t)res;
+}
+#endif
+
+#ifdef MODULE_ZTIMER
+uint32_t bpf_vm_ztimer_now(bpf_t *bpf, uint32_t a1, uint32_t a2,
+                           uint32_t a3, uint32_t a4, uint32_t a5)
+{
+    (void)bpf;
+    (void)a1;
+    (void)a2;
+    (void)a3;
+    (void)a4;
+    (void)a5;
+    return ztimer_now(ZTIMER_USEC);
+}
+uint32_t bpf_vm_ztimer_periodic_wakeup(bpf_t *bpf, uint32_t last_wakeup_p,
+                                       uint32_t period,
+                                       uint32_t a3, uint32_t a4, uint32_t a5)
+{
+    (void)bpf;
+    (void)a3;
+    (void)a4;
+    (void)a5;
+
+    uint32_t *last = (uint32_t*)(intptr_t)last_wakeup_p;
+
+    ztimer_periodic_wakeup(ZTIMER_USEC, last, period);
+    return 0;
 }
 #endif

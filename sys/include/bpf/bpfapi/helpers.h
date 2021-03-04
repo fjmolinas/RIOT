@@ -34,6 +34,9 @@ static int (*bpf_fetch_global)(uint32_t key, uint32_t *value) = (void *) BPF_FUN
 static int (*bpf_fetch_local)(uint32_t key, uint32_t *value) = (void *) BPF_FUNC_BPF_FETCH_LOCAL;
 static uint32_t (*bpf_now_ms)(void) = (void *) BPF_FUNC_BPF_NOW_MS;
 
+/* STDLIB */
+static void *(*bpf_memcpy)(void *dest, const void *src, size_t n) = (void *) BPF_FUNC_BPF_MEMCPY;
+
 /* SAUL calls */
 static bpf_saul_reg_t *(*bpf_saul_reg_find_nth)(int pos) = (void *) BPF_FUNC_BPF_SAUL_REG_FIND_NTH;
 static bpf_saul_reg_t *(*bpf_saul_reg_find_type)(uint8_t type) = (void *) BPF_FUNC_BPF_SAUL_REG_FIND_TYPE;
@@ -47,7 +50,11 @@ static uint8_t *(*bpf_coap_get_pdu)(bpf_coap_ctx_t *ctx) = (void *) BPF_FUNC_BPF
 
 /* FMT calls */
 static size_t (*bpf_fmt_s16_dfp)(char *out, int16_t val, int fp_digits) = (void *) BPF_FUNC_BPF_FMT_S16_DFP;
+static size_t (*bpf_fmt_u32_dec)(char *out, uint32_t val) = (void *) BPF_FUNC_BPF_FMT_U32_DEC;
 
+/* ZTIMER calls */
+static uint32_t (*bpf_ztimer_now)(void) = (void *) BPF_FUNC_BPF_ZTIMER_NOW;
+static void (*bpf_ztimer_periodic_wakeup)(uint32_t *last_wakeup, uint32_t period) = (void *) BPF_FUNC_BPF_ZTIMER_PERIODIC_WAKEUP;
 
 #ifdef __cplusplus
 

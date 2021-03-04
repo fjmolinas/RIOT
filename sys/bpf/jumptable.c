@@ -55,7 +55,7 @@ static int _preflight_checks(const bpf_t *bpf)
     size_t num_instructions = bpf->application_len/sizeof(bpf_instruction_t);
     const bpf_instruction_t *instr = (const bpf_instruction_t*)bpf->application;
 
-    if (instr[num_instructions - 1].opcode != 0x95) {
+    if (instr[num_instructions - 1].opcode != 0x95 && !(bpf->flags & BPF_CONFIG_NO_RETURN)) {
         return BPF_NO_RETURN;
     }
     return BPF_OK;
@@ -66,6 +66,8 @@ static bpf_call_t _bpf_get_call(uint32_t num)
     switch(num) {
         case BPF_FUNC_BPF_PRINTF:
             return &bpf_vm_printf;
+        case BPF_FUNC_BPF_MEMCPY:
+            return &bpf_vm_memcpy;
         case BPF_FUNC_BPF_STORE_LOCAL:
             return &bpf_vm_store_local;
         case BPF_FUNC_BPF_STORE_GLOBAL:
@@ -95,6 +97,14 @@ static bpf_call_t _bpf_get_call(uint32_t num)
 #ifdef MODULE_FMT
         case BPF_FUNC_BPF_FMT_S16_DFP:
             return &bpf_vm_fmt_s16_dfp;
+        case BPF_FUNC_BPF_FMT_U32_DEC:
+            return &bpf_vm_fmt_u32_dec;
+#endif
+#ifdef MODULE_ZTIMER
+        case BPF_FUNC_BPF_ZTIMER_NOW:
+            return &bpf_vm_ztimer_now;
+        case BPF_FUNC_BPF_ZTIMER_PERIODIC_WAKEUP:
+            return &bpf_vm_ztimer_periodic_wakeup;
 #endif
         default:
             return NULL;
