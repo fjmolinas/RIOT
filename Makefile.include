@@ -569,6 +569,7 @@ endif
 # variables defined in `riotboot.mk` for `FLASHFILE` before it is evaluated.
 # It should be included after defining 'BINFILE' for 'riotboot.bin' handling.
 include $(RIOTMAKE)/boot/riotboot.mk
+include $(RIOTMAKE)/boot/riotboot-rs.mk
 
 # Targets to get given file
 elffile: $(ELFFILE)

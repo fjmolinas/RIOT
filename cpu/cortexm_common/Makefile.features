@@ -45,3 +45,6 @@ FEATURES_PROVIDED += no_idle_thread
 ifeq (1, $(TEST_KCONFIG))
   KCONFIG_ADD_CONFIG += $(RIOTCPU)/cortexm_common/cortexm_common.config
 endif
+
+# riotboot-rs should work on all Cortex-M
+FEATURES_PROVIDED += riotboot-rs
