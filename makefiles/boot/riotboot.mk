@@ -1,10 +1,8 @@
-ifneq (,$(filter riotboot,$(FEATURES_USED)))
+ifneq (,$(filter riotboot%,$(FEATURES_USED)))
 ifneq (1,$(RIOTBOOT_BUILD))
 
 .PHONY: riotboot/flash riotboot/flash-bootloader riotboot/flash-slot0 riotboot/flash-slot1 riotboot/bootloader/%
 
-RIOTBOOT_DIR = $(RIOTBASE)/bootloaders/riotboot
-RIOTBOOT ?= $(RIOTBOOT_DIR)/bin/$(BOARD)/riotboot.elf
 CFLAGS += -I$(BINDIR)/riotbuild
 
 HEADER_TOOL_DIR = $(RIOTBASE)/dist/tools/riotboot_gen_hdr
@@ -74,6 +72,34 @@ $(BINDIR_APP)-slot1.hdr: OFFSET=$(SLOT1_IMAGE_OFFSET)
 # Generic target to create a binary files for both slots
 riotboot: $(SLOT_RIOT_BINS)
 
+ifneq (,$(filter riotboot-rs,$(FEATURES_USED)))
+# riotboot-rs bootloader application directory
+RIOTBOOT_DIR = $(RIOTTOOLS)/riotboot-rs
+RIOTBOOT_RS_FLASH_DIR = $(RIOTBASE)/bootloaders/riotboot
+BOOTLOADER_BIN = $(BINDIR)
+RIOTBOOT = riotboot-rs
+
+riotboot/flash-bootloader: riotboot/bootloader/flash
+riotboot/bootloader/flash: FLASHFILE=$(BINDIR)/riotboot-rs.bin
+riotboot/bootloader/flash: riotboot/bootloader/all
+riotboot/bootloader/flash:
+	$(Q)/usr/bin/env -i \
+		QUIET=$(QUIET) PATH="$(PATH)"\
+		EXTERNAL_BOARD_DIRS="$(EXTERNAL_BOARD_DIRS)" BOARD="$(BOARD)"\
+		DEBUG_ADAPTER_ID="$(DEBUG_ADAPTER_ID)" PROGRAMMER="$(PROGRAMMER)"\
+		FLASHFILE="$(FLASHFILE)"\
+		$(MAKE) -C $(RIOTBOOT_RS_FLASH_DIR ) --no-print-directory flash-only
+
+riotboot/bootloader/binfile: riotboot/bootloader/all
+
+riotboot/bootloader/all:
+	$(Q) $(MAKE) --no-print-directory -C $(RIOTBOOT_DIR) all
+else
+# riotboot bootloader application directory
+RIOTBOOT_DIR = $(RIOTBASE)/bootloaders/riotboot
+BOOTLOADER_BIN = $(RIOTBOOT_DIR)/bin/$(BOARD)
+RIOTBOOT = riotboot
+
 # riotboot bootloader compile target
 riotboot/flash-bootloader: riotboot/bootloader/flash
 riotboot/bootloader/%: $(BUILDDEPS)
@@ -83,25 +109,29 @@ riotboot/bootloader/%: $(BUILDDEPS)
 		DEBUG_ADAPTER_ID=$(DEBUG_ADAPTER_ID) \
 		PROGRAMMER=$(PROGRAMMER) PROGRAMMER_QUIET=$(PROGRAMMER_QUIET) \
 			$(MAKE) --no-print-directory -C $(RIOTBOOT_DIR) $*
+endif # (,$(filter riotboot-rs,$(FEATURES_USED)))
+
 
 # Generate a binary file from the bootloader which fills all the
 # allocated space. This is used afterwards to create a combined
 # binary with both bootloader and RIOT firmware with header
-BOOTLOADER_BIN = $(RIOTBOOT_DIR)/bin/$(BOARD)
-$(BOOTLOADER_BIN)/riotboot.extended.bin: $(BOOTLOADER_BIN)/riotboot.bin
+
+$(BOOTLOADER_BIN)/$(RIOTBOOT).extended.bin: $(BOOTLOADER_BIN)/$(RIOTBOOT).bin
 	$(Q)cp $^ $@.tmp
 	$(Q)truncate -s $$(($(RIOTBOOT_LEN))) $@.tmp
 	$(Q)mv $@.tmp $@
 
 # Only call sub make if not already in riotboot
-ifneq ($(BOOTLOADER_BIN)/riotboot.bin,$(BINFILE))
-  $(BOOTLOADER_BIN)/riotboot.bin: riotboot/bootloader/binfile
+ifneq ($(BOOTLOADER_BIN)/$(RIOTBOOT).bin,$(BINFILE))
+  ifneq (,$(filter riotboot,$(FEATURES_USED)))
+    $(BOOTLOADER_BIN)/$(RIOTBOOT).bin: riotboot/bootloader/binfile
+  endif
 endif
 
 # Create combined binary booloader + RIOT firmware with header
 RIOTBOOT_COMBINED_BIN = $(BINDIR_APP)-slot0-combined.bin
 riotboot/combined-slot0: $(RIOTBOOT_COMBINED_BIN)
-$(RIOTBOOT_COMBINED_BIN): $(BOOTLOADER_BIN)/riotboot.extended.bin $(SLOT0_RIOT_BIN)
+$(RIOTBOOT_COMBINED_BIN): $(BOOTLOADER_BIN)/$(RIOTBOOT).extended.bin $(SLOT0_RIOT_BIN)
 	$(Q)cat $^ > $@
 
 RIOTBOOT_EXTENDED_BIN = $(BINDIR_APP)-slot0-extended.bin
