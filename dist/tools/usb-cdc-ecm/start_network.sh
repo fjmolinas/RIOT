@@ -45,6 +45,7 @@ cleanup_interface() {
 
 cleanup() {
     echo "Cleaning up..."
+    run=false
     cleanup_interface
     if [ -n "${UHCPD_PID}" ]; then
         kill "${UHCPD_PID}"
@@ -98,7 +99,11 @@ fi
 if [ -z "${PORT}" ]; then
     echo "Network enabled over CDC-ECM"
     echo "Press Return to stop"
-    read -r
+    run=true
+    while ${run}
+    do
+        sleep 1
+    done
 else
     "${USB_CDC_ECM_DIR}/../pyterm/pyterm" -p "${PORT}"
 fi
