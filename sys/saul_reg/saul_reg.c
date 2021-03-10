@@ -100,6 +100,22 @@ saul_reg_t *saul_reg_find_type(uint8_t type)
     return NULL;
 }
 
+saul_reg_t *saul_reg_find_type_and_subtype(uint8_t type, uint8_t subtype)
+{
+    saul_reg_t *tmp = saul_reg;
+
+    while (tmp) {
+        if (tmp->driver->type == type) {
+            if (tmp->driver->subtype == subtype || subtype == SAUL_CLASS_ANY ||
+                subtype == SAUL_CAT_UNDEF ) {
+                return tmp;
+            }
+        }
+        tmp = tmp->next;
+    }
+    return NULL;
+}
+
 saul_reg_t *saul_reg_find_name(const char *name)
 {
     saul_reg_t *tmp = saul_reg;

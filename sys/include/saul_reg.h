@@ -110,6 +110,16 @@ saul_reg_t *saul_reg_find_nth(int pos);
 saul_reg_t *saul_reg_find_type(uint8_t type);
 
 /**
+ * @brief   Find the first device by its type in the registry
+ *
+ * @param[in] type      the device type to look for
+ *
+ * @return      pointer to the first device matching the given type
+ * @return      NULL if no device of that type could be found
+ */
+saul_reg_t *saul_reg_find_type_and_subtype(uint8_t type, uint8_t subtype);
+
+/**
  * @brief   Find the first device by its name in the registry
  *
  * @param[in] name      the name to look for

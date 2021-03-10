@@ -284,6 +284,7 @@ typedef struct {
     saul_read_t read;       /**< read function pointer */
     saul_write_t write;     /**< write function pointer */
     uint8_t type;           /**< device class the device belongs to */
+    uint8_t subtype;        /**< device subclass the device belongs to */
 } saul_driver_t;
 
 /**
