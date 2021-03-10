@@ -229,6 +229,28 @@ enum {
 };
 
 /**
+ * @brief   Definition of SAUL PM subtypes
+ *
+ */
+enum {
+    SAUL_SENSE_PM_1  = SAUL_SENSE_ID_PM,
+    SAUL_SENSE_PM_2p5,
+    SAUL_SENSE_PM_10,
+    /* extend this list as needed... */
+};
+
+/**
+ * @brief   Definition of SAUL PM subtypes
+ *
+ */
+enum {
+    SAUL_SENSE_COUNT_1  = SAUL_SENSE_ID_COUNT,
+    SAUL_SENSE_COUNT_2p5,
+    SAUL_SENSE_COUNT_10,
+    /* extend this list as needed... */
+};
+
+/**
  * @brief   Bitmask to retrieve the class ID and intra-category ID from a SAUL
  *          class
  */
