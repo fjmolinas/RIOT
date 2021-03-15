@@ -205,6 +205,6 @@ ifneq (,$(filter-out netdev_default, $(filter netdev_%,$(USEMODULE))))
   endif
 endif
 
-ifneq (,$(filter st7735,$(USEMODULE)))
+ifneq (,$(filter st7735 ili9341,$(USEMODULE)))
   USEMODULE += lcd
 endif
