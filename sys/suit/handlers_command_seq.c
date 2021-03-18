@@ -306,6 +306,10 @@ static int _start_storage(suit_manifest_t *manifest, suit_component_t *comp)
         return SUIT_ERR_INVALID_MANIFEST;
     }
 
+#ifdef MODULE_SUITREG
+    suitreg_notify(SUITREG_TYPE_STATUS | SUITREG_TYPE_BLOCK, SUIT_DOWNLOAD_START, img_size);
+#endif
+
     /* Done this before in the component stage, shouldn't be different now */
     suit_component_name_to_string(manifest, comp,
                                   separator, name, sizeof(name));
@@ -355,10 +359,6 @@ static int _dtv_fetch(suit_manifest_t *manifest, int key,
 
     LOG_DEBUG("_dtv_fetch() fetching \"%s\" (url_len=%u)\n", manifest->urlbuf,
               (unsigned)url_len);
-
-#ifdef MODULE_SUITREG
-    suitreg_notify(SUITREG_TYPE_STATUS | SUITREG_TYPE_BLOCK, SUIT_DOWNLOAD_START, manifest->components[0].size);
-#endif
 
     if (_start_storage(manifest, comp) < 0) {
         LOG_ERROR("Unable to start storage backend\n");
