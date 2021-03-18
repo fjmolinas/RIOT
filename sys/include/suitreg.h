@@ -24,7 +24,7 @@
 #define SUITREG_H
 
 #include <stdint.h>
-#include "kernel_types.h"
+#include "sched.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -59,7 +59,7 @@ enum {
 
 /**
  * @brief   SUIT subscription types
- * 
+ *
  * @{
  */
 typedef enum {
@@ -148,9 +148,9 @@ void suitreg_unregister(suitreg_t *entry);
  * @brief   Sends a msg to all subscriber to @p type.
  *
  * @param[in] reg_type   The @ref suitreg_type_t
- * @param[in] type       The message type. 
+ * @param[in] type       The message type.
  * @param[in] content    Content of the message, can also be a pointer to a structure
- * 
+ *
  * @return Number of subscribers to (@p type).
  */
 int suitreg_notify(suitreg_type_t reg_type, uint16_t type, uint32_t content);
