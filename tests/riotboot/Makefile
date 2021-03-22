@@ -3,7 +3,7 @@ BOARD ?= samr21-xpro
 
 # Select the boards with riotboot feature
 FEATURES_REQUIRED += riotboot
-
+FEATURES_REQUIRED += riotboot-rs
 # Include modules to test the bootloader
 USEMODULE += riotboot_slot
 USEMODULE += shell
