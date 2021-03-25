@@ -76,14 +76,18 @@ static bpf_call_t _bpf_get_call(uint32_t num)
             return &bpf_vm_fetch_local;
         case BPF_FUNC_BPF_FETCH_GLOBAL:
             return &bpf_vm_fetch_global;
+#ifdef MODULE_XTIMER
         case BPF_FUNC_BPF_NOW_MS:
             return &bpf_vm_now_ms;
+#endif
+#ifdef MODULE_SAUL_REG
         case BPF_FUNC_BPF_SAUL_REG_FIND_NTH:
             return &bpf_vm_saul_reg_find_nth;
         case BPF_FUNC_BPF_SAUL_REG_FIND_TYPE:
             return &bpf_vm_saul_reg_find_type;
         case BPF_FUNC_BPF_SAUL_REG_READ:
             return &bpf_vm_saul_reg_read;
+#endif
 #ifdef MODULE_GCOAP
         case BPF_FUNC_BPF_GCOAP_RESP_INIT:
             return &bpf_vm_gcoap_resp_init;

@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "bpf.h"
 #include "bpf/instruction.h"
@@ -83,6 +84,7 @@ uint32_t bpf_vm_memcpy(bpf_t *bpf, uint32_t dest_p, uint32_t src_p, uint32_t siz
     return (uintptr_t) memcpy(dest, src, size);
 }
 
+#ifdef MODULE_XTIMER
 uint32_t bpf_vm_now_ms(bpf_t *bpf, uint32_t a1, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5)
 {
     (void)bpf;
@@ -93,7 +95,9 @@ uint32_t bpf_vm_now_ms(bpf_t *bpf, uint32_t a1, uint32_t a2, uint32_t a3, uint32
     (void)a5;
     return xtimer_now_usec64()/US_PER_MS;
 }
+#endif
 
+#ifdef MODULE_SAUL_REG
 uint32_t bpf_vm_saul_reg_find_nth(bpf_t *bpf, uint32_t nth, uint32_t a2, uint32_t a3, uint32_t a4, uint32_t a5)
 {
     (void)bpf;
@@ -131,6 +135,7 @@ uint32_t bpf_vm_saul_reg_read(bpf_t *bpf, uint32_t dev_p, uint32_t data_p, uint3
     int res = saul_reg_read(dev, data);
     return (uint32_t)res;
 }
+#endif
 
 #ifdef MODULE_GCOAP
 uint32_t bpf_vm_gcoap_resp_init(bpf_t *bpf, uint32_t coap_ctx_p, uint32_t resp_code_u, uint32_t a3, uint32_t a4, uint32_t a5)
