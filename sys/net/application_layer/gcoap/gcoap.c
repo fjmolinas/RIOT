@@ -633,12 +633,33 @@ static ssize_t _well_known_core_handler(coap_pkt_t* pdu, uint8_t *buf, size_t le
 {
     (void)ctx;
 
+    coap_block_slicer_t slicer;
+    coap_block2_init(pdu, &slicer);
+
     gcoap_resp_init(pdu, buf, len, COAP_CODE_CONTENT);
     coap_opt_add_format(pdu, COAP_FORMAT_LINK);
+    coap_opt_add_block2(pdu, &slicer, 1);
     ssize_t plen = coap_opt_finish(pdu, COAP_OPT_FINISH_PAYLOAD);
 
-    plen += gcoap_get_resource_list(pdu->payload, (size_t)pdu->payload_len,
-                                    COAP_FORMAT_LINK);
+    /* write payload */
+    gcoap_listener_t *listener = _coap_state.listeners;
+    for (; listener != NULL; listener = listener->next) {
+        if (!listener->link_encoder) {
+            continue;
+        }
+        for (unsigned i = 0; i < listener->resources_len; i++) {
+            if (i || (listener != _coap_state.listeners)) {
+                plen += coap_blockwise_put_char(&slicer, plen + buf, ',');
+            }
+            plen += coap_blockwise_put_char(&slicer, plen + buf, '<');
+            unsigned url_len = strlen(listener->resources[i].path);
+            plen += coap_blockwise_put_bytes(&slicer, plen + buf,
+                    (uint8_t*)listener->resources[i].path, url_len);
+            plen += coap_blockwise_put_char(&slicer, plen + buf, '>');
+        }
+    }
+
+    coap_block2_finish(&slicer);
     return plen;
 }
 
