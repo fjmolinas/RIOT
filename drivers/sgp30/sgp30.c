@@ -240,6 +240,7 @@ int sgp30_read_serial_number(sgp30_t *dev, uint8_t *buf, size_t len)
 {
     (void) len;
     assert(dev && buf && (len == SGP30_SERIAL_ID_LEN));
+    (void) len;
     uint8_t frame[9];
     if (_rx_tx_data(dev, SGP30_CMD_READ_SERIAL, (uint8_t *)frame, sizeof(frame),
                     SGP30_DELAY_READ_SERIAL, true)) {
