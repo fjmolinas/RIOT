@@ -315,4 +315,9 @@ void saul_init_devs(void)
         extern void auto_init_veml6070(void);
         auto_init_veml6070();
     }
+
+    if (IS_USED(MODULE_MOCK_PM)) {
+        extern void auto_init_mock_pm(void);
+        auto_init_mock_pm();
+    }
 }
