@@ -36,6 +36,11 @@ extern "C" {
 #define CONFIG_BPF_ENABLE_ALU32 (0)
 #endif
 
+#ifndef CONFIG_BPF_BRANCHES_ALLOWED
+#define CONFIG_BPF_BRANCHES_ALLOWED 200
+#endif
+
+
 typedef enum {
     BPF_POLICY_CONTINUE,            /**< Always execute next hook */
     BPF_POLICY_ABORT_ON_NEGATIVE,   /**< Execute next script unless result is negative */
@@ -56,7 +61,9 @@ enum {
     BPF_ILLEGAL_JUMP        = -3,
     BPF_ILLEGAL_CALL        = -4,
     BPF_ILLEGAL_LEN         = -5,
-    BPF_NO_RETURN           = -6,
+    BPF_ILLEGAL_REGISTER    = -6,
+    BPF_NO_RETURN           = -7,
+    BPF_OUT_OF_BRANCHES     = -8,
 };
 
 typedef struct bpf_mem_region bpf_mem_region_t;
@@ -86,6 +93,7 @@ typedef struct {
     btree_t btree;              /**< Local btree */
     uint16_t flags;
     uint32_t instruction_count;
+    uint32_t branches_remaining; /**< Number of allowed branch instructions remaining */
 } bpf_t;
 
 typedef struct bpf_hook bpf_hook_t;

@@ -19,6 +19,7 @@
 #include "debug.h"
 
 typedef int dont_be_pedantic;
+static bpf_call_t _bpf_get_call(uint32_t num);
 
 static int _check_mem(const bpf_t *bpf, uint8_t size, const intptr_t addr, uint8_t type)
 {
@@ -52,9 +53,42 @@ static int _preflight_checks(const bpf_t *bpf)
         return BPF_ILLEGAL_LEN;
     }
 
+
+    for (bpf_instruction_t *i = (bpf_instruction_t*)bpf->application;
+            i < (bpf_instruction_t*)(bpf->application + bpf->application_len); i++) {
+        /* Check if register values are valid */
+        if (i->dst >= 11 || i->src >= 11) {
+            return BPF_ILLEGAL_REGISTER;
+        }
+
+        /* Double length instruction */
+        if (i->opcode == 0x18) {
+            i++;
+            continue;
+        }
+
+        /* Only instruction-specific checks here */
+        if ((i->opcode & BPF_INSTRUCTION_CLS_MASK) == BPF_INSTRUCTION_CLS_BRANCH) {
+            intptr_t target = (intptr_t)(i + i->offset);
+            /* Check if the jump target is within bounds. The address is
+             * incremented after the jump by the regular PC increase */
+            if ((target >= (intptr_t)(bpf->application + bpf->application_len))
+                || (target < (intptr_t)bpf->application)) {
+                return BPF_ILLEGAL_JUMP;
+            }
+        }
+
+        if (i->opcode == (BPF_INSTRUCTION_BRANCH_CALL | BPF_INSTRUCTION_CLS_BRANCH)) {
+            if (!_bpf_get_call(i->immediate)) {
+                return BPF_ILLEGAL_CALL;
+            }
+        }
+    }
+
     size_t num_instructions = bpf->application_len/sizeof(bpf_instruction_t);
     const bpf_instruction_t *instr = (const bpf_instruction_t*)bpf->application;
 
+    /* Check if the last instruction is a return instruction */
     if (instr[num_instructions - 1].opcode != 0x95 && !(bpf->flags & BPF_CONFIG_NO_RETURN)) {
         return BPF_NO_RETURN;
     }
@@ -189,6 +223,7 @@ int bpf_run(bpf_t *bpf, const void *ctx, int64_t *result)
 {
     int res = BPF_OK;
     bpf->instruction_count = 0;
+    bpf->branches_remaining = CONFIG_BPF_BRANCHES_ALLOWED;
     uint64_t regmap[11] = { 0 };
     regmap[1] = (uint64_t)(uintptr_t)ctx;
     regmap[10] = (uint64_t)(uintptr_t)(bpf->stack + bpf->stack_size);
@@ -246,9 +281,8 @@ int bpf_run(bpf_t *bpf, const void *ctx, int64_t *result)
 jump_instr:
     if (jump_cond) {
         instr += instr->offset;
-        if (((intptr_t)instr >= (intptr_t)(bpf->application + bpf->application_len))
-                || ((intptr_t)instr < (intptr_t)bpf->application)) {
-            res = BPF_ILLEGAL_JUMP;
+        if (bpf->branches_remaining-- == 0) {
+            res = BPF_OUT_OF_BRANCHES;
             goto exit;
         }
     }
