@@ -132,19 +132,22 @@ static int read_nc_pm_10(const void *_dev, phydat_t *data)
 const saul_driver_t pms5003_saul_driver_mc_pm_1 = {
     .read = read_mc_pm_1,
     .write = saul_notsup,
-    .type = SAUL_SENSE_PM
+    .type = SAUL_SENSE_PM,
+    .subtype = SAUL_SENSE_PM_1,
 };
 
 const saul_driver_t pms5003_saul_driver_mc_pm_2p5 = {
     .read = read_mc_pm_2p5,
     .write = saul_notsup,
-    .type = SAUL_SENSE_PM
+    .type = SAUL_SENSE_PM,
+    .subtype = SAUL_SENSE_PM_2p5,
 };
 
 const saul_driver_t pms5003_saul_driver_mc_pm_10 = {
     .read = read_mc_pm_10,
     .write = saul_notsup,
-    .type = SAUL_SENSE_PM
+    .type = SAUL_SENSE_PM,
+    .subtype = SAUL_SENSE_PM_10,
 };
 
 const saul_driver_t pms5003_saul_driver_nc_pm_1 = {
