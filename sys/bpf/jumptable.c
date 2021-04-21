@@ -49,6 +49,10 @@ static inline int _check_store(const bpf_t *bpf, uint8_t size, const intptr_t ad
 
 static int _preflight_checks(const bpf_t *bpf)
 {
+    if (bpf->flags & BPF_FLAG_PREFLIGHT_DONE) {
+        return BPF_OK;
+    }
+
     if (bpf->application_len % sizeof(bpf_instruction_t)) {
         return BPF_ILLEGAL_LEN;
     }
@@ -92,6 +96,7 @@ static int _preflight_checks(const bpf_t *bpf)
     if (instr[num_instructions - 1].opcode != 0x95 && !(bpf->flags & BPF_CONFIG_NO_RETURN)) {
         return BPF_NO_RETURN;
     }
+    bpf->flags |= BPF_FLAG_PREFLIGHT_DONE;
     return BPF_OK;
 }
 

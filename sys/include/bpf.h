@@ -80,8 +80,9 @@ struct bpf_mem_region {
     uint8_t flag;
 };
 
-#define BPF_FLAG_SETUP_DONE    0x01
-#define BPF_CONFIG_NO_RETURN    0x0100 /**< Script doesn't need to have a return */
+#define BPF_FLAG_SETUP_DONE        0x01
+#define BPF_FLAG_PREFLIGHT_DONE    0x02
+#define BPF_CONFIG_NO_RETURN       0x0100 /**< Script doesn't need to have a return */
 
 typedef struct {
     bpf_mem_region_t stack_region;
