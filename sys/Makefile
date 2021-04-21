@@ -5,6 +5,9 @@ endif
 ifneq (,$(filter bpf,$(USEMODULE)))
   DIRS += bpf
 endif
+ifneq (,$(filter sched_rbpf,$(USEMODULE)))
+  DIRS += sched_rbpf
+endif
 ifneq (,$(filter csma_sender,$(USEMODULE)))
   DIRS += net/link_layer/csma_sender
 endif

@@ -49,6 +49,11 @@ void auto_init(void)
         extern void init_schedstatistics(void);
         init_schedstatistics();
     }
+    if (IS_USED(MODULE_SCHED_RBPF)) {
+        LOG_DEBUG("Auto init sched rbpf.\n");
+        extern void init_sched_rbpf(void);
+        init_sched_rbpf();
+    }
     if (IS_USED(MODULE_DUMMY_THREAD)) {
         extern void dummy_thread_create(void);
         dummy_thread_create();

@@ -40,6 +40,8 @@ extern "C" {
 #define CONFIG_BPF_BRANCHES_ALLOWED 200
 #endif
 
+#define BPF_STACK_SIZE  512
+
 
 typedef enum {
     BPF_POLICY_CONTINUE,            /**< Always execute next hook */
@@ -50,7 +52,7 @@ typedef enum {
 
 typedef enum {
     BPF_HOOK_TRIGGER_NETIF,
-
+    BPF_HOOK_SCHED,
     BPF_HOOK_NUM,
 } bpf_hook_trigger_t;
 
