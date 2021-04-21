@@ -81,3 +81,8 @@ int bpf_store_fetch_local(bpf_t *bpf, uint32_t key, uint32_t *value)
  * default value */
     return _fetch_value(&bpf->btree, key, value);
 }
+
+void bpf_store_iter_global(btree_cb_t cb, void *ctx)
+{
+    btree_traverse(&_global, cb, ctx);
+}
