@@ -47,7 +47,7 @@ static inline int _check_store(const bpf_t *bpf, uint8_t size, const intptr_t ad
     return _check_mem(bpf, size, addr, BPF_MEM_REGION_WRITE);
 }
 
-static int _preflight_checks(const bpf_t *bpf)
+static int _preflight_checks(bpf_t *bpf)
 {
     if (bpf->flags & BPF_FLAG_PREFLIGHT_DONE) {
         return BPF_OK;
@@ -286,7 +286,8 @@ int bpf_run(bpf_t *bpf, const void *ctx, int64_t *result)
 jump_instr:
     if (jump_cond) {
         instr += instr->offset;
-        if (bpf->branches_remaining-- == 0) {
+        if ((!(bpf->flags & BPF_CONFIG_NO_RETURN)) &&
+                bpf->branches_remaining-- == 0) {
             res = BPF_OUT_OF_BRANCHES;
             goto exit;
         }
