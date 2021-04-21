@@ -15,7 +15,7 @@ static uint32_t _average(uint32_t *values)
     return sum / AVERAGING_LEN;
 }
 
-int periodic_incr(void *conf)
+int measurement(void *conf)
 {
     uint32_t last_wakeup = bpf_ztimer_now();
     uint32_t counter = 0;
@@ -26,7 +26,19 @@ int periodic_incr(void *conf)
 
     while (1) {
         /* Read sensor value from sensor */
-        uint64_t value = 0;
+        bpf_saul_reg_t *sensor;
+        phydat_t measurement;
+
+        /* Find first sensor */
+        sensor = bpf_saul_reg_find_nth(1);
+
+        if (!sensor ||
+            (bpf_saul_reg_read(sensor,
+                               &measurement) < 0)) {
+            return -(5 << 5);
+        }
+
+        uint32_t value = measurement.val[0];
 
         if (initial) {
             /* Fill array with the initial measurement */
