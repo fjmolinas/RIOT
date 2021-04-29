@@ -14,3 +14,9 @@ ifneq (,$(filter senml_phydat,$(USEMODULE)))
   USEMODULE += senml
   USEMODULE += phydat
 endif
+
+ifneq (,$(filter senml_json,$(USEMODULE)))
+  USEMODULE += senml
+  USEMODULE += fmt
+  USEMODULE += base64
+endif
