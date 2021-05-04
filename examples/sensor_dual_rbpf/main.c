@@ -26,7 +26,7 @@
 #include "shell.h"
 
 #include "bpf.h"
-#include "blob/bpf/periodic_incr.bin.h"
+#include "blob/bpf/sensor_process.bin.h"
 
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
@@ -41,8 +41,8 @@ static void *_counter_thread(void *arg)
     /* Starts a long running bpf thread */
     (void)arg;
     bpf_t bpf = {
-        .application = periodic_incr_bin,
-        .application_len = sizeof(periodic_incr_bin),
+        .application = sensor_process_bin,
+        .application_len = sizeof(sensor_process_bin),
         .stack = _bpf_stack,
         .stack_size = sizeof(_bpf_stack),
         .flags = BPF_CONFIG_NO_RETURN,

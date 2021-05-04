@@ -29,13 +29,15 @@ int measurement(void *conf)
         bpf_saul_reg_t *sensor;
         phydat_t measurement;
 
+        bpf_ztimer_periodic_wakeup(&last_wakeup, PERIOD_US);
+
         /* Find first sensor */
         sensor = bpf_saul_reg_find_nth(1);
 
         if (!sensor ||
             (bpf_saul_reg_read(sensor,
                                &measurement) < 0)) {
-            return -(5 << 5);
+            continue;
         }
 
         uint32_t value = measurement.val[0];
@@ -58,8 +60,6 @@ int measurement(void *conf)
         uint32_t average = _average(values);
 
         bpf_store_global(SHARED_KEY, average);
-
-        bpf_ztimer_periodic_wakeup(&last_wakeup, PERIOD_US);
     }
 
     return 0;
