@@ -60,6 +60,9 @@ uint32_t bpf_vm_fetch_local(bpf_t *bpf, uint32_t key, uint32_t value, uint32_t a
     (void)a3;
     (void)a4;
     (void)a5;
+    if (bpf_store_allowed(bpf, (void*)value, sizeof(uint32_t)) < 0) {
+        return -1;
+    }
     return (uint32_t)bpf_store_fetch_local(bpf, key, (uint32_t*)(uintptr_t)value);
 }
 
@@ -69,6 +72,9 @@ uint32_t bpf_vm_fetch_global(bpf_t *bpf, uint32_t key, uint32_t value, uint32_t 
     (void)a3;
     (void)a4;
     (void)a5;
+    if (bpf_store_allowed(bpf, (void*)value, sizeof(uint32_t)) < 0) {
+        return -1;
+    }
     return (uint32_t)bpf_store_fetch_global(key, (uint32_t*)(uintptr_t)value);
 }
 

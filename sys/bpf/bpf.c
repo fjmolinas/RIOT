@@ -32,13 +32,29 @@ static bool _continue(bpf_hook_t *hook, int64_t *res)
     return true;
 }
 
-int bpf_execute(bpf_t *bpf, void *ctx, size_t ctx_len, int64_t *result)
+static int _execute(bpf_t *bpf, void *ctx, int64_t *result)
 {
     assert(bpf->flags & BPF_FLAG_SETUP_DONE);
+    return bpf_run(bpf, ctx, result);
+}
+
+int bpf_execute(bpf_t *bpf, void *ctx, size_t ctx_len, int64_t *result)
+{
+    (void)ctx;
+    (void)ctx_len;
+    bpf->arg_region.start = NULL;
+    bpf->arg_region.len = 0;
+
+    return _execute(bpf, ctx, result);
+}
+
+int bpf_execute_ctx(bpf_t *bpf, void *ctx, size_t ctx_len, int64_t *result)
+{
     bpf->arg_region.start = ctx;
     bpf->arg_region.len = ctx_len;
+    bpf->arg_region.flag = (BPF_MEM_REGION_READ | BPF_MEM_REGION_WRITE);
 
-    return bpf_run(bpf, ctx, result);
+    return _execute(bpf, ctx, result);
 }
 
 void bpf_setup(bpf_t *bpf)
@@ -46,10 +62,10 @@ void bpf_setup(bpf_t *bpf)
     bpf->stack_region.start = bpf->stack;
     bpf->stack_region.len = bpf->stack_size;
     bpf->stack_region.flag = (BPF_MEM_REGION_READ | BPF_MEM_REGION_WRITE);
-
     bpf->stack_region.next = &bpf->arg_region;
-
-    bpf->arg_region.flag = (BPF_MEM_REGION_READ | BPF_MEM_REGION_WRITE);
+    bpf->arg_region.next = NULL;
+    bpf->arg_region.start = NULL;
+    bpf->arg_region.len = 0;
 
     bpf->flags |= BPF_FLAG_SETUP_DONE;
 }
@@ -57,11 +73,11 @@ void bpf_setup(bpf_t *bpf)
 void bpf_add_region(bpf_t *bpf, bpf_mem_region_t *region,
                     void *start, size_t len, uint8_t flags)
 {
-    region->next = bpf->stack_region.next;
+    region->next = bpf->arg_region.next;
     region->start = start;
     region->len = len;
     region->flag = flags;
-    bpf->stack_region.next = region;
+    bpf->arg_region.next = region;
 }
 
 static void _register(bpf_hook_t **install_hook, bpf_hook_t *new)

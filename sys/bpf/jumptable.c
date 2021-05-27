@@ -18,6 +18,11 @@
 #define ENABLE_DEBUG (0)
 #include "debug.h"
 
+#if ENABLE_DEBUG
+#include "xtimer.h"
+#include <stdio.h>
+#endif
+
 typedef int dont_be_pedantic;
 static bpf_call_t _bpf_get_call(uint32_t num);
 
@@ -25,7 +30,7 @@ static int _check_mem(const bpf_t *bpf, uint8_t size, const intptr_t addr, uint8
 {
     const intptr_t end = addr + size;
     for (const bpf_mem_region_t *region = &bpf->stack_region; region; region = region->next) {
-        if ((addr  >= (intptr_t)region->start) &&
+        if ((addr >= (intptr_t)(region->start)) &&
                 (end <= (intptr_t)(region->start + region->len)) &&
                 (region->flag & type)) {
 
@@ -47,13 +52,23 @@ static inline int _check_store(const bpf_t *bpf, uint8_t size, const intptr_t ad
     return _check_mem(bpf, size, addr, BPF_MEM_REGION_WRITE);
 }
 
+int bpf_store_allowed(const bpf_t *bpf, void *addr, size_t size)
+{
+    return _check_store(bpf, size, (intptr_t)addr);
+}
+
+int bpf_load_allowed(const bpf_t *bpf, void *addr, size_t size)
+{
+    return _check_load(bpf, size, (intptr_t)addr);
+}
+
 static int _preflight_checks(bpf_t *bpf)
 {
     if (bpf->flags & BPF_FLAG_PREFLIGHT_DONE) {
         return BPF_OK;
     }
 
-    if (bpf->application_len % sizeof(bpf_instruction_t)) {
+    if (bpf->application_len & 0x7) {
         return BPF_ILLEGAL_LEN;
     }
 
@@ -236,10 +251,18 @@ int bpf_run(bpf_t *bpf, const void *ctx, int64_t *result)
     const bpf_instruction_t *instr = (const bpf_instruction_t*)bpf->application;
     bool jump_cond = false;
 
+#if ENABLE_DEBUG
+    uint32_t start = xtimer_now_usec();
+#endif
+
     res = _preflight_checks(bpf);
     if (res < 0) {
         return res;
     }
+
+#if ENABLE_DEBUG
+    uint32_t mid = xtimer_now_usec();
+#endif
 
     static const void * const _jumptable[256] = {
         [0 ... 255] = &&invalid_instruction,
@@ -308,8 +331,68 @@ bpf_start:
     ALU(RSH, >>)
     ALU(XOR,  ^)
     ALU(MUL,  *)
-    ALU(DIV,  /)
-    ALU(MOD,  %)
+
+ALU64_MOD_REG:
+    if (SRC == 0) {
+        res = BPF_ILLEGAL_DIV;
+        goto exit;
+    }
+    DST = DST % SRC;
+    CONT;
+ALU64_MOD_IMM:
+    if (IMM == 0) {
+        res = BPF_ILLEGAL_DIV;
+        goto exit;
+    }
+    DST = DST % IMM;
+    CONT;
+#if (CONFIG_BPF_ENABLE_ALU32)
+ALU32_MOD_REG:
+    if (SRC == 0) {
+        res = BPF_ILLEGAL_DIV;
+        goto exit;
+    }
+    DST = (uint32_t)DST % (uint32_t)SRC;
+    CONT;
+ALU32_MOD_IMM:
+    if (IMM == 0) {
+        res = BPF_ILLEGAL_DIV;
+        goto exit;
+    }
+    DST = (uint32_t)DST % (uint32_t)IMM;
+    CONT;
+#endif
+
+ALU64_DIV_REG:
+    if (SRC == 0) {
+        res = BPF_ILLEGAL_DIV;
+        goto exit;
+    }
+    DST = DST / SRC;
+    CONT;
+ALU64_DIV_IMM:
+    if (IMM == 0) {
+        res = BPF_ILLEGAL_DIV;
+        goto exit;
+    }
+    DST = DST / IMM;
+    CONT;
+#if (CONFIG_BPF_ENABLE_ALU32)
+ALU32_DIV_REG:
+    if (SRC == 0) {
+        res = BPF_ILLEGAL_DIV;
+        goto exit;
+    }
+    DST = (uint32_t)DST / (uint32_t)SRC;
+    CONT;
+ALU32_DIV_IMM:
+    if (IMM == 0) {
+        res = BPF_ILLEGAL_DIV;
+        goto exit;
+    }
+    DST = (uint32_t)DST / (uint32_t)IMM;
+    CONT;
+#endif
 
 ALU64_NEG_REG:
     DST = -(int64_t)DST;
@@ -429,6 +512,12 @@ exit:
 
     DEBUG("Number of instructions: %"PRIu32"\n", bpf->instruction_count);
     *result = regmap[0];
+#if ENABLE_DEBUG
+    uint32_t end = xtimer_now_usec();
+
+    printf("startup = %"PRIu32" us\n", mid - start);
+    printf("timing = %"PRIu32" us\n", end - mid);
+#endif
     return res;
 }
 

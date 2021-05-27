@@ -66,6 +66,7 @@ enum {
     BPF_ILLEGAL_REGISTER    = -6,
     BPF_NO_RETURN           = -7,
     BPF_OUT_OF_BRANCHES     = -8,
+    BPF_ILLEGAL_DIV         = -9,
 };
 
 typedef struct bpf_mem_region bpf_mem_region_t;
@@ -112,6 +113,7 @@ void bpf_init(void);
 void bpf_setup(bpf_t *bpf);
 
 int bpf_execute(bpf_t *bpf, void *ctx, size_t ctx_size, int64_t *result);
+int bpf_execute_ctx(bpf_t *bpf, void *ctx, size_t ctx_size, int64_t *result);
 int bpf_hook_execute(bpf_hook_trigger_t trigger, void *ctx, size_t ctx_size, int64_t *script_res);
 int bpf_hook_install(bpf_hook_t *hook, bpf_hook_trigger_t trigger);
 
@@ -119,6 +121,9 @@ int bpf_install_hook(bpf_t *bpf);
 
 void bpf_add_region(bpf_t *bpf, bpf_mem_region_t *region,
                     void *start, size_t len, uint8_t flags);
+
+int bpf_store_allowed(const bpf_t *bpf, void *addr, size_t size);
+int bpf_load_allowed(const bpf_t *bpf, void *addr, size_t size);
 
 #ifdef __cplusplus
 }
