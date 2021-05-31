@@ -139,7 +139,7 @@
 
 /* Configure MCO */
 #ifndef CONFIG_CLOCK_ENABLE_MCO
-#define CONFIG_CLOCK_ENABLE_MCO     0   /* Don't enable MCO by default */
+#define CONFIG_CLOCK_ENABLE_MCO     1   /* Don't enable MCO by default */
 #endif
 
 /* Configure the MCO clock source: options are PLLCLK (default), HSE, HSI, LSE, LSI or SYSCLK*/
@@ -149,7 +149,7 @@
     IS_ACTIVE(CONFIG_CLOCK_MCO_USE_MSI) || IS_ACTIVE(CONFIG_CLOCK_MCO_USE_SYSCLK)
 #define CONFIG_CLOCK_MCO_USE_PLLCLK 0
 #else
-#define CONFIG_CLOCK_MCO_USE_PLLCLK 1   /* Use PLLCLK by default */
+#define CONFIG_CLOCK_MCO_USE_SYSCLK 1   /* Use PLLCLK by default */
 #endif
 #endif /* CONFIG_CLOCK_MCO_USE_PLLCLK */
 
@@ -246,7 +246,7 @@
 
 /* Configure the MCO prescaler: valid values are 1, 2, 4, 8, 16 */
 #ifndef CONFIG_CLOCK_MCO_PRE
-#define CONFIG_CLOCK_MCO_PRE                    (1)
+#define CONFIG_CLOCK_MCO_PRE                    (16)
 #endif
 
 #if defined(CPU_FAM_STM32WB) || defined(CPU_FAM_STM32WL)
@@ -488,16 +488,16 @@ void stmclk_init_sysclk(void)
              (instead of MSIRANGE in the RCC_CR) */
     RCC->CR = (RCC_CR_HSION);
 
+       /* Use VDDTCXO regulator */
+#if defined(CPU_FAM_STM32WL)
+        RCC->CR |= (RCC_CR_HSEBYPPWR);
+#endif
     /* Enable the HSE clock only when it's provided by the board and required:
         - Use HSE as system clock
         - Use HSE as PLL input clock
     */
     if (IS_ACTIVE(CLOCK_ENABLE_HSE)) {
 
-    /* Use VDDTCXO regulator */
-#if defined(CPU_FAM_STM32WL)
-        RCC->CR |= (RCC_CR_HSEBYPPWR);
-#endif
         RCC->CR |= (RCC_CR_HSEON);
         while (!(RCC->CR & RCC_CR_HSERDY)) {}
     }
