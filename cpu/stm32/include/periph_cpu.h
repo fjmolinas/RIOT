@@ -1172,6 +1172,24 @@ void stm32_eth_common_init(void);
 #define HAVE_PTP_TIMER_SET_ABSOLUTE 1   /**< Native implementation available */
 /** @} */
 
+#if defined(CPU_FAM_STM32WL) && IS_ACTIVE(MODULE_SX126X)
+/**
+ * @name    Sub-GHz radio (LoRa) configuration
+ * @{
+ */
+#define SX126X_PARAM_SPI                    (SPI_DEV(1))
+#define SX126X_PARAM_SPI_NSS                GPIO_UNDEF
+#define SX126X_PARAM_RESET                  GPIO_UNDEF
+#define SX126X_PARAM_BUSY                   GPIO_UNDEF
+#define SX126X_PARAM_DIO1                   GPIO_UNDEF
+#define SX126X_PARAM_REGULATOR              SX126X_REG_MODE_LDO
+/* forward declaration */
+typedef struct sx126x sx126x_t;
+extern sx126x_t *sx126x_subghz;
+#define SX126X_SUBGHZ_RADIO                 sx126x_subghz
+/** @} */
+#endif
+
 #ifdef __cplusplus
 }
 #endif

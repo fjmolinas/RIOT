@@ -46,6 +46,9 @@ static kernel_pid_t _recv_pid;
 static char message[SX126X_MAX_PAYLOAD_LEN];
 
 static sx126x_t sx126x;
+#if defined(CPU_FAM_STM32WL)
+sx126x_t *sx126x_subghz = &sx126x;
+#endif
 
 static void _event_cb(netdev_t *dev, netdev_event_t event)
 {

@@ -47,11 +47,19 @@
 static sx126x_t sx126x_devs[SX126X_NUMOF];
 static char sx126x_stacks[SX126X_NUMOF][SX126X_STACKSIZE];
 static gnrc_netif_t _netif[SX126X_NUMOF];
+#if defined(CPU_FAM_STM32WL)
+sx126x_t *sx126x_subghz;
+#endif
 
 void auto_init_sx126x(void)
 {
     for (unsigned i = 0; i < SX126X_NUMOF; ++i) {
         LOG_DEBUG("[auto_init_netif] initializing sx126x #%u\n", i);
+#if defined(CPU_FAM_STM32WL)
+        if (sx126x_params[i].spi == SUBGHZPI) {
+            sx126x_subghz = sx126x_devs[i];
+        }
+#endif
         sx126x_setup(&sx126x_devs[i], &sx126x_params[i], i);
         if (IS_USED(MODULE_GNRC_NETIF_LORAWAN)) {
             /* Currently only one lora device is supported */

@@ -129,6 +129,11 @@ void spi_init(spi_t bus)
 
 void spi_init_pins(spi_t bus)
 {
+#ifdef SUBGHZSPI_IRQn
+    if (bus == SUBGHZSPI) {
+        return;
+    }
+#endif
 #ifdef CPU_FAM_STM32F1
     gpio_init_af(spi_config[bus].sclk_pin, GPIO_AF_OUT_PP);
     gpio_init_af(spi_config[bus].mosi_pin, GPIO_AF_OUT_PP);
@@ -148,6 +153,13 @@ int spi_init_cs(spi_t bus, spi_cs_t cs)
     if (bus >= SPI_NUMOF) {
         return SPI_NODEV;
     }
+#ifdef CPU_FAM_STM32WL
+    if (dev(bus) == SUBGHZSPI) {
+        /* NSS is a register for STM32WL*/
+        return 0;
+    }
+#endif
+
     if (cs == SPI_CS_UNDEF ||
         (((cs & SPI_HWCS_MASK) == SPI_HWCS_MASK) && (cs & ~(SPI_HWCS_MASK)))) {
         return SPI_NOCS;
@@ -356,8 +368,40 @@ static void _transfer_no_dma(spi_t bus, const void *out, void *in, size_t len)
             inbuf[i] = *DR;
         }
     }
-
     _wait_for_end(bus);
+}
+
+
+static void _cs_low(spi_t bus, spi_cs_t cs)
+{
+#ifdef SUBGHZSPI_IRQn
+    if (bus == SUBGHZSPI) {
+        PWR->SUBGHZSPICR &= ~PWR_SUBGHZSPICR_NSS;
+        return;
+    }
+#endif
+    /* active the given chip select line */
+    dev(bus)->CR1 |= (SPI_CR1_SPE);     /* this pulls the HW CS line low */
+    if ((cs != SPI_HWCS_MASK) && (cs != SPI_CS_UNDEF)) {
+        gpio_clear((gpio_t)cs);
+    }
+}
+
+static void _cs_high(spi_t bus, spi_cs_t cs, bool cont)
+{
+#ifdef SUBGHZSPI_IRQn
+    if (bus == SUBGHZSPI) {
+        PWR->SUBGHZSPICR |= PWR_SUBGHZSPICR_NSS;
+        return;
+    }
+#endif
+    /* release the chip select if not specified differently */
+    if ((!cont) && (cs != SPI_CS_UNDEF)) {
+        dev(bus)->CR1 &= ~(SPI_CR1_SPE);    /* pull HW CS line high */
+        if (cs != SPI_HWCS_MASK) {
+            gpio_set((gpio_t)cs);
+        }
+    }
 }
 
 void spi_transfer_bytes(spi_t bus, spi_cs_t cs, bool cont,
@@ -365,13 +409,7 @@ void spi_transfer_bytes(spi_t bus, spi_cs_t cs, bool cont,
 {
     /* make sure at least one input or one output buffer is given */
     assert(out || in);
-
-    /* active the given chip select line */
-    dev(bus)->CR1 |= (SPI_CR1_SPE);     /* this pulls the HW CS line low */
-    if ((cs != SPI_HWCS_MASK) && (cs != SPI_CS_UNDEF)) {
-        gpio_clear((gpio_t)cs);
-    }
-
+    _cs_low(bus, cs);
 #ifdef MODULE_PERIPH_DMA
     if (_use_dma(&spi_config[bus])) {
         _transfer_dma(bus, out, in, len);
@@ -382,12 +420,5 @@ void spi_transfer_bytes(spi_t bus, spi_cs_t cs, bool cont,
 #ifdef MODULE_PERIPH_DMA
     }
 #endif
-
-    /* release the chip select if not specified differently */
-    if ((!cont) && (cs != SPI_CS_UNDEF)) {
-        dev(bus)->CR1 &= ~(SPI_CR1_SPE);    /* pull HW CS line high */
-        if (cs != SPI_HWCS_MASK) {
-            gpio_set((gpio_t)cs);
-        }
-    }
+    _cs_high(bus, cs, cont);
 }

@@ -77,6 +77,8 @@ static void sx126x_init_default_config(sx126x_t *dev)
 {
     /* packet type must be set first */
     sx126x_set_pkt_type(dev, SX126X_PKT_TYPE_LORA);
+    DEBUG ("set SX126X_PKT_TYPE_LORA");
+
     sx126x_set_channel(dev, CONFIG_SX126X_CHANNEL_DEFAULT);
 
     /* Configure PA optimal settings for maximum output power
@@ -135,10 +137,23 @@ static void _dio1_isr(void *arg)
     netdev_trigger_event_isr((netdev_t *)arg);
 }
 
+#ifdef SX126X_SUBGHZ_RADIO
+void isr_subghz_radio(void)
+{
+    netdev_trigger_event_isr((netdev_t*)SX126X_SUBGHZ_RADIO);
+}
+#endif
+
 int sx126x_init(sx126x_t *dev)
 {
+    int res = 0;
+#ifdef SX126X_SUBGHZ_RADIO
+    if (dev == SX126X_SUBGHZ_RADIO) {
+        goto reset;
+    }
+#endif
     /* Setup SPI for SX126X */
-    int res = spi_init_cs(dev->params->spi, dev->params->nss_pin);
+    res = spi_init_cs(dev->params->spi, dev->params->nss_pin);
 
     if (res != SPI_OK) {
         DEBUG("[sx126x] error: failed to initialize SPI_%i device (code %i)\n",
@@ -164,7 +179,11 @@ int sx126x_init(sx126x_t *dev)
         return -EIO;
     }
 
+#ifdef SX126X_SUBGHZ_RADIO
+    reset:
+#endif
     /* Reset the device */
+    DEBUG("[sx126x_init] : Reset the device\n");
     sx126x_reset(dev);
 
     /* Configure the power regulator mode */

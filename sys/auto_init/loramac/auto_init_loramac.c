@@ -42,6 +42,9 @@ static sx127x_t sx127x;
 
 #if IS_USED(MODULE_SX126X)
 static sx126x_t sx126x;
+#if defined(CPU_FAM_STM32WL)
+sx126x_t *sx126x_subghz = &sx126x;
+#endif
 #endif
 
 void auto_init_loramac(void)

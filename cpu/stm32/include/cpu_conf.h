@@ -218,7 +218,6 @@ typedef uint16_t stm32_flashpage_block_t;
 #define FLASHPAGE_WRITE_BLOCK_ALIGNMENT       (4U)
 #endif
 /** @} */
-
 /**
  * @brief   Bit-Band configuration
  * @{

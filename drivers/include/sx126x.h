@@ -47,7 +47,7 @@ typedef struct {
 /**
  * @brief   Device descriptor for the driver
  */
-typedef struct {
+typedef struct sx126x {
     netdev_t netdev;                        /**< Netdev parent struct */
     sx126x_params_t *params;                /**< Initialization parameters */
     sx126x_pkt_params_lora_t pkt_params;    /**< Lora packet parameters */
