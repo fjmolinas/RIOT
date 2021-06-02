@@ -70,7 +70,7 @@ static void tests_bpf_run1(void)
     uint32_t start = xtimer_now_usec();
     int res = 0;
     for (unsigned i = 0; i < 1000; i++) {
-        res = bpf_execute(&bpf, &ctx, sizeof(ctx), &result);
+        res = bpf_execute_ctx(&bpf, &ctx, sizeof(ctx), &result);
     }
     uint32_t stop = xtimer_now_usec();
 
