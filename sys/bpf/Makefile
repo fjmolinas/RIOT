@@ -3,6 +3,7 @@ NO_AUTO_SRC := 1
 SRC += bpf.c
 SRC += call.c
 SRC += store.c
+SRC += verify.c
 
 BPF_USE_JUMPTABLE ?= 1
 

@@ -112,6 +112,8 @@ struct bpf_hook {
 void bpf_init(void);
 void bpf_setup(bpf_t *bpf);
 
+int bpf_verify_preflight(bpf_t *bpf);
+
 int bpf_execute(bpf_t *bpf, void *ctx, size_t ctx_size, int64_t *result);
 int bpf_execute_ctx(bpf_t *bpf, void *ctx, size_t ctx_size, int64_t *result);
 int bpf_hook_execute(bpf_hook_trigger_t trigger, void *ctx, size_t ctx_size, int64_t *script_res);

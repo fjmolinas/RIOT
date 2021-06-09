@@ -343,6 +343,11 @@ int bpf_run(bpf_t *bpf, const void *ctx, int64_t *result)
     regmap[10] = (uint64_t)(uintptr_t)(bpf->stack + bpf->stack_size);
     bool end = false;
 
+    res = bpf_verify_preflight(bpf);
+    if (res < 0) {
+        return res;
+    }
+
     const bpf_instruction_t *pc = (const bpf_instruction_t*)bpf->application;
 
     while (!end) {
