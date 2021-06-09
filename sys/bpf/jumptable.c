@@ -320,7 +320,7 @@ jump_instr:
 select_instr:
     instr++;
 bpf_start:
-    bpf->instruction_count++;
+    //bpf->instruction_count++;
     goto *_jumptable[instr->opcode];
 
     ALU(ADD,  +)
