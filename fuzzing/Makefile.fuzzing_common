@@ -14,7 +14,7 @@ CFLAGS += -ggdb                # Make ASAN output more useful error messages
 CFLAGS += -D_FORTIFY_SOURCE=2  # Compiler hardening
 
 # Various utilitiy modules
-USEMODULE += fuzzing
+#USEMODULE += fuzzing
 USEMODULE += ssp
 
 # Enable DEVELHELP by default
