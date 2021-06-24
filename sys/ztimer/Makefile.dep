@@ -77,7 +77,7 @@ ifneq (,$(filter samd21 fe310,$(CPU)))
   USEMODULE += ztimer_no_periph_rtt
 endif
 
-ifneq (,$(filter ztimer_msec ztimer_sec,$(USEMODULE)))
+ifneq (,$(filter ztimer_epoch ztimer_msec ztimer_sec,$(USEMODULE)))
   USEMODULE += ztimer
   ifeq (,$(filter ztimer_no_periph_rtt,$(USEMODULE)))
     FEATURES_OPTIONAL += periph_rtt
@@ -101,4 +101,8 @@ ifneq (,$(filter ztimer_msec ztimer_sec,$(USEMODULE)))
   else
     USEMODULE += ztimer_periph_timer
   endif
+endif
+
+ifneq (,$(filter ztimer_epoch,$(USEMODULE)))
+  USEMODULE += ztimer_adjust_time
 endif

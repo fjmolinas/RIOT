@@ -335,6 +335,53 @@ static void _ztimer_update(ztimer_clock_t *clock)
     }
 }
 
+void _ztimer_clock_pending_cb(ztimer_clock_t *clock)
+{
+    ztimer_t *entry = _now_next(clock);
+    while (entry) {
+        DEBUG("ztimer_handler(): trigger %p->%p at %" PRIu32 "\n",
+              (void *)entry, (void *)entry->base.next, clock->ops->now(clock));
+        entry->callback(entry->arg);
+        entry = _now_next(clock);
+        if (!entry) {
+            /* See if any more alarms expired during callback processing */
+            /* This reduces the number of implicit calls to clock->ops->now() */
+            _ztimer_update_head_offset(clock);
+            entry = _now_next(clock);
+        }
+    }
+}
+
+#if IS_USED(MODULE_ZTIMER_ADJUST_TIME)
+void ztimer_adjust_time(ztimer_clock_t *clock, int32_t diff)
+{
+    unsigned state = irq_disable();
+    clock->adjust_time += diff;
+
+    uint32_t old_base = clock->list.offset;
+    uint32_t now = ztimer_now(clock);
+    /* time was set back */
+    if ( now < old_base ) {
+        ztimer_base_t *entry = clock->list.next;
+        uint32_t add = old_base - now;
+        entry->offset += add;
+        /* fix the first callback execution */
+        _ztimer_update(clock);
+        /* update base */
+        clock->list.offset = now;
+    }
+    /* time advanced */
+    else {
+        _ztimer_update_head_offset(clock);
+        /* update base depending on how time shifted */
+        _ztimer_update(clock);
+        _ztimer_clock_pending_cb(clock);
+        _ztimer_update(clock);
+    }
+    irq_restore(state);
+}
+#endif
+
 void ztimer_handler(ztimer_clock_t *clock)
 {
     DEBUG("ztimer_handler(): %p now=%" PRIu32 "\n", (void *)clock, clock->ops->now(
@@ -377,20 +424,7 @@ void ztimer_handler(ztimer_clock_t *clock)
         clock->list.offset += clock->list.next->offset;
         clock->list.next->offset = 0;
 
-        ztimer_t *entry = _now_next(clock);
-        while (entry) {
-            DEBUG("ztimer_handler(): trigger %p->%p at %" PRIu32 "\n",
-                  (void *)entry, (void *)entry->base.next, clock->ops->now(
-                      clock));
-            entry->callback(entry->arg);
-            entry = _now_next(clock);
-            if (!entry) {
-                /* See if any more alarms expired during callback processing */
-                /* This reduces the number of implicit calls to clock->ops->now() */
-                _ztimer_update_head_offset(clock);
-                entry = _now_next(clock);
-            }
-        }
+        _ztimer_clock_pending_cb(clock);
     }
 
     _ztimer_update(clock);

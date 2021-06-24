@@ -35,7 +35,6 @@
  *
  * @}
  */
-
 #include "kernel_defines.h"
 
 #include "board.h"
@@ -48,7 +47,6 @@
 #include "ztimer/periph_rtt.h"
 #include "ztimer/periph_rtc.h"
 #include "ztimer/config.h"
-
 #include "log.h"
 
 #define WIDTH_TO_MAXVAL(width)  (UINT32_MAX >> (32 - width))
@@ -91,7 +89,7 @@
 
 /* ZTIMER_USEC always uses the basic timer
  * basic timer is available on all boards */
-#if MODULE_ZTIMER_USEC
+#if IS_USED(MODULE_ZTIMER_USEC)
 #  ifndef INIT_ZTIMER_TIMER
 #    define INIT_ZTIMER_TIMER 1
 #  endif
@@ -100,7 +98,7 @@
 /* ZTIMER_MSEC prefers ZTIMER_RTT (ztimer_periph_rtt)
  * if it is available and runs at a frequency > 1kHz
  * if not it falls back to use the basic timer */
-#if MODULE_ZTIMER_MSEC
+#if IS_USED(MODULE_ZTIMER_MSEC)
 #  if defined(ZTIMER_RTT) && ZTIMER_RTT_FREQ >= FREQ_1KHZ
 #    define ZTIMER_MSEC_RTT 1
 #    ifndef INIT_ZTIMER_RTT
@@ -121,7 +119,7 @@
 /* ZTIMER_SEC prefers ZTIMER_RTT (ztimer_periph_rtt) if it is available
  * if not it prefers ZTIMER_RTC (ztimer_periph_rtc) if it is available
  * if not it falls back to use the basic timer */
-#if MODULE_ZTIMER_SEC
+#if IS_USED(MODULE_ZTIMER_SEC)
 #  ifdef ZTIMER_RTT
 #    define ZTIMER_SEC_RTT
 #    ifndef INIT_ZTIMER_RTT
@@ -143,6 +141,31 @@
 #    endif
 #  endif
 #endif
+
+/* ZTIMER_EPOCH requires ZTIMER_RTC (ztimer_periph_rtc) */
+#if IS_USED(MODULE_ZTIMER_EPOCH)
+#  ifdef ZTIMER_RTC
+#    define ZTIMER_EPOCH_RTC
+#    ifndef INIT_ZTIMER_RTC
+#      define INIT_ZTIMER_RTC 1
+#    endif
+#  else
+#    ifdef ZTIMER_RTT
+#      define ZTIMER_EPOCH_RTT
+#      ifndef INIT_ZTIMER_RTT
+#        define INIT_ZTIMER_RTT 1
+#      endif
+#      define ZTIMER_EPOCH_CONVERT_LOWER_FREQ ZTIMER_RTT_FREQ
+#    else
+#      define ZTIMER_EPOCH_TIMER
+#      ifndef INIT_ZTIMER_TIMER
+#        define INIT_ZTIMER_TIMER 1
+#      endif
+#      define ZTIMER_EPOCH_CONVERT_LOWER_FREQ ZTIMER_TIMER_FREQ
+#    endif
+#  endif
+#endif
+
 
 /* Step 2: setup static memory for used ztimer-periphery */
 
@@ -235,6 +258,23 @@ static void _ztimer_usec_overhead(unsigned samples, unsigned base, uint16_t *adj
     *adjust_value = min;
 }
 #endif
+
+#if MODULE_ZTIMER_EPOCH
+#  ifdef ZTIMER_EPOCH_RTC
+ztimer_clock_t *const ZTIMER_EPOCH_BASE = &ZTIMER_RTC_CLK;
+ztimer_clock_t *const ZTIMER_EPOCH = &ZTIMER_RTC_CLK;
+#  elif defined(ZTIMER_EPOCH_RTT)
+ztimer_clock_t *const ZTIMER_EPOCH_BASE = &ZTIMER_RTT_CLK;
+#  elif defined(ZTIMER_EPOCH_TIMER)
+ztimer_clock_t *const ZTIMER_EPOCH_BASE = &ZTIMER_TIMER_CLK;
+#  endif
+
+#  ifdef ZTIMER_EPOCH_CONVERT_LOWER_FREQ
+static ztimer_convert_frac_t _ztimer_convert_frac_epoch;
+ztimer_clock_t *const ZTIMER_EPOCH = &_ztimer_convert_frac_epoch.super.super;
+#  endif
+#endif
+
 
 void ztimer_init(void)
 {
@@ -350,4 +390,14 @@ void ztimer_init(void)
                              FREQ_1HZ, ZTIMER_SEC_CONVERT_LOWER_FREQ);
 #  endif
 #endif
+
+#if MODULE_ZTIMER_EPOCH
+#  if ZTIMER_EPOCH_CONVERT_LOWER_FREQ
+    LOG_DEBUG("ztimer_init(): ZTIMER_EPOCH convert_frac from %lu to 1\n",
+              (long unsigned)ZTIMER_EPOCH_CONVERT_LOWER_FREQ);
+    ztimer_convert_frac_init(&_ztimer_convert_frac_epoch, ZTIMER_EPOCH_BASE,
+                             FREQ_1HZ, ZTIMER_EPOCH_CONVERT_LOWER_FREQ);
+#  endif
+#endif
+
 }
