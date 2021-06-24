@@ -104,6 +104,19 @@ static void _ztimer_periph_rtc_set(ztimer_clock_t *clock, uint32_t val)
     uint32_t now = _ztimer_periph_rtc_now(NULL);
     uint32_t target;
 
+    if (val < RTC_MIN_OFFSET) {
+        /* the rtt might advance right between the call to rtt_get_counter()
+         * and rtt_set_alarm(). If that happens with val==1, we'd set an alarm
+         * to the current time, which would then underflow.  To avoid this, we
+         * set the alarm at least two ticks in the future.  TODO: confirm this
+         * is sufficient, or conceive logic to lower this value.
+         *
+         * @note RTT_MIN_OFFSET defaults to 2, but some platforms might have
+         * different values.
+         */
+        val = RTC_MIN_OFFSET;
+    }
+
     do {
         /* make sure there's no pending ISR */
         rtc_clear_alarm();
