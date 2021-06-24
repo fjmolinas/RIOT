@@ -47,6 +47,19 @@
 extern "C" {
 #endif
 
+/**
+ * @def     RTC_MIN_OFFSET
+ *
+ * @brief   The minimum offset to correctly set an rtC callback.
+ *
+ * This value can vary depending on the platform.
+ *
+ */
+#ifndef RTC_MIN_OFFSET
+#define RTC_MIN_OFFSET (1U)
+#endif
+
+
 #if !defined(RIOT_EPOCH) || DOXYGEN
 /**
  * @brief Earliest year of the RTC

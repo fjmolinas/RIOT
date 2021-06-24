@@ -352,6 +352,8 @@ struct ztimer_clock {
     uint16_t adjust_set;            /**< will be subtracted on every set()  */
     uint16_t adjust_sleep;          /**< will be subtracted on every sleep(),
                                          in addition to adjust_set          */
+    int32_t adjust_time;            /**< will added to every ztimer_base
+                                         offset */
 #if MODULE_ZTIMER_EXTEND || MODULE_ZTIMER_NOW64 || DOXYGEN
     /* values used for checkpointed intervals and 32bit extension */
     uint32_t max_value;             /**< maximum relative timer value       */
@@ -389,6 +391,8 @@ void ztimer_handler(ztimer_clock_t *clock);
  *         (`now() + @p val = absolute trigger time`).
  */
 uint32_t ztimer_set(ztimer_clock_t *clock, ztimer_t *timer, uint32_t val);
+
+void ztimer_adjust_time(ztimer_clock_t *clock, int32_t time);
 
 /**
  * @brief   Check if a timer is currently active
@@ -490,10 +494,10 @@ static inline ztimer_now_t ztimer_now(ztimer_clock_t *clock)
 #else
     if (0) {
 #endif
-        return _ztimer_now_extend(clock);
+        return _ztimer_now_extend(clock) + clock->adjust_time;
     }
     else {
-        return clock->ops->now(clock);
+        return clock->ops->now(clock) + clock->adjust_time;
     }
 }
 
@@ -635,6 +639,11 @@ extern ztimer_clock_t *const ZTIMER_MSEC;
  * @brief   Default ztimer second clock
  */
 extern ztimer_clock_t *const ZTIMER_SEC;
+
+/**
+ * @brief   Default ztimer epoch clock
+ */
+extern ztimer_clock_t *const ZTIMER_EPOCH;
 
 /**
  * @brief   Base ztimer for the microsecond clock (ZTIMER_USEC)
