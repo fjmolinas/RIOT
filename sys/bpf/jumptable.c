@@ -347,7 +347,7 @@ ALU64_NEG_REG:
 
 #if (CONFIG_BPF_ENABLE_ALU32)
 ALU32_NEG_REG:
-    DST = (int32_t)DST;
+    DST = -(int32_t)DST;
     CONT;
 
     /* MOV */
