@@ -1,5 +1,5 @@
 ifneq (,$(filter stdio_uart,$(USEMODULE)))
-  FEATURES_REQUIRED += periph_lpuart
+  FEATURES_REQUIRED += periph_uart
 endif
 ifneq (,$(filter sx126x%,$(USEMODULE)))
   USEMODULE += sx126x_stm32wl

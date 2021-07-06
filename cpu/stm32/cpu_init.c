@@ -152,11 +152,13 @@ static void _gpio_init_ain(void)
 }
 #endif
 
+
 /**
  * @brief   Initialize HW debug pins for Sub-GHz Radio
  */
 void _wl55jc_init_subghz_debug_pins(void)
 {
+#if IS_ACTIVE(CONFIG_STM32_WL55JC_SUBGHZ_DEBUG)
     /* SUBGHZSPI Debug */
     gpio_init(CPU_STM32WL_SUBGHZSPI_DEBUG_MOSIOUT, GPIO_OUT);
     gpio_init_af(CPU_STM32WL_SUBGHZSPI_DEBUG_MOSIOUT,
@@ -194,6 +196,7 @@ void _wl55jc_init_subghz_debug_pins(void)
     gpio_init(CPU_STM32WL_SUBGHZ_DEBUG_RF_HSE32RDY, GPIO_OUT);
     gpio_init_af(CPU_STM32WL_SUBGHZ_DEBUG_RF_HSE32RDY,
                  CPU_STM32WL_SUBGHZ_DEBUG_RF_HSE32RDY_AF);
+#endif
 }
 
 void cpu_init(void)

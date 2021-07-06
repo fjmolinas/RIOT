@@ -1,0 +1,18 @@
+/**
+ * @defgroup    boards_lora-e5-dev LoRa-E5 Development Board - STM32WLE5JC
+ * @ingroup     boards
+ * @brief       Support for the LoRa-E5 Development Board - STM32WLE5JC board.
+ *
+ * ### General information
+ *
+ * Some general information about the board
+ *
+ * ### Pinout
+ *
+ * A detailed description of the board pinout (if available)
+ *
+ * ### Flash the board
+ *
+ * Some notes about how to flash the board
+ *
+ */
