@@ -663,6 +663,11 @@ endif
 # It should be included after defining 'BINFILE' for 'riotboot.bin' handling.
 include $(RIOTMAKE)/boot/riotboot.mk
 
+# include suit targets
+ifneq (,$(filter suit, $(USEMODULE)))
+  include $(RIOTMAKE)/suit.inc.mk
+endif
+
 # Targets to get given file
 elffile: $(ELFFILE)
 hexfile: $(HEXFILE)
