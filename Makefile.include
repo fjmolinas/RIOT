@@ -654,8 +654,9 @@ HEXFILE ?= $(ELFFILE:.elf=.hex)
 BINFILE ?= $(ELFFILE:.elf=.bin)
 MAPFILE ?= $(ELFFILE:.elf=.map)
 
-ifneq (,$(filter suit, $(USEMODULE)))
+ifneq (,$(filter suit,$(USEMODULE)))
   include $(RIOTMAKE)/suit.base.inc.mk
+  include $(RIOTMAKE)/suit.inc.mk
 endif
 
 # include bootloaders support. It should be included early to allow using
