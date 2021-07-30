@@ -356,6 +356,9 @@ static void _suit_handle_url(const char *url)
                                                    _manifest_buf,
                                                    SUIT_MANIFEST_BUFSIZE);
     if (size >= 0) {
+#ifdef MODULE_SUITREG
+        suitreg_notify(SUITREG_TYPE_STATUS, SUIT_NEW_UPDATE, 0);
+#endif
         LOG_INFO("suit_coap: got manifest with size %u\n", (unsigned)size);
 
 #ifdef MODULE_SUIT

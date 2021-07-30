@@ -35,6 +35,7 @@ extern "C" {
  */
 enum {
     SUIT_TRIGGER = 0x07A00,      /**< trigger has been received */
+    SUIT_NEW_UPDATE,             /**< new update was found */
     SUIT_SIGNATURE_START,        /**< manifest signature validation will start */
     SUIT_SIGNATURE_ERROR,        /**< manifest signature error */
     SUIT_SIGNATURE_END,          /**< manifest signature end */
