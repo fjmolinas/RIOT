@@ -487,9 +487,18 @@ static int _dtv_verify_image_match(suit_manifest_t *manifest, int key,
     /* TODO: replace with generic verification (not only sha256) */
     LOG_INFO("Starting digest verification against image\n");
     res = _validate_payload(comp, digest, img_size);
+    /* TODO: there is something weird here where the same function is called
+             twice, check with KOEN */
     if (res == SUIT_OK) {
-        LOG_INFO("Install correct payload\n");
-        suit_storage_install(comp->storage_backend, manifest);
+        if (!suit_component_check_flag(comp, SUIT_COMPONENT_STATE_INSTALLED)) {
+            LOG_INFO("Install correct payload\n");
+            suit_storage_install(comp->storage_backend, manifest);
+            suit_component_set_flag(comp, SUIT_COMPONENT_STATE_INSTALLED);
+        }
+        else {
+            LOG_INFO("Verified installed payload\n");
+            suit_component_set_flag(comp, SUIT_COMPONENT_STATE_FINALIZED);
+        }
     }
     else {
         LOG_INFO("Erasing bad payload\n");
