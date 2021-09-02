@@ -21,6 +21,7 @@
 #define SUIT_STORAGE_FLASHWRITE_H
 
 #include "suit.h"
+#include "suit/storage.h"
 #include "riotboot/flashwrite.h"
 
 #ifdef __cplusplus

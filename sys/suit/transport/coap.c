@@ -27,12 +27,12 @@
 #include <string.h>
 
 #include "msg.h"
-#include "log.h"
 #include "net/nanocoap.h"
 #include "net/nanocoap_sock.h"
 #include "thread.h"
 #include "periph/pm.h"
 #include "ztimer.h"
+#include "log.h"
 
 #include "suit/transport/coap.h"
 #include "net/sock/util.h"
@@ -85,7 +85,6 @@ static inline void _print_download_progress(suit_manifest_t *manifest,
     (void)manifest;
     (void)offset;
     (void)len;
-    DEBUG("_suit_flashwrite(): writing %u bytes at pos %u\n", len, offset);
 #if defined(MODULE_PROGRESS_BAR)
     if (image_size != 0) {
         char _suffix[7] = { 0 };
@@ -97,6 +96,7 @@ static inline void _print_download_progress(suit_manifest_t *manifest,
         }
     }
 #else
+    LOG_DEBUG("suit: writing %u bytes at pos %u\n", len, offset);
     (void) image_size;
 #endif
 }
@@ -136,18 +136,22 @@ static void _suit_handle_url(const char *url, coap_blksize_t blksize)
 
 #endif
 #ifdef MODULE_SUIT_STORAGE_FLASHWRITE
+        extern suit_storage_t* suit_storage_flashwrite_ptr;
         if (res == 0) {
-            const riotboot_hdr_t *hdr = riotboot_slot_get_hdr(
-                riotboot_slot_other());
-            riotboot_hdr_print(hdr);
-            ztimer_sleep(ZTIMER_MSEC, 1 * MS_PER_SEC);
+            suit_component_t *comp = &manifest.components[manifest.component_current];
+            if (res == 0 && comp->storage_backend == suit_storage_flashwrite_ptr) {
+                 const riotboot_hdr_t *hdr = riotboot_slot_get_hdr(
+                    riotboot_slot_other());
+                riotboot_hdr_print(hdr);
+                ztimer_sleep(ZTIMER_MSEC, 1 * MS_PER_SEC);
 
-            if (riotboot_hdr_validate(hdr) == 0) {
-                LOG_INFO("suit_coap: rebooting...\n");
-                pm_reboot();
-            }
-            else {
-                LOG_INFO("suit_coap: update failed, hdr invalid\n ");
+                if (riotboot_hdr_validate(hdr) == 0) {
+                    LOG_INFO("suit_coap: rebooting...\n");
+                    pm_reboot();
+                }
+                else {
+                    LOG_INFO("suit_coap: update failed, hdr invalid\n ");
+                }
             }
         }
 #endif
@@ -189,7 +193,9 @@ int suit_storage_helper(void *arg, size_t offset, uint8_t *buf, size_t len,
         return -1;
     }
 
-    _print_download_progress(manifest, offset, len, image_size);
+    if (LOG_LEVEL >= LOG_INFO) {
+        _print_download_progress(manifest, offset, len, image_size);
+    }
 
     int res = suit_storage_write(comp->storage_backend, manifest, buf, offset, len);
     if (!more) {
