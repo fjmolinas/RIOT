@@ -45,11 +45,13 @@ static void _touch_event_callback(void *arg)
 
 void auto_init_lvgl(void)
 {
-    LOG_DEBUG("[auto_init_screen] initializing lvgl\n");
+    printf("[auto_init_screen] initializing lvgl\n");
 
     /* Only a single screen is supported by lvgl */
+#if !IS_USED(MODULE_LV_DRIVERS_DISPLAY_MONITOR)
     disp_dev_reg_t *disp_dev = disp_dev_reg_find_screen(CONFIG_LVGL_SCREEN_DEFAULT);
     s_screen.display = disp_dev->dev;
+#endif
 
 #if IS_USED(MODULE_TOUCH_DEV)
     touch_dev_reg_t *touch_dev = touch_dev_reg_find_screen(CONFIG_LVGL_SCREEN_DEFAULT);

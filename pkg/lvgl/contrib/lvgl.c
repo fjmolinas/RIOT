@@ -31,6 +31,13 @@
 
 #include "screen_dev.h"
 
+#if IS_USED(MODULE_LV_DRIVERS_INDEV_MOUSE)
+#include "indev/mouse.h"
+#endif
+#if IS_USED(MODULE_LV_DRIVERS_DISPLAY_MONITOR)
+#include "display/monitor.h"
+#endif
+
 #ifndef LVGL_COLOR_BUF_SIZE
 #define LVGL_COLOR_BUF_SIZE         (LV_HOR_RES_MAX * 5)
 #endif
@@ -52,8 +59,8 @@ static kernel_pid_t _task_thread_pid;
 static lv_disp_buf_t disp_buf;
 static lv_color_t buf[LVGL_COLOR_BUF_SIZE];
 
+#if !IS_USED(MODULE_LV_DRIVERS_DISPLAY_MONITOR)
 static screen_dev_t *_screen_dev = NULL;
-
 static void _disp_map(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *color_p)
 {
     if (!_screen_dev->display) {
@@ -67,6 +74,7 @@ static void _disp_map(lv_disp_drv_t *drv, const lv_area_t *area, lv_color_t *col
 
     lv_disp_flush_ready(drv);
 }
+#endif
 
 #if IS_USED(MODULE_TOUCH_DEV)
 /* adapted from https://github.com/lvgl/lvgl/tree/v6.1.2#add-littlevgl-to-your-project */
@@ -101,21 +109,32 @@ static bool _touch_read(lv_indev_drv_t *indev_driver, lv_indev_data_t *data)
 void lvgl_init(screen_dev_t *screen_dev)
 {
     lv_init();
+#if !IS_USED(MODULE_LV_DRIVERS_DISPLAY_MONITOR)
     _screen_dev = screen_dev;
     assert(screen_dev->display);
+#else
+    (void)screen_dev;
+#endif
 
     lv_disp_drv_t disp_drv;
     lv_disp_drv_init(&disp_drv);
+
+#if IS_USED(MODULE_LV_DRIVERS_DISPLAY_MONITOR)
+    /* Add a display
+     * Use the 'monitor' driver which creates window on PC's monitor to simulate a display*/
+    monitor_init();
+    disp_drv.flush_cb = monitor_flush;      /*Used when `LV_VDB_SIZE != 0` in lv_conf.h (buffered drawing)*/
+#else
     /* Configure horizontal and vertical resolutions based on the
        underlying display device parameters */
     disp_drv.hor_res = disp_dev_width(screen_dev->display);
     disp_drv.ver_res = disp_dev_height(screen_dev->display);
-
     disp_drv.flush_cb = _disp_map;
+#endif
+
     disp_drv.buffer = &disp_buf;
     lv_disp_drv_register(&disp_drv);
     lv_disp_buf_init(&disp_buf, buf, NULL, LVGL_COLOR_BUF_SIZE);
-
 #if IS_USED(MODULE_TOUCH_DEV)
     if (screen_dev->touch) {
         lv_indev_drv_t indev_drv;
@@ -124,6 +143,16 @@ void lvgl_init(screen_dev_t *screen_dev)
         indev_drv.read_cb = _touch_read;
         lv_indev_drv_register(&indev_drv);
     }
+#endif
+#if IS_USED(MODULE_LV_DRIVERS_INDEV_MOUSE)
+    /* Add the mouse das input device
+     * Use the 'mouse' driver which reads the PC's mouse*/
+    mouse_init();
+    lv_indev_drv_t indev_drv;
+    lv_indev_drv_init(&indev_drv);          /*Basic initialization*/
+    indev_drv.type = LV_INDEV_TYPE_POINTER;
+    indev_drv.read_cb = mouse_read;         /*This function will be called periodically (by the library) to get the mouse position and state*/
+    lv_indev_drv_register(&indev_drv);
 #endif
 }
 
