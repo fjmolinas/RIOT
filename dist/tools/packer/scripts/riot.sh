@@ -3,7 +3,7 @@ apt-get install -y ccache clang cmake curl git build-essential vim python-setupt
     python-argparse python3-pip python-pip mosquitto-clients socat g++-multilib \
     net-tools pcregrep libpcre3 gcc-avr binutils-avr avr-libc \
     avrdude doxygen cppcheck valgrind coccinelle \
-    gcc-msp430 mspdebug unzip pkg-config jimsh libtool \
+    gcc-msp430 mspdebug unzip pkg-config jimsh libtool\
     #
 
 DEBIAN_FRONTEND=noninteractive DEBCONF_NONINTERACTIVE_SEEN=true apt-get install -y tshark
@@ -22,13 +22,14 @@ sudo -u /${SSH_USERNAME} pip3 install --user aiocoap pyocd paho-mqtt pyserial fl
             #
 
 # OpenOCD
+OPENOCD_VERSION="97db87c22eec204edfebd55973ee1211a1dba6d3"
 apt-get install -y build-essential libftdi-dev libhidapi-dev \
         libusb-1.0-0-dev libudev-dev autoconf libsqlite3-dev \
         libpopt-dev libxml2-dev ruby libtool pkg-config
 
 git clone https://github.com/ntfreak/openocd openocd && \
     cd openocd && \
-    git checkout 09ac9ab135ed35c846bcec4f7d468c3656852f26 && \
+    git checkout ${OPENOCD_VERSION} && \
     ./bootstrap && ./configure && \
     make && \
     make install && \

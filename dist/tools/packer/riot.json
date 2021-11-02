@@ -1,7 +1,6 @@
 {
   "builders": [
     {
-      "type": "virtualbox-iso",
       "boot_command": [
         "<esc><wait>",
         "<esc><wait>",
@@ -32,39 +31,264 @@
       "guest_additions_path": "VBoxGuestAdditions_{{.Version}}.iso",
       "guest_os_type": "{{ user `virtualbox_guest_os_type` }}",
       "headless": "{{ user `headless` }}",
-      "iso_checksum": "{{ user `iso_checksum` }}",
-      "iso_checksum_type": "{{ user `iso_checksum_type` }}",
-      "iso_urls": [ "{{ user `iso_path` }}/{{ user `iso_name` }}", "{{ user `iso_url` }}" ],
-      "output_directory": "output-{{ user `vm_name` }}-virtualbox-iso",
       "http_directory": "http",
+      "iso_checksum": "{{ user `iso_checksum_type` }}:{{ user `iso_checksum` }}",
+      "iso_urls": [
+        "{{ user `iso_path` }}/{{ user `iso_name` }}",
+        "{{ user `iso_url` }}"
+      ],
+      "output_directory": "output-{{ user `vm_name` }}-virtualbox-iso",
       "shutdown_command": "echo '{{ user `ssh_password` }}'|sudo -S shutdown -P now",
-      "ssh_username": "{{ user `ssh_username` }}",
       "ssh_password": "{{ user `ssh_password` }}",
       "ssh_port": 22,
-      "ssh_wait_timeout": "10000s",
+      "ssh_timeout": "15000s",
+      "ssh_username": "{{ user `ssh_username` }}",
+      "type": "virtualbox-iso",
       "vboxmanage": [
-        [ "modifyvm", "{{.Name}}", "--memory", "{{ user `memory` }}" ],
-        [ "modifyvm", "{{.Name}}", "--cpus", "{{ user `cpus` }}" ],
-        [ "modifyvm", "{{.Name}}", "--usb", "on" ],
-        [ "modifyvm", "{{.Name}}", "--audio", "none"],
-        [ "modifyvm", "{{.Name}}", "--ioapic", "on"],
-        [ "modifyvm", "{{.Name}}", "--rtcuseutc", "on"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "FTDI USB-TTL", "--vendorid", "0x0403", "--productid",  "0x6001"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "CP2102 USB to UART", "--vendorid", "0x10c4", "--productid",  "0xea60"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "STM32 STLink", "--vendorid", "0x0483", "--productid",  "0x3748"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "STM32 STLink", "--vendorid", "0x0483", "--productid", "0x374b"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "USBasp", "--vendorid", "0x16c0", "--productid",  "0x05dc"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "iotlab-m3", "--vendorid", "0x0403", "--productid",  "0x6010"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "iotlab-m3-cn", "--vendorid", "0x0403", "--productid", "0x6011"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "CMSIS-DAP", "--vendorid", "0x03eb", "--productid",  "0x2111"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "Arduino UNO", "--vendorid", "0x2341", "--productid",  "0x0042"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "Arduino Mega 2560", "--vendorid", "0x2a03", "--productid",  "0x0042"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "Phytec phyWAVE KW22", "--vendorid", "0x0d28", "--productid",  "0x0204"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "Bluepill", "--vendorid", "0x1d50", "--productid",  "0x6017"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "Bluepill", "--vendorid", "0x1d50", "--productid",  "0x6018"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "JLink", "--vendorid", "0x1366", "--productid", "0x1015"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "Arduino Zero", "--vendorid", "0x03eb", "--productid", "0x2157"],
-        ["usbfilter", "add", "0", "--target", "{{.Name}}", "--name", "DAPLink", "--vendorid", "0x0d28", "--productid", "0x0204"]
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--memory",
+          "{{ user `memory` }}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--cpus",
+          "{{ user `cpus` }}"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--usb",
+          "on"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--audio",
+          "none"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--ioapic",
+          "on"
+        ],
+        [
+          "modifyvm",
+          "{{.Name}}",
+          "--rtcuseutc",
+          "on"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "FTDI USB-TTL",
+          "--vendorid",
+          "0x0403",
+          "--productid",
+          "0x6001"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "CP2102 USB to UART",
+          "--vendorid",
+          "0x10c4",
+          "--productid",
+          "0xea60"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "STM32 STLink",
+          "--vendorid",
+          "0x0483",
+          "--productid",
+          "0x3748"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "STM32 STLink",
+          "--vendorid",
+          "0x0483",
+          "--productid",
+          "0x374b"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "USBasp",
+          "--vendorid",
+          "0x16c0",
+          "--productid",
+          "0x05dc"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "iotlab-m3",
+          "--vendorid",
+          "0x0403",
+          "--productid",
+          "0x6010"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "iotlab-m3-cn",
+          "--vendorid",
+          "0x0403",
+          "--productid",
+          "0x6011"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "CMSIS-DAP",
+          "--vendorid",
+          "0x03eb",
+          "--productid",
+          "0x2111"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "Arduino UNO",
+          "--vendorid",
+          "0x2341",
+          "--productid",
+          "0x0042"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "Arduino Mega 2560",
+          "--vendorid",
+          "0x2a03",
+          "--productid",
+          "0x0042"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "Phytec phyWAVE KW22",
+          "--vendorid",
+          "0x0d28",
+          "--productid",
+          "0x0204"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "Bluepill",
+          "--vendorid",
+          "0x1d50",
+          "--productid",
+          "0x6017"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "Bluepill",
+          "--vendorid",
+          "0x1d50",
+          "--productid",
+          "0x6018"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "JLink",
+          "--vendorid",
+          "0x1366",
+          "--productid",
+          "0x1015"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "Arduino Zero",
+          "--vendorid",
+          "0x03eb",
+          "--productid",
+          "0x2157"
+        ],
+        [
+          "usbfilter",
+          "add",
+          "0",
+          "--target",
+          "{{.Name}}",
+          "--name",
+          "DAPLink",
+          "--vendorid",
+          "0x0d28",
+          "--productid",
+          "0x0204"
+        ]
       ],
       "virtualbox_version_file": ".vbox_version",
       "vm_name": "{{user `vm_name`}}"
@@ -73,16 +297,15 @@
   "post-processors": [
     [
       {
-        "type": "vagrant",
         "keep_input_artifact": false,
         "output": "{{user `vm_name`}}_{{.Provider}}.box",
+        "type": "vagrant",
         "vagrantfile_template": "{{ user `vagrantfile_template` }}"
       }
     ]
   ],
   "provisioners": [
     {
-      "type": "shell",
       "environment_vars": [
         "SSH_USERNAME={{ user `ssh_username` }}"
       ],
@@ -99,24 +322,25 @@
             "scripts/cleanup.sh"
           ]
         }
-      }
+      },
+      "type": "shell"
     }
   ],
   "variables": {
     "cpus": "2",
     "disk_size": "10240",
     "headless": "true",
-    "iso_checksum": "e2ecdace33c939527cbc9e8d23576381c493b071107207d2040af72595f8990b",
-    "iso_checksum_type": "sha256",
-    "iso_name": "ubuntu-18.04.4-server-amd64.iso",
-    "iso_path": "iso",
-    "iso_url": "http://cdimage.ubuntu.com/ubuntu/releases/bionic/release/ubuntu-18.04.4-server-amd64.iso",
-    "memory": "1024",
     "hostname": "riot-vm",
-    "ssh_username": "user",
+    "iso_checksum": "f11bda2f2caed8f420802b59f382c25160b114ccc665dbac9c5046e7fceaced2",
+    "iso_checksum_type": "sha256",
+    "iso_url": "https://cdimage.ubuntu.com/ubuntu-legacy-server/releases/focal/release/ubuntu-20.04.1-legacy-server-amd64.iso",
+    "memory": "1024",
+    "name": "ubuntu-20.04.1-legacy-server-amd64.iso",
     "ssh_password": "user",
+    "ssh_username": "user",
     "vagrantfile_template": "vagrantfile.tpl",
     "virtualbox_guest_os_type": "Ubuntu_64",
     "vm_name": "RIOT-VM"
   }
 }
+

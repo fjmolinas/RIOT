@@ -9,7 +9,7 @@ cd /opt && wget -nv -O - "${ARM_GCC_ARCHIVE_URL}" | tar -jxf -
 echo "export PATH=/opt/gcc-arm-none-eabi-9-2019-q4-major/bin:\$PATH" >> /home/${SSH_USERNAME}/.bashrc
 
 # Install MIPS toolchain
-MIPS_VERSION=2018.09-03
+MIPS_VERSION=2020.06-01
 curl -L "https://codescape.mips.com/components/toolchain/${MIPS_VERSION}/Codescape.GNU.Tools.Package.${MIPS_VERSION}.for.MIPS.MTI.Bare.Metal.CentOS-6.x86_64.tar.gz" -o - \
     | tar -C /opt -zx
 rm -rf /opt/mips-mti-elf/*/share/{doc,info,man,locale}
@@ -21,24 +21,27 @@ echo "export MIPS_ELF_ROOT=/opt/mips-mti-elf/${MIPS_VERSION}" >> /home/${SSH_USE
 echo "export PATH=\$MIPS_ELF_ROOT/bin:\$PATH" >> /home/${SSH_USERNAME}/.bashrc
 
 # Install MSP430 toolchain
-MSP430_URL=https://software-dl.ti.com/msp430/msp430_public_sw/mcu/msp430/MSPGCC/latest/exports
-MSP430_VERSION=8.3.0.16_linux64
-wget -q ${MSP430_URL}/msp430-gcc-${MSP430_VERSION}.tar.bz2 -O- | tar -C /opt -xj
-echo "export PATH=\$PATH:/opt/msp430-gcc-${MSP430_VERSION}/bin" >> /home/${SSH_USERNAME}/.bashrc
+RIOT_TOOLCHAIN_GCC_VERSION=10.1.0
+RIOT_TOOLCHAIN_PACKAGE_VERSION=18
+RIOT_TOOLCHAIN_TAG=20200722112854-64162e7
+RIOT_TOOLCHAIN_GCCPKGVER=${RIOT_TOOLCHAIN_GCC_VERSION}-${RIOT_TOOLCHAIN_PACKAGE_VERSION}
+RIOT_TOOLCHAIN_SUBDIR=${RIOT_TOOLCHAIN_GCCPKGVER}-${RIOT_TOOLCHAIN_TAG}
+MSP430_URL=https://github.com/RIOT-OS/toolchains/releases/download/${RIOT_TOOLCHAIN_SUBDIR}/riot-msp430-elf-${RIOT_TOOLCHAIN_GCCPKGVER}.tgz
+get -q ${MSP430_URL} -O- | tar -C /opt -xz
+echo "export PATH=\$PATH:/opt/riot-toolchain/msp430-elf/${RIOT_TOOLCHAIN_GCCPKGVER}/bin" >> /home/${SSH_USERNAME}/.bashrc
 
 # Install RISC-V
-RISCV_VERSION=8.2.0-2.2-20190521
-RISCV_BUILD=0004
-wget -q https://github.com/gnu-mcu-eclipse/riscv-none-gcc/releases/download/v${RISCV_VERSION}/gnu-mcu-eclipse-riscv-none-gcc-${RISCV_VERSION}-${RISCV_BUILD}-centos64.tgz -O- \
+RISCV_VERSION=10.1.0-1.1
+wget -q https://github.com/xpack-dev-tools/riscv-none-embed-gcc-xpack/releases/download/v${RISCV_VERSION}/xpack-riscv-none-embed-gcc-${RISCV_VERSION}-linux-x64.tar.gz -O- \
         | tar -C /opt -xz
-rm -rf /opt/gnu-mcu-eclipse/riscv-none-gcc/*/share/doc
+m -rf /opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/share/doc
 cd /opt/gnu-mcu-eclipse/riscv-none-gcc/*/riscv-none-embed/bin
 for f in *; do test -f "../../bin/riscv-none-embed-$f" && \
     ln -f "../../bin/riscv-none-embed-$f" "$f"; \
 done
 cd -
 
-echo "export PATH=/opt/gnu-mcu-eclipse/riscv-none-gcc/${RISCV_VERSION}-${RISCV_BUILD}/bin:\$PATH" >> /home/${SSH_USERNAME}/.bashrc
+echo "export PATH=/opt/xpack-riscv-none-embed-gcc-${RISCV_VERSION}/bin:\$PATH" >> /home/${SSH_USERNAME}/.bashrc
 
 # Install ESP32 toolchain
 echo 'Installing ESP32 toolchain'
@@ -59,8 +62,8 @@ rm -rf app_trace app_update aws_iot bootloader bt coap console cxx \
 find . -name '*.[csS]' -exec rm {} \;
 cd /opt/esp
 git clone https://github.com/gschorcht/xtensa-esp32-elf.git && \
-cd xtensa-esp32-elf
-git checkout -q ca40fb4c219accf8e7c8eab68f58a7fc14cadbab
+cd xtensa-esp32-elf && \
+git checkout -q 414d1f3a577702e927973bd906357ee00d7a6c6c
 
 echo "export PATH=/opt/esp/xtensa-esp32-elf/bin:\$PATH" >> /home/${SSH_USERNAME}/.bashrc
 
@@ -91,3 +94,5 @@ echo 'Installing ESP8266 toolchain' >&2 && \
     rm -rf .git
 
 echo "export PATH=\$PATH:/opt/esp/xtensa-esp8266-elf/bin" >> /home/${SSH_USERNAME}/.bashrc
+
+#

@@ -3,7 +3,7 @@
 
 Vagrant.configure("2") do |config|
     config.vm.define "RIOT-VM"
-    config.vm.box = "RIOT/ubuntu1804"
+    config.vm.box = "RIOT/ubuntu2004"
     config.ssh.username = "user"
     config.vm.synced_folder ".", "/vagrant", disabled: true
 
