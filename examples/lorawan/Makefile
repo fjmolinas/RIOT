@@ -1,8 +1,8 @@
 # name of your application
 APPLICATION = lorawan
 
-# Use the ST B-L072Z-LRWAN1 board by default:
-BOARD ?= b-l072z-lrwan1
+# Use the ST LoRa-E5-DEV board by default:
+BOARD ?= lora-e5-dev
 
 # This has to be the absolute path to the RIOT base directory:
 RIOTBASE ?= $(CURDIR)/../..
@@ -16,8 +16,8 @@ DOCKER_ENV_VARS += DEVEUI
 DOCKER_ENV_VARS += APPEUI
 DOCKER_ENV_VARS += APPKEY
 
-# Default radio driver is Semtech SX1276 (used by the B-L072Z-LRWAN1 board)
-DRIVER ?= sx1276
+# Default radio driver is Semtech SX127X (used by the LoRa-E5-DEV board)
+DRIVER ?= sx126x_stm32wl
 
 # Default region is Europe and default band is 868MHz
 LORA_REGION ?= EU868
