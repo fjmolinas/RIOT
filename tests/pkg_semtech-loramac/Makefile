@@ -1,4 +1,4 @@
-BOARD ?= b-l072z-lrwan1
+BOARD ?= lora-e5-dev
 
 include ../Makefile.tests_common
 
@@ -8,7 +8,7 @@ BOARD_WITHOUT_LORAMAC_RX := \
     stm32f0discovery \
     waspmote-pro \
 
-LORA_DRIVER ?= sx1276
+LORA_DRIVER ?= sx126x_stm32wl
 LORA_REGION ?= EU868
 
 USEPKG += semtech-loramac
