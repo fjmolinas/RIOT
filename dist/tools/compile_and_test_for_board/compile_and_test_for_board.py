@@ -301,7 +301,7 @@ class RIOTApplication:
         cmd = ["info-debug-variable-BOARD_INSUFFICIENT_MEMORY"]
         boards = self.make(cmd, log_error=True).strip().split()
 
-        has_enough_memory = self.board not in boards
+        has_enough_memory = True
         self.logger.info("Board has enough memory: %s", has_enough_memory)
         return has_enough_memory
 
