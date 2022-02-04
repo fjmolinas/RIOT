@@ -25,6 +25,6 @@ NIMBLE_MAX_CONN = 3
 
 DEVELHELP = 0
 
-TEST_ON_CI_WHITELIST += nrf52dk nrf52840dk
+BOARD_WHITELIST += nrf52dk nrf52840dk
 
 include $(RIOTBASE)/Makefile.include

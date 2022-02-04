@@ -19,6 +19,6 @@ USEMODULE += nimble_autoconn_ext
 FEATURES_OPTIONAL += ble_phy_2mbit
 FEATURES_OPTIONAL += ble_phy_coded
 
-TEST_ON_CI_WHITELIST += nrf52dk nrf52840dk
+BOARD_WHITELIST += nrf52dk nrf52840dk
 
 include $(RIOTBASE)/Makefile.include
