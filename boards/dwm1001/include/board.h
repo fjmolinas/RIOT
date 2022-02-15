@@ -82,6 +82,18 @@ extern "C" {
 #define DW1000_PARAM_INT_PIN        GPIO_PIN(0, 19)
 /** @} */
 
+/**
+ * @name    SD Card device configuration
+ * @{
+ */
+#define SDCARD_SPI_PARAM_SPI         SPI_DEV(0)
+#define SDCARD_SPI_PARAM_CD          (GPIO_PIN(0, 26))
+#define SDCARD_SPI_PARAM_CS          (GPIO_PIN(0, 3))
+#define SDCARD_SPI_PARAM_CLK         (GPIO_PIN(0, 4))
+#define SDCARD_SPI_PARAM_MOSI        (GPIO_PIN(0, 6))
+#define SDCARD_SPI_PARAM_MISO        (GPIO_PIN(0, 7))
+/** @} */
+
 #ifdef __cplusplus
 }
 #endif

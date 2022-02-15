@@ -31,8 +31,9 @@
 #include <string.h>
 #include <inttypes.h>
 
-static inline void _select_card_spi(sdcard_spi_t *card, spi_clk_t clk, bool spi);
-static inline void _unselect_card_spi(sdcard_spi_t *card, bool spi);
+/* number of used sd cards */
+#define SDCARD_SPI_NUM ARRAY_SIZE(sdcard_spi_params)
+
 static inline uint8_t _wait_for_r1(sdcard_spi_t *card, uint32_t retry_us);
 static inline void _send_dummy_byte(sdcard_spi_t *card);
 static inline bool _wait_for_not_busy(sdcard_spi_t *card, uint32_t retry_us);
@@ -45,28 +46,19 @@ static sd_rw_response_t _read_data_packet(sdcard_spi_t *card, uint8_t token, uin
 static sd_rw_response_t _write_data_packet(sdcard_spi_t *card, uint8_t token, const uint8_t *data,
                                            int size);
 
-/* number of used sd cards */
-#define SDCARD_SPI_NUM ARRAY_SIZE(sdcard_spi_params)
-
 /* Allocate memory for the device descriptors */
 sdcard_spi_t sdcard_spi_devs[SDCARD_SPI_NUM];
 
 /* CRC-7 (polynomial: x^7 + x^3 + 1) LSB of CRC-7 in a 8-bit variable is always 1*/
 static uint8_t _crc_7(const uint8_t *data, int n);
 
-/* use this transfer method instead of _transfer_bytes to force the use of 0xFF as dummy bytes */
-static inline int _transfer_bytes(sdcard_spi_t *card, const uint8_t *out, uint8_t *in,
-                                  unsigned int length);
-
-/* uses bitbanging for spi communication which allows to enable pull-up on the miso pin for
-   greater card compatibility on platforms that don't have a hw pull up installed */
-static inline void _sw_spi_rxtx_byte(sdcard_spi_t *card, uint8_t out, uint8_t *in);
-
-/* wrapper for default spi_transfer_byte function */
-static inline void _hw_spi_rxtx_byte(sdcard_spi_t *card, uint8_t out, uint8_t *in);
-
+// #if IS_USED(MODULE_PERIPH_SPI_GPIO_MODE)
 /* function pointer to switch to hw spi mode after init sequence */
 static void (*_dyn_spi_rxtx_byte)(sdcard_spi_t *card, uint8_t out, uint8_t *in);
+// #else
+static inline void _hw_spi_rxtx_byte(sdcard_spi_t *card, uint8_t out, uint8_t *in);
+// #define _dyn_spi_rxtx_byte _hw_spi_rxtx_byte
+// #endif
 
 static inline uint32_t _deadline_from_interval(uint32_t interval)
 {
@@ -81,6 +73,75 @@ static inline uint32_t _deadline_left(uint32_t deadline)
         left = 0;
     }
     return left;
+}
+
+#if !IS_USED(MODULE_PERIPH_SPI_GPIO_MODE)
+/* uses bitbanging for spi communication which allows to enable pull-up on the miso pin for
+   greater card compatibility on platforms that don't have a hw pull up installed */
+static inline void _sw_spi_rxtx_byte(sdcard_spi_t *card, uint8_t out, uint8_t *in)
+{
+    uint8_t rx = 0;
+    int i = 7;
+
+    for (; i >= 0; i--) {
+        if (((out >> (i)) & 0x01) == 1) {
+            gpio_set(card->params.mosi);
+        }
+        else {
+            gpio_clear(card->params.mosi);
+        }
+        ztimer_sleep(ZTIMER_USEC, SD_CARD_PREINIT_CLOCK_PERIOD_US / 2);
+        gpio_set(card->params.clk);
+        rx = (rx | ((gpio_read(card->params.miso) > 0) << i));
+        ztimer_sleep(ZTIMER_USEC, SD_CARD_PREINIT_CLOCK_PERIOD_US / 2);
+        gpio_clear(card->params.clk);
+    }
+    *in = rx;
+}
+#endif
+
+/* wrapper for default spi_transfer_byte function */
+static inline void _hw_spi_rxtx_byte(sdcard_spi_t *card, uint8_t out, uint8_t *in)
+{
+    *in = spi_transfer_byte(card->params.spi_dev, GPIO_UNDEF, true, out);
+}
+
+/* use this transfer method instead of _transfer_bytes to force the use of 0xFF as dummy bytes */
+static inline int _transfer_bytes(sdcard_spi_t *card, const uint8_t *out, uint8_t *in,
+                                  unsigned int length)
+{
+    unsigned trans_bytes = 0;
+    uint8_t in_temp;
+
+    for (trans_bytes = 0; trans_bytes < length; trans_bytes++) {
+        if (out != NULL) {
+            _dyn_spi_rxtx_byte(card, out[trans_bytes], &in_temp);
+        }
+        else {
+            _dyn_spi_rxtx_byte(card, SD_CARD_DUMMY_BYTE, &in_temp);
+        }
+        if (in != NULL) {
+            in[trans_bytes] = in_temp;
+        }
+    }
+
+    return trans_bytes;
+}
+
+static void _select_card_spi(sdcard_spi_t *card, spi_clk_t clk, bool spi)
+{
+    if (spi) {
+        spi_acquire(card->params.spi_dev, GPIO_UNDEF, SD_CARD_SPI_MODE, clk);
+    }
+    gpio_clear(card->params.cs);
+}
+
+static void _unselect_card_spi(sdcard_spi_t *card, bool spi)
+{
+    gpio_set(card->params.cs);
+    if (spi) {
+        spi_release(card->params.spi_dev);
+    }
 }
 
 int sdcard_spi_init(sdcard_spi_t *card, const sdcard_spi_params_t *params)
@@ -112,16 +173,39 @@ static sd_init_fsm_state_t _init_sd_fsm_step(sdcard_spi_t *card, sd_init_fsm_sta
 #ifdef MODULE_PERIPH_SPI_RECONFIGURE
         spi_deinit_pins(card->params.spi_dev);
 #endif
+#if IS_USED(MODULE_PERIPH_SPI_GPIO_MODE)
+        spi_init_pins(card->params.spi_dev);
+
+        const spi_gpio_mode_t gpio_modes = {
+            .mosi = GPIO_OUT,
+            .miso = GPIO_IN_PU,
+            .sclk = GPIO_OUT,
+        };
+
+        if ((spi_init_with_gpio_mode(card->params.spi_dev, &gpio_modes) == 0) &&
+            (gpio_init(card->params.cs, GPIO_OUT) == 0) &&
+            ((!gpio_is_valid(card->params.power)) ||
+             (gpio_init(card->params.power, GPIO_OUT) == 0))) {
+            DEBUG("gpio_init(): [OK]\n");
+            /* always use hw-spi */
+            _dyn_spi_rxtx_byte = &_hw_spi_rxtx_byte;
+            return SD_INIT_SPI_POWER_SEQ;
+        }
+#else
         if ((gpio_init(card->params.mosi, GPIO_OUT) == 0) &&
-            (gpio_init(card->params.clk,  GPIO_OUT) == 0) &&
-            (gpio_init(card->params.cs,   GPIO_OUT) == 0) &&
+            (gpio_init(card->params.clk, GPIO_OUT) == 0) &&
+            (gpio_init(card->params.cs, GPIO_OUT) == 0) &&
             (gpio_init(card->params.miso, GPIO_IN_PU) == 0) &&
             ((!gpio_is_valid(card->params.power)) ||
              (gpio_init(card->params.power, GPIO_OUT) == 0))) {
 
             DEBUG("gpio_init(): [OK]\n");
+           /* use soft-spi to perform init command to allow use of internal pull-ups on miso */
+            _dyn_spi_rxtx_byte = &_sw_spi_rxtx_byte;
+
             return SD_INIT_SPI_POWER_SEQ;
         }
+#endif
 
         DEBUG("gpio_init(): [ERROR]\n");
         return SD_INIT_CARD_UNKNOWN;
@@ -135,16 +219,22 @@ static sd_init_fsm_state_t _init_sd_fsm_step(sdcard_spi_t *card, sd_init_fsm_sta
         }
 
         gpio_set(card->params.mosi);
+        _select_card_spi(card, SPI_CLK_100KHZ, IS_USED(MODULE_PERIPH_SPI_GPIO_MODE));
         _unselect_card_spi(card, false);       /* unselect sdcard for power up sequence */
 
+        uint8_t dummy;
+        for (int i = 0; i < SD_POWERSEQUENCE_CLOCK_COUNT; i += 1) {
+            _dyn_spi_rxtx_byte(card, SD_CARD_DUMMY_BYTE, &dummy);
+        }
         /* powersequence: perform at least 74 clockcycles with mosi_pin being high
          * (same as sending dummy bytes with 0xFF) */
-        for (int i = 0; i < SD_POWERSEQUENCE_CLOCK_COUNT; i += 1) {
-            gpio_set(card->params.clk);
-            ztimer_sleep(ZTIMER_USEC, SD_CARD_PREINIT_CLOCK_PERIOD_US / 2);
-            gpio_clear(card->params.clk);
-            ztimer_sleep(ZTIMER_USEC, SD_CARD_PREINIT_CLOCK_PERIOD_US / 2);
-        }
+        // for (int i = 0; i < SD_POWERSEQUENCE_CLOCK_COUNT; i += 1) {
+        //     gpio_set(card->params.clk);
+        //     ztimer_sleep(ZTIMER_USEC, SD_CARD_PREINIT_CLOCK_PERIOD_US / 2);
+        //     gpio_clear(card->params.clk);
+        //     ztimer_sleep(ZTIMER_USEC, SD_CARD_PREINIT_CLOCK_PERIOD_US / 2);
+        // }
+        _unselect_card_spi(card, IS_USED(MODULE_PERIPH_SPI_GPIO_MODE));
         return SD_INIT_SEND_CMD0;
 
     case SD_INIT_SEND_CMD0:
@@ -152,21 +242,19 @@ static sd_init_fsm_state_t _init_sd_fsm_step(sdcard_spi_t *card, sd_init_fsm_sta
 
         gpio_clear(card->params.mosi);
 
-        /* use soft-spi to perform init command to allow use of internal pull-ups on miso */
-        _dyn_spi_rxtx_byte = &_sw_spi_rxtx_byte;
-
         /* select sdcard for cmd0 */
-        _select_card_spi(card, SPI_CLK_100KHZ, false);
+        _select_card_spi(card, SPI_CLK_100KHZ, IS_USED(MODULE_PERIPH_SPI_GPIO_MODE));
         uint8_t cmd0_r1 = sdcard_spi_send_cmd(card, SD_CMD_0, SD_CMD_NO_ARG, INIT_CMD0_RETRY_US);
-        _unselect_card_spi(card, false);
+        _unselect_card_spi(card, IS_USED(MODULE_PERIPH_SPI_GPIO_MODE));
 
         if (R1_VALID(cmd0_r1) && !R1_ERROR(cmd0_r1) && R1_IDLE_BIT_SET(cmd0_r1)) {
             DEBUG("CMD0: [OK]\n");
-
+#if !IS_USED(MODULE_PERIPH_SPI_GPIO_MODE)
             /* give control over SPI pins back to HW SPI device */
             spi_init_pins(card->params.spi_dev);
             /* switch to HW SPI since SD card is now in real SPI mode */
             _dyn_spi_rxtx_byte = &_hw_spi_rxtx_byte;
+#endif
             return SD_INIT_ENABLE_CRC;
         }
 
@@ -534,69 +622,6 @@ static inline uint8_t _wait_for_r1(sdcard_spi_t *card, uint32_t retry_us)
 
     DEBUG("_wait_for_r1: [TIMEOUT]\n");
     return r1;
-}
-
-static void _select_card_spi(sdcard_spi_t *card, spi_clk_t clk, bool spi)
-{
-    if (spi) {
-        spi_acquire(card->params.spi_dev, GPIO_UNDEF, SD_CARD_SPI_MODE, clk);
-    }
-    gpio_clear(card->params.cs);
-}
-
-static void _unselect_card_spi(sdcard_spi_t *card, bool spi)
-{
-    gpio_set(card->params.cs);
-    if (spi) {
-        spi_release(card->params.spi_dev);
-    }
-}
-
-static inline void _sw_spi_rxtx_byte(sdcard_spi_t *card, uint8_t out, uint8_t *in)
-{
-    uint8_t rx = 0;
-    int i = 7;
-
-    for (; i >= 0; i--) {
-        if (((out >> (i)) & 0x01) == 1) {
-            gpio_set(card->params.mosi);
-        }
-        else {
-            gpio_clear(card->params.mosi);
-        }
-        ztimer_sleep(ZTIMER_USEC, SD_CARD_PREINIT_CLOCK_PERIOD_US / 2);
-        gpio_set(card->params.clk);
-        rx = (rx | ((gpio_read(card->params.miso) > 0) << i));
-        ztimer_sleep(ZTIMER_USEC, SD_CARD_PREINIT_CLOCK_PERIOD_US / 2);
-        gpio_clear(card->params.clk);
-    }
-    *in = rx;
-}
-
-static inline void _hw_spi_rxtx_byte(sdcard_spi_t *card, uint8_t out, uint8_t *in)
-{
-    *in = spi_transfer_byte(card->params.spi_dev, SPI_CS_UNDEF, true, out);
-}
-
-static inline int _transfer_bytes(sdcard_spi_t *card, const uint8_t *out, uint8_t *in,
-                                  unsigned int length)
-{
-    unsigned trans_bytes = 0;
-    uint8_t in_temp;
-
-    for (trans_bytes = 0; trans_bytes < length; trans_bytes++) {
-        if (out != NULL) {
-            _dyn_spi_rxtx_byte(card, out[trans_bytes], &in_temp);
-        }
-        else {
-            _dyn_spi_rxtx_byte(card, SD_CARD_DUMMY_BYTE, &in_temp);
-        }
-        if (in != NULL) {
-            in[trans_bytes] = in_temp;
-        }
-    }
-
-    return trans_bytes;
 }
 
 static sd_rw_response_t _read_data_packet(sdcard_spi_t *card, uint8_t token, uint8_t *data,

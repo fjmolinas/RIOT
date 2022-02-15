@@ -33,7 +33,7 @@ ifneq (,$(filter saul_nrf_vddh,$(USEMODULE)))
 endif
 
 ifneq (,$(filter periph_spi,$(USEMODULE)))
-  USEMODULE += periph_spi_gpio_mode
+  FEATURES_REQUIRED += periph_spi_gpio_mode
 endif
 
 include $(RIOTCPU)/nrf5x_common/Makefile.dep
