@@ -58,7 +58,7 @@ typedef struct uwb_core_rng_data_t {
     float fppl;             /**< range request first path phase loss */
 #endif
     uint32_t time;          /**< range request timestamp ms */
-    int32_t d_cm;           /**< range request range estimation (cm) */
+    float d_m;           /**< range request range estimation (cm) */
     uint16_t src;           /**< source short address */
     uint16_t dest;          /**< destination short address */
 #if IS_USED(MODULE_UWB_CORE_RNG_TRX_INFO)

@@ -94,7 +94,7 @@ Iface  3        HWaddr: C8:0C  NID: DE:CA
 Both nodes should show the ranging result:
 
 ```shell
-> {"t": 55158, "src": "02:A1", "dst": "C8:0C", "d_cm": 39}
+> {"t": 55158, "src": "02:A1", "dst": "C8:0C", "d_m": 39}
 ```
 
 By default `twr-ss` (Single-Sided Two-Way-Ranging) is used, try using different
@@ -117,19 +117,19 @@ Usage:
 ```shell
 > twr req C8:0C -c 5 -i 10
 [twr]: start ranging
-{"t": 251588, "src": "02:A1", "dst": "C8:0C", "d_cm": 38}
-{"t": 251600, "src": "02:A1", "dst": "C8:0C", "d_cm": 37}
-{"t": 251610, "src": "02:A1", "dst": "C8:0C", "d_cm": 38}
-{"t": 251620, "src": "02:A1", "dst": "C8:0C", "d_cm": 37}
+{"t": 251588, "src": "02:A1", "dst": "C8:0C", "d_m": 38}
+{"t": 251600, "src": "02:A1", "dst": "C8:0C", "d_m": 37}
+{"t": 251610, "src": "02:A1", "dst": "C8:0C", "d_m": 38}
+{"t": 251620, "src": "02:A1", "dst": "C8:0C", "d_m": 37}
 ```
 
 ```shell
 > twr req C8:0C -c 5 -i 10 -p ds
 [twr]: start ranging
-{"t": 312513, "src": "C8:0C", "dst": "02:A1", "d_cm": 36}
-{"t": 312525, "src": "C8:0C", "dst": "02:A1", "d_cm": 37}
-{"t": 312535, "src": "C8:0C", "dst": "02:A1", "d_cm": 35}
-{"t": 312545, "src": "C8:0C", "dst": "02:A1", "d_cm": 35}
+{"t": 312513, "src": "C8:0C", "dst": "02:A1", "d_m": 36}
+{"t": 312525, "src": "C8:0C", "dst": "02:A1", "d_m": 37}
+{"t": 312535, "src": "C8:0C", "dst": "02:A1", "d_m": 35}
+{"t": 312545, "src": "C8:0C", "dst": "02:A1", "d_m": 35}
 ```
 
 ### Automatic Test

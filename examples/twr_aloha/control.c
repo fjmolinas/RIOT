@@ -100,8 +100,8 @@ static void _print_rng_data_cb(void *arg)
     byteorder_htobebufs(buffer, rng_data->dest);
     l2util_addr_to_str(buffer, IEEE802154_SHORT_ADDRESS_LEN, addr_str);
     turo_string(&ctx, addr_str);
-    turo_dict_key(&ctx, "d_cm");
-    turo_s32(&ctx, rng_data->d_cm);
+    turo_dict_key(&ctx, "d_m");
+    turo_float(&ctx, rng_data->d_m);
 #if IS_USED(MODULE_UWB_CORE_RNG_TRX_INFO)
     turo_dict_key(&ctx, "tof");
     turo_float(&ctx, rng_data->tof);
@@ -170,11 +170,11 @@ static bool _complete_cb(struct uwb_dev *inst, struct uwb_mac_interface *cbs)
     data.src = frame->src_address;
     data.dest = frame->dst_address;
     data.time = ztimer_now(ZTIMER_MSEC);
-    float range_f =
-        uwb_rng_tof_to_meters(uwb_rng_twr_to_tof(rng, rng->idx_current));
+    float range_f = uwb_rng_tof_to_meters(uwb_rng_twr_to_tof(rng, rng->idx_current));
+    data.d_m = range_f;
 
     /* convert from float meters to cm */
-    data.d_cm = ((int32_t)(range_f * 100));
+    data.d_cm = range_f;
 #if IS_USED(MODULE_UWB_CORE_RNG_TRX_INFO)
     data.rssi = (int16_t)uwb_calc_rssi(inst, inst->rxdiag);
     data.fppl = uwb_calc_fppl(inst, inst->rxdiag);
