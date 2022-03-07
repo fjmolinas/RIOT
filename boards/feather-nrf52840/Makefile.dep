@@ -2,6 +2,14 @@ ifneq (,$(filter saul_default,$(USEMODULE)))
   USEMODULE += saul_gpio
 endif
 
+ifneq (,$(filter disp_dev,$(USEMODULE)))
+  USEMODULE += ili9341
+endif
+
+ifneq (,$(filter touch_dev,$(USEMODULE)))
+  USEMODULE += stmpe811_spi
+endif
+
 # include common nrf52 dependencies
 include $(RIOTBOARD)/common/nrf52/bootloader_nrfutil.dep.mk
 include $(RIOTBOARD)/common/nrf52/Makefile.dep
