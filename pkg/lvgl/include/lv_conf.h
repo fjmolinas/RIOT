@@ -309,7 +309,7 @@ e.g. "stm32f769xx.h" or "stm32f429xx.h"*/
 #define LV_FONT_MONTSERRAT_26    0  /**< Montserrat font size 26 */
 #define LV_FONT_MONTSERRAT_28    0  /**< Montserrat font size 28 */
 #define LV_FONT_MONTSERRAT_30    0  /**< Montserrat font size 30 */
-#define LV_FONT_MONTSERRAT_32    0  /**< Montserrat font size 32 */
+#define LV_FONT_MONTSERRAT_32    1  /**< Montserrat font size 32 */
 #define LV_FONT_MONTSERRAT_34    0  /**< Montserrat font size 34 */
 #define LV_FONT_MONTSERRAT_36    0  /**< Montserrat font size 36 */
 #define LV_FONT_MONTSERRAT_38    0  /**< Montserrat font size 38 */
