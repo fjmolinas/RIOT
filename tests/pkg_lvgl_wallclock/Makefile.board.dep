@@ -1,0 +1,6 @@
+ifeq (feather-nrf52840,$(BOARD))
+  USEMODULE += ds3231
+else
+  USEMODULE += ztimer_sec
+  USEMODULE += rtc_utils
+endif
