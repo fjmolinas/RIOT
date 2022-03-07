@@ -181,7 +181,9 @@ void lvgl_run(void)
         }
         else {
             /* Block after LVGL_ACTIVITY_PERIOD msec inactivity */
+            disp_dev_backlight_off();
             thread_flags_wait_one(LVGL_THREAD_FLAG);
+            disp_dev_backlight_on();
             /* trigger an activity so the task handler is called on the next loop */
             lv_disp_trig_activity(NULL);
         }
