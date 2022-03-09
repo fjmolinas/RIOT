@@ -18,7 +18,7 @@ USEMODULE += lvgl_extra_layout_flex
 USEMODULE += lvgl_extra_theme_default
 USEMODULE += lvgl_extra_theme_default_dark
 
-USEMODULE += event_timeout
+USEMODULE += event_timeout_ztimer
 USEMODULE += event_thread
 CFLAGS += -DEVENT_THREAD_MEDIUM_STACKSIZE=THREAD_STACKSIZE_LARGE
 
@@ -30,3 +30,4 @@ endif
 CFLAGS += -DLV_MEM_SIZE=32*1024
 
 include $(RIOTBASE)/Makefile.include
+

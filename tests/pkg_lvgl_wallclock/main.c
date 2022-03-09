@@ -39,6 +39,35 @@
 #define LVGL_STACKSIZE      THREAD_STACKSIZE_LARGE
 #endif
 
+#include "slotted_adv.h"
+#include "timex.h"
+
+/* Advertising Event Thread spec */
+#ifndef DEFAULT_ADV_ITVL_MS
+#define DEFAULT_ADV_ITVL_MS     (10 * MS_PER_SEC)
+#endif
+
+#define CURRENT_TIME_SERVICE_UUID16         0x3333
+
+#ifndef CONFIG_TIME_SERVER_ADV_INST
+#define CONFIG_TIME_SERVER_ADV_INST         0
+#endif
+#define CONFIG_BLE_ADV_TX_POWER         127
+
+typedef union __attribute__((packed)) current_time {
+    uint32_t epoch;
+    uint8_t bytes[4];
+} current_time_t;
+
+/* buffer for ad */
+static uint8_t buf[BLE_HS_ADV_MAX_SZ];
+/* advertising data struct */
+static bluetil_ad_t ad;
+/* the advertisement event */
+static adv_event_t adv_event;
+/* the extended adv parameters */
+static struct ble_gap_ext_adv_params params;
+
 extern void *lvgl_thread(void *arg);
 static char _lvgl_stack[LVGL_STACKSIZE];
 
@@ -53,6 +82,69 @@ void get_time(struct tm *time)
 #else
     rtc_localtime(ztimer_now(ZTIMER_SEC), time);
 #endif
+}
+
+uint32_t get_epoch(void)
+{
+#if IS_USED(MODULE_DS3231)
+    struct tm time;
+    ds3231_get_time(&_dev, &time);
+    return rtc_mktime(&time);
+#else
+    return ztimer_now(ZTIMER_SEC);
+#endif
+}
+
+void set_epoch_adv_data(bluetil_ad_t *ad, void *arg)
+{
+    (void)arg;
+
+    /* reset buffer */
+    memset(ad->buf, 0, ad->size);
+    ad->pos = 0;
+    /* Tx power field added by the driver */
+    int8_t phy_txpwr_dbm = ble_phy_txpwr_get();
+    int rc = bluetil_ad_add(ad, BLE_GAP_AD_TX_POWER_LEVEL, &phy_txpwr_dbm,
+                            sizeof(phy_txpwr_dbm));
+
+    assert(rc == BLUETIL_AD_OK);
+    /* Add service data uuid */
+    uint16_t svc_uid = CURRENT_TIME_SERVICE_UUID16;
+
+    rc = bluetil_ad_add(ad, BLE_GAP_AD_UUID16_COMP, &svc_uid, sizeof(svc_uid));
+    assert(rc == BLUETIL_AD_OK);
+    /* Add service data field */
+    current_time_t current_time = { .epoch = get_epoch()};
+    rc = bluetil_ad_add(ad, BLE_GAP_AD_SERVICE_DATA, &current_time.bytes, sizeof(current_time));
+    assert(rc == BLUETIL_AD_OK);
+    (void)rc;
+}
+
+int _cmd_adv_start(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
+
+    uint32_t itvl_ms = DEFAULT_ADV_ITVL_MS;
+
+    if (argc == 2) {
+        if (!strcmp(argv[1], "help")) {
+            printf("usage: %s <advertisement period in seconds>\n", argv[0]);
+            return 0;
+        }
+        itvl_ms = (uint32_t)atoi(argv[1]) * MS_PER_SEC;
+    }
+    slotted_adv_start(&adv_event, itvl_ms, UINT32_MAX, &ad, set_epoch_adv_data, NULL);
+    return 0;
+}
+
+int _cmd_adv_stop(int argc, char **argv)
+{
+    (void)argc;
+    (void)argv;
+    printf("Stopped ongoing advertisements (if any)\n");
+    slotted_adv_stop(&adv_event);
+    return 0;
 }
 
 #if IS_USED(MODULE_DS3231)
@@ -101,6 +193,8 @@ static const shell_command_t _commands[] = {
 #if IS_USED(MODULE_DS3231)
     { "time", "set/get time", _cmd_time },
 #endif
+    { "start", "Starts Current Time advertisements", _cmd_adv_start },
+    { "stop", "Stops Current Time advertisement", _cmd_adv_stop },
     { NULL, NULL, NULL }
 };
 
@@ -118,6 +212,12 @@ int main(void)
         return 1;
     }
 #endif
+
+    memset(&params, 0, sizeof(params));
+    bluetil_ad_init(&ad, buf, 0, sizeof(buf));
+    set_epoch_adv_data(&ad, NULL);
+    slotted_adv_init(&adv_event, CONFIG_TIME_SERVER_ADV_INST, EVENT_PRIO_HIGHEST,
+                     &params);
 
     /* start lvgl server thread */
     thread_create(_lvgl_stack, sizeof(_lvgl_stack),

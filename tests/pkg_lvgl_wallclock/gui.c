@@ -182,8 +182,8 @@ static void create_settings(lv_obj_t *parent)
 
     lv_menu_set_mode_root_back_btn(menu, LV_MENU_ROOT_BACK_BTN_ENABLED);
     /* TODO: parametrize this */
-    lv_obj_set_size(menu, lv_disp_get_hor_res(NULL), lv_disp_get_ver_res(NULL) - 10);
-    lv_obj_align(menu, LV_ALIGN_CENTER, 0, 10);
+    lv_obj_set_size(menu, lv_disp_get_hor_res(NULL) - 30, lv_disp_get_ver_res(NULL) - 40);
+    lv_obj_align(menu, LV_ALIGN_CENTER, 0, 0);
 
     lv_obj_t *cont;
     lv_obj_t *section;
@@ -218,8 +218,6 @@ static void create_settings(lv_obj_t *parent)
     lv_obj_add_event_cb(lv_obj_get_child(cont_slider,
                                          2), state_change_handler, LV_EVENT_VALUE_CHANGED,
                         cont_slider);
-
-
 
     lv_obj_t *sub_menu_mode_page = lv_menu_page_create(menu, NULL);
 
@@ -284,9 +282,7 @@ void create_wallclock(lv_obj_t *parent)
 
 void mainface_create(void)
 {
-    lv_coord_t vres = lv_disp_get_ver_res(NULL);
-
-    lv_obj_t *tv = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, vres / 10);
+    lv_obj_t *tv = lv_tabview_create(lv_scr_act(), LV_DIR_TOP, 40);
 
     lv_obj_t *tab0 = lv_tabview_add_tab(tv, "clock");
     lv_obj_t *tab1 = lv_tabview_add_tab(tv, "system");

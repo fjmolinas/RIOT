@@ -25,6 +25,10 @@
 #include "ztimer.h"
 #include "timex.h"
 
+#if defined(MODULE_NIMBLE_AUTOCONN)
+#include "nimble_autoconn.h"
+#endif
+
 #ifndef LOG_LEVEL
 #define LOG_LEVEL   LOG_DEBUG
 #endif
@@ -53,6 +57,13 @@ void _controller_handler(event_t *event)
     }
     if (_controller.status & CONTROLLER_STATUS_BLE_AUTO_CONN) {
         LOG_DEBUG("[controller]: enable autoconn\n");
+#if defined(MODULE_NIMBLE_AUTOCONN)
+        nimble_autoconn_enable();
+#endif
+    } else {
+#if defined(MODULE_NIMBLE_AUTOCONN)
+        nimble_autoconn_disable();
+#endif
     }
     if (_controller.status & CONTROLLER_STATUS_BLE_TIME_ADV) {
         LOG_DEBUG("[controller]: enable time advertiser\n");
@@ -69,11 +80,14 @@ void controller_init(event_queue_t *queue)
     _controller.brightness = 100;
     _controller.status = 0;
     event_timeout_ztimer_init(&_timeout, ZTIMER_MSEC, _queue, &_status_change);
+#if defined(MODULE_NIMBLE_AUTOCONN)
+    nimble_autoconn_disable();
+#endif
 }
 
 void controller_status_changed(void)
 {
-    event_timeout_set(&_timeout, MS_PER_SEC);
+    event_timeout_set(&_timeout, 100);
 }
 
 controller_t* controller_adquire(void)
@@ -87,6 +101,6 @@ controller_t* controller_adquire(void)
 int controller_release(void)
 {
     LOG_DEBUG("[controller]: unlock\n");
-    mutex_unlock(&_controller.lock);
+    // mutex_unlock(&_controller.lock);
     return 0;
 }
