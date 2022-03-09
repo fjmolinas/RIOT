@@ -29,5 +29,13 @@ endif
 
 CFLAGS += -DLV_MEM_SIZE=32*1024
 
+EXTERNAL_MODULE_DIRS += $(CURDIR)/modules
+USEMODULE += slotted_adv
+USEMODULE += rtc_utils
+
+# include nimble makefile tools
+include $(RIOTBASE)/makefiles/pkg/nimble.adv.mk
+$(eval $(call _add_ext_adv_instance,TIME_SERVER_ADV_INST))
+
 include $(RIOTBASE)/Makefile.include
 

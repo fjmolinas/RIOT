@@ -44,6 +44,9 @@ static void _controller_handler(event_t *event);
 static event_t _status_change = {.handler = _controller_handler, .list_node.next=NULL};
 static event_timeout_t _timeout;
 
+extern int time_adv_start(void);
+extern int time_adv_stop(void);
+
 void _controller_handler(event_t *event)
 {
     (void)event;
@@ -67,6 +70,11 @@ void _controller_handler(event_t *event)
     }
     if (_controller.status & CONTROLLER_STATUS_BLE_TIME_ADV) {
         LOG_DEBUG("[controller]: enable time advertiser\n");
+        time_adv_start();
+    }
+    else {
+        LOG_DEBUG("[controller]: disable time advertiser\n");
+        time_adv_stop();
     }
     if (_controller.status & CONTROLLER_STATUS_BLE_STDIO) {
         LOG_DEBUG("[controller]: enable ble stdio\n");

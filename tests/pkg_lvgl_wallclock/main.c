@@ -30,7 +30,7 @@
 #include "ds3231_params.h"
 #else
 #include "ztimer.h"
-#include "periph/rtc.h"
+#include "rtc_utils.h"
 #endif
 
 #include "controller.h"
@@ -40,11 +40,12 @@
 #endif
 
 #include "slotted_adv.h"
+#include "rtc_utils.h"
 #include "timex.h"
 
 /* Advertising Event Thread spec */
 #ifndef DEFAULT_ADV_ITVL_MS
-#define DEFAULT_ADV_ITVL_MS     (10 * MS_PER_SEC)
+#define DEFAULT_ADV_ITVL_MS     (1 * MS_PER_SEC)
 #endif
 
 #define CURRENT_TIME_SERVICE_UUID16         0x3333
@@ -103,6 +104,7 @@ void set_epoch_adv_data(bluetil_ad_t *ad, void *arg)
     memset(ad->buf, 0, ad->size);
     ad->pos = 0;
     /* Tx power field added by the driver */
+    extern int ble_phy_txpwr_get(void);
     int8_t phy_txpwr_dbm = ble_phy_txpwr_get();
     int rc = bluetil_ad_add(ad, BLE_GAP_AD_TX_POWER_LEVEL, &phy_txpwr_dbm,
                             sizeof(phy_txpwr_dbm));
@@ -118,31 +120,27 @@ void set_epoch_adv_data(bluetil_ad_t *ad, void *arg)
     rc = bluetil_ad_add(ad, BLE_GAP_AD_SERVICE_DATA, &current_time.bytes, sizeof(current_time));
     assert(rc == BLUETIL_AD_OK);
     (void)rc;
+    struct tm time;
+    rtc_localtime(get_epoch(), &time);
+    printf("Current time:\n");
+    printf("\tDate: %04d-%02d-%02d %02d:%02d:%02d,\n",
+            time.tm_year + 1900,
+            time.tm_mon + 1,
+            time.tm_mday,
+            time.tm_hour,
+            time.tm_min,
+            time.tm_sec);
+    printf("\tEpoch: %"PRIu32"\n", get_epoch());
 }
 
-int _cmd_adv_start(int argc, char **argv)
+int time_adv_start(void)
 {
-    (void)argc;
-    (void)argv;
-
-    uint32_t itvl_ms = DEFAULT_ADV_ITVL_MS;
-
-    if (argc == 2) {
-        if (!strcmp(argv[1], "help")) {
-            printf("usage: %s <advertisement period in seconds>\n", argv[0]);
-            return 0;
-        }
-        itvl_ms = (uint32_t)atoi(argv[1]) * MS_PER_SEC;
-    }
-    slotted_adv_start(&adv_event, itvl_ms, UINT32_MAX, &ad, set_epoch_adv_data, NULL);
+    slotted_adv_start(&adv_event, DEFAULT_ADV_ITVL_MS, UINT32_MAX, &ad, set_epoch_adv_data, NULL);
     return 0;
 }
 
-int _cmd_adv_stop(int argc, char **argv)
+int time_adv_stop(void)
 {
-    (void)argc;
-    (void)argv;
-    printf("Stopped ongoing advertisements (if any)\n");
     slotted_adv_stop(&adv_event);
     return 0;
 }
@@ -193,8 +191,6 @@ static const shell_command_t _commands[] = {
 #if IS_USED(MODULE_DS3231)
     { "time", "set/get time", _cmd_time },
 #endif
-    { "start", "Starts Current Time advertisements", _cmd_adv_start },
-    { "stop", "Stops Current Time advertisement", _cmd_adv_stop },
     { NULL, NULL, NULL }
 };
 
@@ -202,11 +198,11 @@ int main(void)
 {
     /* initialize the device */
 #if IS_USED(MODULE_DS3231)
-    ds3231_params_t params = ds3231_params[0];
-    params.opt = DS3231_OPT_BAT_ENABLE;
-    params.opt |= DS3231_OPT_INTER_ENABLE;
+    ds3231_params_t params_ds3231 = ds3231_params[0];
+    params_ds3231.opt = DS3231_OPT_BAT_ENABLE;
+    params_ds3231.opt |= DS3231_OPT_INTER_ENABLE;
 
-    int res = ds3231_init(&_dev, &params);
+    int res = ds3231_init(&_dev, &params_ds3231);
     if (res != 0) {
         puts("error: unable to initialize DS3231 [I2C initialization error]");
         return 1;
