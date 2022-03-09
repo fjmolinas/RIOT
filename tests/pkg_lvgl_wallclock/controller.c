@@ -24,6 +24,9 @@
 #include "event/timeout.h"
 #include "ztimer.h"
 #include "timex.h"
+#if IS_USED(MODULE_DISP_DEV)
+#include "disp_dev.h"
+#endif
 
 #if defined(MODULE_NIMBLE_AUTOCONN)
 #include "nimble_autoconn.h"
@@ -56,6 +59,9 @@ void _controller_handler(event_t *event)
     }
     if (_controller.status & CONTROLLER_STATUS_BRIGHTNESS) {
         LOG_DEBUG("[controller]: brightness changed: %d\n", _controller.brightness);
+#if IS_USED(MODULE_DISP_DEV)
+        disp_dev_backlight_lvl(_controller.brightness);
+#endif
         _controller.status &= ~CONTROLLER_STATUS_BRIGHTNESS;
     }
     if (_controller.status & CONTROLLER_STATUS_BLE_AUTO_CONN) {

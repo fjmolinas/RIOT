@@ -25,6 +25,7 @@
 #include "cfg_clock_32_1.h"
 #include "cfg_rtt_default.h"
 #include "cfg_timer_default.h"
+#include "board.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -36,14 +37,14 @@ extern "C" {
  */
 static const uart_conf_t uart_config[] = {
     {
-        .dev        = NRF_UARTE0,
-        .rx_pin     = GPIO_PIN(0,24),
-        .tx_pin     = GPIO_PIN(0,25),
+        .dev = NRF_UARTE0,
+        .rx_pin = GPIO_PIN(0, 24),
+        .tx_pin = GPIO_PIN(0, 25),
 #ifdef MODULE_PERIPH_UART_HW_FC
-        .rts_pin    = GPIO_UNDEF,
-        .cts_pin    = GPIO_UNDEF,
+        .rts_pin = GPIO_UNDEF,
+        .cts_pin = GPIO_UNDEF,
 #endif
-        .irqn       = UARTE0_UART0_IRQn,
+        .irqn = UARTE0_UART0_IRQn,
     },
 };
 
@@ -58,7 +59,7 @@ static const uart_conf_t uart_config[] = {
  */
 static const spi_conf_t spi_config[] = {
     {
-        .dev  = NRF_SPIM0,
+        .dev = NRF_SPIM0,
         .sclk = 14,
         .mosi = 13,
         .miso = 15,
@@ -82,6 +83,23 @@ static const i2c_conf_t i2c_config[] = {
 };
 #define I2C_NUMOF           ARRAY_SIZE(i2c_config)
 /** @} */
+
+/**
+ * @name    PWM configuration
+ *
+ * @{
+ */
+
+#define ILI9341_BL_PIN         GPIO_PIN(1, 9)                       /**< Backlight pin, D13*/
+static const pwm_conf_t pwm_config[] = {
+    {
+        NRF_PWM0,
+        {
+            ILI9341_BL_PIN,
+        },
+    },
+};
+#define PWM_NUMOF           ARRAY_SIZE(pwm_config)
 
 #ifdef __cplusplus
 }

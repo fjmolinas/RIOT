@@ -23,6 +23,9 @@
 #include "cpu.h"
 #include "board_common.h"
 #include "periph/gpio.h"
+#if IS_USED(MODULE_ILI9341) || IS_USED(MODULE_STMPE811)
+#include "periph/pwm.h"
+#endif
 
 #ifdef __cplusplus
 extern "C" {
@@ -98,10 +101,11 @@ extern "C" {
  * @{
  *
  */
+#define ILI9341_BL_PIN         GPIO_PIN(1, 9)                       /**< Backlight pin, D13*/
 #if IS_USED(MODULE_ILI9341) || IS_USED(MODULE_STMPE811)
-#define BACKLIGHT_PIN          GPIO_PIN(1, 9)                       /**< Backlight pin, D13*/
-#define BACKLIGHT_ON           (gpio_set(BACKLIGHT_PIN))            /**< Turn backlight on */
-#define BACKLIGHT_OFF          (gpio_clear(BACKLIGHT_PIN))          /**< Turn backlight off */
+#define BACKLIGHT_ON           (pwm_poweron(PWM_DEV(0)))            /**< Turn backlight on */
+#define BACKLIGHT_OFF          (pwm_poweroff(PWM_DEV(0)))          /**< Turn backlight off */
+#define BACKLIGHT_SET_LVL(x)   (pwm_set(PWM_DEV(0), 0, x))
 #endif
 /** @ */
 

@@ -4,6 +4,7 @@ endif
 
 ifneq (,$(filter disp_dev,$(USEMODULE)))
   USEMODULE += ili9341
+  FEATURES_REQUIRED += periph_pwm
 endif
 
 ifneq (,$(filter touch_dev,$(USEMODULE)))

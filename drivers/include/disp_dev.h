@@ -37,6 +37,10 @@ extern "C" {
 #define BACKLIGHT_OFF
 #endif
 
+#ifndef BACKLIGHT_SET_LVL
+#define BACKLIGHT_SET_LVL(x)    ((void)x)
+#endif
+
 /**
  * @brief   Forward declaration for display device struct
  */
@@ -187,11 +191,23 @@ uint8_t disp_dev_color_depth(const disp_dev_t *dev);
 void disp_dev_set_invert(const disp_dev_t *dev, bool invert);
 
 /**
+ * @brief   Set
+ */
+extern uint8_t _backlight_lvl;
+static inline void disp_dev_backlight_lvl(uint8_t lvl)
+{
+    _backlight_lvl = lvl;
+    BACKLIGHT_SET_LVL(lvl);
+}
+
+/**
  * @brief   Enable the backlight pin
  */
 static inline void disp_dev_backlight_on(void)
 {
+    pwm_init(PWM_DEV(0), PWM_RIGHT, 1000, 255);
     BACKLIGHT_ON;
+    disp_dev_backlight_lvl(_backlight_lvl);
 }
 
 /**
@@ -200,6 +216,8 @@ static inline void disp_dev_backlight_on(void)
 static inline void disp_dev_backlight_off(void)
 {
     BACKLIGHT_OFF;
+    gpio_init(ILI9341_BL_PIN, GPIO_OUT);
+    gpio_clear(ILI9341_BL_PIN);
 }
 
 #ifdef __cplusplus

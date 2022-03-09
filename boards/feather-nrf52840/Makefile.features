@@ -4,6 +4,7 @@ CPU_MODEL = nrf52840xxaa
 FEATURES_PROVIDED += periph_i2c
 FEATURES_PROVIDED += periph_spi
 FEATURES_PROVIDED += periph_uart
+FEATURES_PROVIDED += periph_pwm
 FEATURES_PROVIDED += periph_usbdev
 
 # Various other features (if any)

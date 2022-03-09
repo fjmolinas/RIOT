@@ -214,7 +214,7 @@ static void create_settings(lv_obj_t *parent)
                              lv_obj_get_style_pad_left(lv_menu_get_main_header(menu), 0), 0);
     lv_menu_separator_create(sub_display_page);
     section = lv_menu_section_create(sub_display_page);
-    cont_slider = create_slider(section, LV_SYMBOL_SETTINGS, "Brightness", 0, 100, 50, NULL, NULL);
+    cont_slider = create_slider(section, LV_SYMBOL_SETTINGS, "Brightness", 0, 255, 255, NULL, NULL);
     lv_obj_add_event_cb(lv_obj_get_child(cont_slider,
                                          2), state_change_handler, LV_EVENT_VALUE_CHANGED,
                         cont_slider);

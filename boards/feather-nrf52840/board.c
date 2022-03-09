@@ -17,6 +17,9 @@
 #include "board.h"
 
 #include "periph/gpio.h"
+#include "periph/pwm.h"
+
+uint8_t _backlight_lvl = 255;
 
 void board_init(void)
 {
@@ -27,8 +30,8 @@ void board_init(void)
     gpio_clear(LED1_PIN);
 
     /* initialize the screen backlight, turn it off by default */
-    gpio_init(BACKLIGHT_PIN, GPIO_OUT);
-    gpio_clear(BACKLIGHT_PIN);
+    pwm_init(PWM_DEV(0), PWM_RIGHT, 1000, 255);
+    pwm_poweroff(PWM_DEV(0));
 }
 
 /** @} */
