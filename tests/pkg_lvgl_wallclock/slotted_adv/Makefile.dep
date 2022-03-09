@@ -1,0 +1,7 @@
+USEPKG += nimble
+USEMODULE += nimble_svc_gap
+USEMODULE += nimble_adv_ext
+USEMODULE += bluetil_ad
+USEMODULE += event
+USEMODULE += event_timeout_ztimer
+USEMODULE += ztimer_msec
