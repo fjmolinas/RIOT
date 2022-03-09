@@ -107,7 +107,7 @@ endif
 ifneq (,$(filter nimble_scanlist,$(USEMODULE)))
   USEMODULE += nimble_addr
   USEMODULE += bluetil_ad
-  USEMODULE += ztimer_usec
+  USEMODULE += ztimer_msec
 endif
 
 ifneq (,$(filter nimble_statconn_ext,$(USEMODULE)))

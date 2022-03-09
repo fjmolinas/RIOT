@@ -73,7 +73,7 @@ void nimble_scanlist_update(uint8_t type, const ble_addr_t *addr,
     assert(addr);
     assert(len <= BLE_ADV_PDU_LEN);
 
-    uint32_t now = (uint32_t)ztimer_now(ZTIMER_USEC);
+    uint32_t now = (uint32_t)ztimer_now(ZTIMER_MSEC);
     nimble_scanlist_entry_t *e = _find(addr);
 
     if (!e) {
