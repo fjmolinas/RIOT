@@ -3,6 +3,8 @@ PKG_URL = https://github.com/future-proof-iot/EDHOC-C.git
 PKG_VERSION = 27be50625bed86f7b2d3cbedc373e0c26f276e93
 PKG_LICENSE = BSD-3-Clause
 
+PKG_SOURCE_LOCAL = /home/francisco/workspace/EDHOC-C
+
 include $(RIOTBASE)/pkg/pkg.mk
 
 CFLAGS += -Wno-newline-eof

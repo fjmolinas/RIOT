@@ -54,6 +54,7 @@ static const shell_command_t shell_commands[] = {
     { NULL, NULL, NULL }
 };
 
+
 #if IS_ACTIVE(CONFIG_RESPONDER)
 static void *_nanocoap_server_thread(void *arg)
 {

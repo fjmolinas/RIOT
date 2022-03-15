@@ -96,7 +96,9 @@ extern "C" {
  * Sets the maximum buffer size for credentials (raw keys or certificates)
  *
  */
+#ifndef EDHOC_CRED_SIZE
 #define EDHOC_CRED_SIZE                     (256)
+#endif
 
 /**
  * @brief EDHOC_CREDENTIAL_ID_MAX_SIZE
@@ -104,7 +106,9 @@ extern "C" {
  * Sets the maximum buffer size for credential identifiers
  *
  */
+#ifndef EDHOC_CRED_ID_SIZE
 #define EDHOC_CRED_ID_SIZE                  (256)
+#endif
 
 /**
  * @brief EDHOC_ADD_DATA_MAX_SIZE

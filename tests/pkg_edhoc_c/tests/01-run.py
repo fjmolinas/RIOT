@@ -8,6 +8,7 @@
 
 import os
 import sys
+import time
 
 from testrunner import run
 
@@ -65,6 +66,7 @@ def get_ipv6_addr_and_netif(child):
 
 def testfunc(child):
     addr, netif = get_ipv6_addr_and_netif(child)
+    start = time.time()
     child.sendline("init handshake {}%{} {}".format(addr, netif, COAP_PORT))
     child.expect_exact("[initiator]: sending msg1 (37 bytes):")
     for line in LAKE_WG_EDHOC_TV_34900_MSG1.split('\n'):
@@ -83,6 +85,7 @@ def testfunc(child):
     child.expect_exact("[initiator]: Transcript hash 4 (32 bytes):")
     for line in LAKE_WG_EDHOC_TV_34900_TH4.split('\n'):
         child.expect_exact(line)
+    end = time.time()
     child.sendline("init oscore")
     child.expect_exact("OSCORE secret:")
     for line in LAKE_WG_EDHOC_TV_34900_OSCORE_SECRET.split('\n'):
@@ -95,6 +98,7 @@ def testfunc(child):
         child.expect_exact(line)
     child.expect_exact("OSCORE salt:")
     child.expect_exact(LAKE_WG_EDHOC_TV_34900_OSCORE_SALT)
+    print(f"elapsed time {end - start}")
 
 
 if __name__ == "__main__":

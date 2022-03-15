@@ -44,5 +44,9 @@ CFLAGS += -DCONFIG_INITIATOR=$(CONFIG_INITIATOR)
 CONFIG_RESPONDER ?= 1
 CFLAGS += -DCONFIG_RESPONDER=$(CONFIG_RESPONDER)
 
+# Need to increasse COAP timeout since signature processing can be long and
+# significantly delay response time
+CFLAGS += -DCONFIG_COAP_ACK_TIMEOUT_MS=20*1000
+
 include $(RIOTBASE)/Makefile.include
 include $(RIOTMAKE)/default-radio-settings.inc.mk

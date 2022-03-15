@@ -36,9 +36,9 @@
 #define ENABLE_DEBUG        0
 #include "debug.h"
 
-#define COAP_BUF_SIZE     (256U)
-
 #if IS_ACTIVE(CONFIG_INITIATOR)
+
+#define COAP_BUF_SIZE     (128U)
 
 extern void print_bstr(const uint8_t *bstr, size_t bstr_len);
 extern int edhoc_setup(edhoc_ctx_t *ctx, edhoc_conf_t *conf, edhoc_role_t role,
@@ -57,8 +57,36 @@ static wc_Sha256 _sha_i;
 #elif IS_USED(MODULE_TINYCRYPT)
 struct tc_sha256_state_struct _sha_i;
 #endif
-static uint8_t _method;
-static uint8_t _suite;
+static uint8_t _method = EDHOC_AUTH_STATIC_STATIC;
+static uint8_t _suite = EDHOC_CIPHER_SUITE_0;
+
+#include "thread.h"
+static char thread_stack2[3*THREAD_STACKSIZE_LARGE];
+static char thread_stack1[3*THREAD_STACKSIZE_LARGE];
+
+typedef struct {
+    edhoc_ctx_t *ctx;
+    uint8_t * in;
+    size_t inlen;
+    uint8_t * out;
+    size_t outlen;
+} thread_args_t;
+
+void * _bench_create_msg1(void* arg)
+{
+    (void)arg;
+    thread_args_t* ptr = (thread_args_t*) arg;
+    ptr->outlen = edhoc_create_msg1(ptr->ctx, CORR_1_2, _method, _suite, ptr->out, COAP_BUF_SIZE);
+    return NULL;
+}
+
+void * _bench_create_msg3(void*arg)
+{
+    (void)arg;
+    thread_args_t* ptr = (thread_args_t*) arg;
+    ptr->outlen = edhoc_create_msg3(ptr->ctx, ptr->in, ptr->inlen, ptr->out, COAP_BUF_SIZE);
+    return NULL;
+}
 
 static int _parse_ipv6_addr(char *addr_str, ipv6_addr_t *addr, uint16_t *netif)
 {
@@ -140,9 +168,6 @@ int _handshake_cmd(int argc, char **argv)
     uint8_t msg[COAP_BUF_SIZE];
     ssize_t msg_len = 0;
 
-    /* correlation value is transport specific */
-    corr_t corr = CORR_1_2;
-
     if (argc < 2) {
         printf("usage: %s <addr>[%%iface] <port>\n", argv[0]);
         return -1;
@@ -161,7 +186,20 @@ int _handshake_cmd(int argc, char **argv)
     /* reset state */
     _ctx.state = EDHOC_WAITING;
 
-    if ((msg_len = edhoc_create_msg1(&_ctx, corr, _method, _suite, msg, sizeof(msg))) > 0) {
+
+    thread_args_t args1 = { .ctx=&_ctx, .out=msg};
+    kernel_pid_t pid1 = thread_create(thread_stack1, sizeof(thread_stack1), THREAD_PRIORITY_MAIN,
+                       THREAD_CREATE_STACKTEST | THREAD_CREATE_WOUT_YIELD, _bench_create_msg1, &args1, "test_thread");
+    thread_t * thread_pt1= thread_get(pid1);
+    thread_yield();
+    printf("msg1 stack usage %d/%d\n",
+           sizeof(thread_stack1) - thread_measure_stack_free(thread_get_stackstart(thread_pt1)), sizeof(thread_stack1));
+
+    msg_len = args1.outlen;
+
+    /* correlation value is transport specific */
+    // if ((msg_len = edhoc_create_msg1(&_ctx, CORR_1_2, _method, _suite, msg, sizeof(msg))) > 0) {
+    if ((msg_len) > 0) {
         printf("[initiator]: sending msg1 (%d bytes):\n", (int)msg_len);
         print_bstr(msg, msg_len);
         _build_coap_pkt(&pkt, buf, sizeof(buf), msg, msg_len);
@@ -179,7 +217,21 @@ int _handshake_cmd(int argc, char **argv)
     printf("[initiator]: received a message (%d bytes):\n", pkt.payload_len);
     print_bstr(pkt.payload, pkt.payload_len);
 
-    if ((msg_len = edhoc_create_msg3(&_ctx, pkt.payload, pkt.payload_len, msg, sizeof(msg))) > 0) {
+    thread_args_t args2 = { .ctx=&_ctx, .out=msg};
+    kernel_pid_t pid2 = thread_create(thread_stack2, sizeof(thread_stack2), THREAD_PRIORITY_MAIN,
+                       THREAD_CREATE_STACKTEST | THREAD_CREATE_WOUT_YIELD, _bench_create_msg3, &args2, "test_thread");
+    thread_t * thread_pt2 = thread_get(pid2);
+    (void)thread_pt2;
+    args2.inlen = pkt.payload_len;
+    args2.in = pkt.payload;
+    args2.out = msg;
+    thread_yield();
+    printf("msg3 stack usage %d/%d\n",
+           sizeof(thread_stack2) - thread_measure_stack_free(thread_get_stackstart(thread_pt2)), sizeof(thread_stack2));
+    msg_len = args2.outlen;
+
+    // if ((msg_len = edhoc_create_msg3(&_ctx, pkt.payload, pkt.payload_len, msg, sizeof(msg))) > 0) {
+    if ((msg_len) > 0) {
         printf("[initiator]: sending msg3 (%d bytes):\n", (int)msg_len);
         print_bstr(msg, msg_len);
         _build_coap_pkt(&pkt, buf, sizeof(buf), msg, msg_len);

@@ -36,7 +36,7 @@
 #define ENABLE_DEBUG        0
 #include "debug.h"
 
-#define COAP_BUF_SIZE     (256U)
+#define COAP_BUF_SIZE     (64U)
 
 #if IS_ACTIVE(CONFIG_RESPONDER)
 
@@ -58,6 +58,35 @@ static wc_Sha256 _sha_r;
 struct tc_sha256_state_struct _sha_r;
 #endif
 
+#include "thread.h"
+static char thread_stack1[3 * THREAD_STACKSIZE_LARGE];
+static char thread_stack2[3 * THREAD_STACKSIZE_LARGE];
+
+typedef struct {
+    edhoc_ctx_t *ctx;
+    uint8_t *in;
+    size_t inlen;
+    uint8_t *out;
+    size_t outlen;
+} thread_args_t;
+
+void *_bench_create_msg2(void *arg)
+{
+    (void)arg;
+    thread_args_t *ptr = (thread_args_t *)arg;
+
+    ptr->outlen = edhoc_create_msg2(ptr->ctx, ptr->in, ptr->inlen, ptr->out, COAP_BUF_SIZE);
+    return NULL;
+}
+
+void *_bench_finalize(void *arg)
+{
+    (void)arg;
+    thread_args_t *ptr = (thread_args_t *)arg;
+    edhoc_resp_finalize(ptr->ctx, ptr->in, ptr->inlen, false, NULL, 0);
+    return NULL;
+}
+
 ssize_t _edhoc_handler(coap_pkt_t *pkt, uint8_t *buf, size_t len, void *context)
 {
     (void)context;
@@ -72,9 +101,21 @@ ssize_t _edhoc_handler(coap_pkt_t *pkt, uint8_t *buf, size_t len, void *context)
 
     if (_ctx.state == EDHOC_WAITING) {
         uint8_t msg[COAP_BUF_SIZE];
-        if ((msg_len =
-                 edhoc_create_msg2(&_ctx, pkt->payload, pkt->payload_len, msg, sizeof(msg))) >= 0) {
-            printf("[responder]: sending msg2 (%d bytes):\n", (int) msg_len);
+        thread_args_t args1 = { .ctx = &_ctx, .out = msg, .in=pkt->payload, .inlen=pkt->payload_len};
+        kernel_pid_t pid1 = thread_create(thread_stack1, sizeof(thread_stack1), THREAD_PRIORITY_MAIN - 1,
+                                         THREAD_CREATE_STACKTEST | THREAD_CREATE_WOUT_YIELD,
+                                         _bench_create_msg2, &args1, "test_thread");
+        thread_t *thread_pt1 = thread_get(pid1);
+        thread_yield();
+        printf("msg2 stack usage %d/%d\n",
+               sizeof(thread_stack1) - thread_measure_stack_free(thread_get_stackstart(
+                                                                    thread_pt1)),
+               sizeof(thread_stack1));
+        msg_len = args1.outlen;
+        if ((msg_len) > 0) {
+            // if ((msg_len =
+            //          edhoc_create_msg2(&_ctx, pkt->payload, pkt->payload_len, msg, sizeof(msg))) >= 0) {
+            printf("[responder]: sending msg2 (%d bytes):\n", (int)msg_len);
             print_bstr(msg, msg_len);
             msg_len = coap_reply_simple(pkt, COAP_CODE_204, buf, len, COAP_FORMAT_OCTET, msg,
                                         msg_len);
@@ -87,7 +128,17 @@ ssize_t _edhoc_handler(coap_pkt_t *pkt, uint8_t *buf, size_t len, void *context)
     }
     else if (_ctx.state == EDHOC_SENT_MESSAGE_2) {
         puts("[responder]: finalize exchange");
-        edhoc_resp_finalize(&_ctx, pkt->payload, pkt->payload_len, false, NULL, 0);
+        thread_args_t args2 = { .ctx = &_ctx, .in=pkt->payload, .inlen=pkt->payload_len};
+        kernel_pid_t pid2 = thread_create(thread_stack2, sizeof(thread_stack2), THREAD_PRIORITY_MAIN - 1,
+                                         THREAD_CREATE_STACKTEST | THREAD_CREATE_WOUT_YIELD,
+                                         _bench_finalize, &args2, "test_thread");
+        thread_t *thread_pt2 = thread_get(pid2);
+        thread_yield();
+        printf("finalize stack usage %d/%d\n",
+               sizeof(thread_stack2) - thread_measure_stack_free(thread_get_stackstart(
+                                                                    thread_pt2)),
+               sizeof(thread_stack2));
+        // edhoc_resp_finalize(&_ctx, pkt->payload, pkt->payload_len, false, NULL, 0);
         msg_len = coap_reply_simple(pkt, COAP_CODE_204, buf, len, COAP_FORMAT_OCTET, NULL, 0);
     }
 
@@ -130,6 +181,7 @@ int responder_cmd(int argc, char **argv)
 
 int responder_cli_init(void)
 {
+
     if (edhoc_setup(&_ctx, &_conf, EDHOC_IS_RESPONDER, &_auth_key, &_cred_id,
                     &_rpk, &_sha_r)) {
         puts("[responder]: error during setup");
