@@ -33,6 +33,9 @@ USEMODULE += shell_commands
 USEMODULE += ps
 USEMODULE += xtimer
 
+USEMODULE += thread_fn_bench
+CFLAGS += -DCONFIG_THREAD_FN_BENCH_STACKSIZE=3*THREAD_STACKSIZE_LARGE
+
 # This is an optimized stack value based on testing, if you observe
 # a segmentation fault please increase this stack size.
 CFLAGS += -DTHREAD_STACKSIZE_MAIN=3*THREAD_STACKSIZE_LARGE

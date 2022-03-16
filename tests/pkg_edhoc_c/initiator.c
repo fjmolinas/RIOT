@@ -36,6 +36,8 @@
 #define ENABLE_DEBUG        0
 #include "debug.h"
 
+#include "thread_fn_bench.h"
+
 #if IS_ACTIVE(CONFIG_INITIATOR)
 
 #define COAP_BUF_SIZE     (128U)
@@ -59,10 +61,6 @@ struct tc_sha256_state_struct _sha_i;
 #endif
 static uint8_t _method = EDHOC_AUTH_STATIC_STATIC;
 static uint8_t _suite = EDHOC_CIPHER_SUITE_0;
-
-#include "thread.h"
-static char thread_stack2[3*THREAD_STACKSIZE_LARGE];
-static char thread_stack1[3*THREAD_STACKSIZE_LARGE];
 
 typedef struct {
     edhoc_ctx_t *ctx;
@@ -186,19 +184,11 @@ int _handshake_cmd(int argc, char **argv)
     /* reset state */
     _ctx.state = EDHOC_WAITING;
 
-
     thread_args_t args1 = { .ctx=&_ctx, .out=msg};
-    kernel_pid_t pid1 = thread_create(thread_stack1, sizeof(thread_stack1), THREAD_PRIORITY_MAIN,
-                       THREAD_CREATE_STACKTEST | THREAD_CREATE_WOUT_YIELD, _bench_create_msg1, &args1, "test_thread");
-    thread_t * thread_pt1= thread_get(pid1);
-    thread_yield();
-    printf("msg1 stack usage %d/%d\n",
-           sizeof(thread_stack1) - thread_measure_stack_free(thread_get_stackstart(thread_pt1)), sizeof(thread_stack1));
-
+    thread_fn_bench(_bench_create_msg1, &args1, THREAD_PRIORITY_MAIN, "msg1_create");
     msg_len = args1.outlen;
 
     /* correlation value is transport specific */
-    // if ((msg_len = edhoc_create_msg1(&_ctx, CORR_1_2, _method, _suite, msg, sizeof(msg))) > 0) {
     if ((msg_len) > 0) {
         printf("[initiator]: sending msg1 (%d bytes):\n", (int)msg_len);
         print_bstr(msg, msg_len);
@@ -217,20 +207,10 @@ int _handshake_cmd(int argc, char **argv)
     printf("[initiator]: received a message (%d bytes):\n", pkt.payload_len);
     print_bstr(pkt.payload, pkt.payload_len);
 
-    thread_args_t args2 = { .ctx=&_ctx, .out=msg};
-    kernel_pid_t pid2 = thread_create(thread_stack2, sizeof(thread_stack2), THREAD_PRIORITY_MAIN,
-                       THREAD_CREATE_STACKTEST | THREAD_CREATE_WOUT_YIELD, _bench_create_msg3, &args2, "test_thread");
-    thread_t * thread_pt2 = thread_get(pid2);
-    (void)thread_pt2;
-    args2.inlen = pkt.payload_len;
-    args2.in = pkt.payload;
-    args2.out = msg;
-    thread_yield();
-    printf("msg3 stack usage %d/%d\n",
-           sizeof(thread_stack2) - thread_measure_stack_free(thread_get_stackstart(thread_pt2)), sizeof(thread_stack2));
+    thread_args_t args2 = { .ctx=&_ctx, .out=msg, .in = pkt.payload, .inlen = pkt.payload_len};
+    thread_fn_bench(_bench_create_msg3, &args2, THREAD_PRIORITY_MAIN, "msg3_create");
     msg_len = args2.outlen;
 
-    // if ((msg_len = edhoc_create_msg3(&_ctx, pkt.payload, pkt.payload_len, msg, sizeof(msg))) > 0) {
     if ((msg_len) > 0) {
         printf("[initiator]: sending msg3 (%d bytes):\n", (int)msg_len);
         print_bstr(msg, msg_len);
