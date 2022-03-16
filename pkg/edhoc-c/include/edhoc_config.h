@@ -60,7 +60,7 @@ extern "C" {
  * Enables some extra methods that allow for easier testing and debugging
  *
  */
-#define EDHOC_DEBUG_ENABLED
+// #define EDHOC_DEBUG_ENABLED
 
 /**
  * @brief EDHOC_AUTH_CERT_ENABLED
