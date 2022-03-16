@@ -324,6 +324,7 @@ int initiator_cli_init(void)
         puts("[initiator]: error during setup");
         return -1;
     }
+#ifdef EDHOC_DEBUG_ENABLED
     /* use fixed values only for testing purposes */
     puts("[initiator]: load ephemeral key: ONLY FOR TESTING");
     if (edhoc_load_ephkey(&_ctx, init_cbor_eph_key, sizeof(init_cbor_eph_key)) != 0) {
@@ -333,6 +334,7 @@ int initiator_cli_init(void)
     if (edhoc_session_preset_cidi(&_ctx, init_cid, sizeof(init_cid)) != 0) {
         return -1;
     }
+#endif
 
     return 0;
 }

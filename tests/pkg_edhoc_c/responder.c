@@ -167,6 +167,7 @@ int responder_cli_init(void)
         return -1;
     }
 
+#ifdef EDHOC_DEBUG_ENABLED
     /* use fixed values only for testing purposes */
     puts("[responder]: load ephemeral key: ONLY FOR TESTING");
     if (edhoc_load_ephkey(&_ctx, resp_cbor_eph_key, sizeof(resp_cbor_eph_key)) != 0) {
@@ -176,6 +177,7 @@ int responder_cli_init(void)
     if (edhoc_session_preset_cidr(&_ctx, resp_cid, sizeof(resp_cid)) != 0) {
         return -1;
     }
+#endif
 
     return 0;
 }
