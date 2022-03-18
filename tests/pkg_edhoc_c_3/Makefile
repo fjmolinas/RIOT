@@ -38,7 +38,7 @@ CFLAGS += -DCONFIG_THREAD_FN_BENCH_STACKSIZE=3*THREAD_STACKSIZE_LARGE
 
 # This is an optimized stack value based on testing, if you observe
 # a segmentation fault please increase this stack size.
-CFLAGS += -DTHREAD_STACKSIZE_MAIN=3*THREAD_STACKSIZE_LARGE
+CFLAGS += -DTHREAD_STACKSIZE_MAIN=THREAD_STACKSIZE_LARGE
 
 # Include responder code
 CONFIG_INITIATOR ?= 1
@@ -46,10 +46,6 @@ CFLAGS += -DCONFIG_INITIATOR=$(CONFIG_INITIATOR)
 # Include responder code
 CONFIG_RESPONDER ?= 1
 CFLAGS += -DCONFIG_RESPONDER=$(CONFIG_RESPONDER)
-
-# Need to increasse COAP timeout since signature processing can be long and
-# significantly delay response time
-CFLAGS += -DCONFIG_COAP_ACK_TIMEOUT_MS=20*1000
 
 include $(RIOTBASE)/Makefile.include
 include $(RIOTMAKE)/default-radio-settings.inc.mk

@@ -36,7 +36,7 @@
 #define ENABLE_DEBUG        0
 #include "debug.h"
 
-#define COAP_BUF_SIZE     (64U)
+#define COAP_BUF_SIZE     (256U)
 
 #include "thread_fn_bench.h"
 
@@ -117,10 +117,10 @@ ssize_t _edhoc_handler(coap_pkt_t *pkt, uint8_t *buf, size_t len, void *context)
         }
     }
     else if (_ctx.state == EDHOC_SENT_MESSAGE_2) {
-        uint8_t buf[32];
+        uint8_t buf[256];
         puts("[responder]: finalize exchange");
         thread_args_t args2 =
-        { .ctx = &_ctx, .out = buf, .outlen = 32, .in = pkt->payload, .inlen = pkt->payload_len };
+        { .ctx = &_ctx, .out = buf, .outlen = 256, .in = pkt->payload, .inlen = pkt->payload_len };
         thread_fn_bench(_bench_finalize, &args2, THREAD_PRIORITY_MAIN - 1, "finalize");
         msg_len = coap_reply_simple(pkt, COAP_CODE_204, buf, len, COAP_FORMAT_OCTET, NULL, 0);
     }

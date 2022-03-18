@@ -40,7 +40,7 @@
 
 #if IS_ACTIVE(CONFIG_INITIATOR)
 
-#define COAP_BUF_SIZE     (64U)
+#define COAP_BUF_SIZE     (256U)
 
 extern void print_bstr(const uint8_t *bstr, size_t bstr_len);
 extern int edhoc_setup(edhoc_ctx_t *ctx, edhoc_conf_t *conf, edhoc_role_t role,
@@ -321,9 +321,6 @@ int initiator_cmd(int argc, char **argv)
 
 int initiator_cli_init(void)
 {
-    /* default to static-static (method 3) since we are using RPK keys */
-    _method = EDHOC_AUTH_STATIC_STATIC;
-    _suite = EDHOC_CIPHER_SUITE_0;
     if (edhoc_setup(&_ctx, &_conf, EDHOC_IS_INITIATOR, &_auth_key, &_cred_id,
                     &_rpk, &_sha_i)) {
         puts("[initiator]: error during setup");
