@@ -1,6 +1,6 @@
 PKG_NAME = EDHOC-C
 PKG_URL = https://github.com/future-proof-iot/EDHOC-C.git
-PKG_VERSION = 27be50625bed86f7b2d3cbedc373e0c26f276e93
+PKG_VERSION = 1db007ac073d87029937252e1b3d160969628871
 PKG_LICENSE = BSD-3-Clause
 
 PKG_SOURCE_LOCAL = /home/francisco/workspace/EDHOC-C

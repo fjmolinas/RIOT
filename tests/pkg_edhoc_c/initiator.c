@@ -40,7 +40,7 @@
 
 #if IS_ACTIVE(CONFIG_INITIATOR)
 
-#define COAP_BUF_SIZE     (128U)
+#define COAP_BUF_SIZE     (64U)
 
 extern void print_bstr(const uint8_t *bstr, size_t bstr_len);
 extern int edhoc_setup(edhoc_ctx_t *ctx, edhoc_conf_t *conf, edhoc_role_t role,
@@ -59,29 +59,31 @@ static wc_Sha256 _sha_i;
 #elif IS_USED(MODULE_TINYCRYPT)
 struct tc_sha256_state_struct _sha_i;
 #endif
-static uint8_t _method = EDHOC_AUTH_STATIC_STATIC;
+static uint8_t _method = EDHOC_AUTH_SIGN_SIGN;
 static uint8_t _suite = EDHOC_CIPHER_SUITE_0;
 
 typedef struct {
     edhoc_ctx_t *ctx;
-    uint8_t * in;
+    uint8_t *in;
     size_t inlen;
-    uint8_t * out;
+    uint8_t *out;
     size_t outlen;
 } thread_args_t;
 
-void * _bench_create_msg1(void* arg)
+void *_bench_create_msg1(void *arg)
 {
     (void)arg;
-    thread_args_t* ptr = (thread_args_t*) arg;
+    thread_args_t *ptr = (thread_args_t *)arg;
+
     ptr->outlen = edhoc_create_msg1(ptr->ctx, CORR_1_2, _method, _suite, ptr->out, COAP_BUF_SIZE);
     return NULL;
 }
 
-void * _bench_create_msg3(void*arg)
+void *_bench_create_msg3(void *arg)
 {
     (void)arg;
-    thread_args_t* ptr = (thread_args_t*) arg;
+    thread_args_t *ptr = (thread_args_t *)arg;
+
     ptr->outlen = edhoc_create_msg3(ptr->ctx, ptr->in, ptr->inlen, ptr->out, COAP_BUF_SIZE);
     return NULL;
 }
@@ -177,6 +179,7 @@ int _handshake_cmd(int argc, char **argv)
     /* parse address */
     uint16_t netif;
     ipv6_addr_t addr;
+
     if (_parse_ipv6_addr(argv[1], &addr, &netif)) {
         return -1;
     }
@@ -184,7 +187,8 @@ int _handshake_cmd(int argc, char **argv)
     /* reset state */
     _ctx.state = EDHOC_WAITING;
 
-    thread_args_t args1 = { .ctx=&_ctx, .out=msg};
+    thread_args_t args1 = { .ctx = &_ctx, .out = msg };
+
     thread_fn_bench(_bench_create_msg1, &args1, THREAD_PRIORITY_MAIN, "msg1_create");
     msg_len = args1.outlen;
 
@@ -207,7 +211,8 @@ int _handshake_cmd(int argc, char **argv)
     printf("[initiator]: received a message (%d bytes):\n", pkt.payload_len);
     print_bstr(pkt.payload, pkt.payload_len);
 
-    thread_args_t args2 = { .ctx=&_ctx, .out=msg, .in = pkt.payload, .inlen = pkt.payload_len};
+    thread_args_t args2 = { .ctx = &_ctx, .out = msg, .in = pkt.payload, .inlen = pkt.payload_len };
+
     thread_fn_bench(_bench_create_msg3, &args2, THREAD_PRIORITY_MAIN, "msg3_create");
     msg_len = args2.outlen;
 
