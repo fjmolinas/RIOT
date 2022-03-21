@@ -148,8 +148,6 @@ typedef struct {
     cred_type_t type;
     const uint8_t *id;      /**< credential id pointer */
     size_t id_len;          /**< credential id length */
-    const uint8_t *authkey;
-    size_t authkey_len;
     const uint8_t *cred;    /**< credential pointer */
     size_t cred_len;        /**< credential length */
 } cred_db_entry_t;
@@ -160,8 +158,6 @@ static const cred_db_entry_t cred_db[] = {
         CRED_TYPE_RPK,
         resp_cbor_rpk_id_value,
         sizeof(resp_cbor_rpk_id_value),
-        resp_cbor_auth_key,
-        sizeof(resp_cbor_auth_key),
         resp_cbor_rpk,
         sizeof(resp_cbor_rpk)
     },
@@ -169,8 +165,6 @@ static const cred_db_entry_t cred_db[] = {
         CRED_TYPE_RPK,
         init_cbor_rpk_id_value,
         sizeof(init_cbor_rpk_id_value),
-        init_cbor_auth_key,
-        sizeof(init_cbor_auth_key),
         init_cbor_rpk,
         sizeof(init_cbor_rpk)
     },

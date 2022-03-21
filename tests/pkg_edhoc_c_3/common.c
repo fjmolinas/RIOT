@@ -29,7 +29,7 @@
 
 #define CRED_DB_SIZE        ARRAY_SIZE(cred_db)
 
-int _cred_cb(const uint8_t *k, size_t k_len, cred_type_t* type, const uint8_t **o, size_t *o_len, const uint8_t **auth, size_t *auth_len)
+int _cred_cb(const uint8_t *k, size_t k_len, cred_type_t* type, const uint8_t **o, size_t *o_len)
 {
     for (uint8_t i = 0; i < (uint8_t)CRED_DB_SIZE; i++) {
         if (cred_db[i].id_len == k_len) {
@@ -37,16 +37,12 @@ int _cred_cb(const uint8_t *k, size_t k_len, cred_type_t* type, const uint8_t **
                 *o = cred_db[i].cred;
                 *o_len = cred_db[i].cred_len;
                 *type = cred_db[i].type;
-                *auth = cred_db[i].authkey;
-                *auth_len = cred_db[i].authkey_len;
                 return 0;
             }
         }
     }
     *o = NULL;
     *o_len = 0;
-    *auth = NULL;
-    *auth_len = 0;
     return EDHOC_ERR_INVALID_CRED_ID;
 }
 

@@ -40,6 +40,10 @@
 
 #if IS_ACTIVE(CONFIG_INITIATOR)
 
+#ifndef DEFAULT_METHOD
+#define DEFAULT_METHOD EDHOC_AUTH_SIGN_SIGN
+#endif
+
 #define COAP_BUF_SIZE     (256U)
 
 extern void print_bstr(const uint8_t *bstr, size_t bstr_len);
@@ -59,7 +63,7 @@ static wc_Sha256 _sha_i;
 #elif IS_USED(MODULE_TINYCRYPT)
 struct tc_sha256_state_struct _sha_i;
 #endif
-static uint8_t _method = EDHOC_AUTH_SIGN_SIGN;
+static uint8_t _method = DEFAULT_METHOD;
 static uint8_t _suite = EDHOC_CIPHER_SUITE_0;
 
 typedef struct {

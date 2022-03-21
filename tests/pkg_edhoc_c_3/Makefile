@@ -47,5 +47,10 @@ CFLAGS += -DCONFIG_INITIATOR=$(CONFIG_INITIATOR)
 CONFIG_RESPONDER ?= 1
 CFLAGS += -DCONFIG_RESPONDER=$(CONFIG_RESPONDER)
 
+CFLAGS += -DDEFAULT_METHOD=EDHOC_AUTH_STATIC_STATIC
+
+# Increase timeout to 10s for signing processing time
+CFLAGS += -DCONFIG_COAP_ACK_TIMEOUT=10*1000
+
 include $(RIOTBASE)/Makefile.include
 include $(RIOTMAKE)/default-radio-settings.inc.mk
