@@ -46,7 +46,13 @@ void riotboot_hdr_print(const riotboot_hdr_t *riotboot_hdr)
            (unsigned)riotboot_hdr->magic_number);
     printf("Image Version: 0x%08x\n", (unsigned)riotboot_hdr->version);
     printf("Image start address: 0x%08x\n", (unsigned)riotboot_hdr->start_addr);
+    printf("Image size: 0x%08x\n", (unsigned)riotboot_hdr->img_size);
     printf("Header chksum: 0x%08x\n", (unsigned)riotboot_hdr->chksum);
+    printf("Header digest: ");
+    for (uint8_t i=0; i < SHA256_DIGEST_LENGTH; i++) {
+        printf("%02x", riotboot_hdr->digest[i]);
+    }
+    printf("\n");
     printf("\n");
 }
 

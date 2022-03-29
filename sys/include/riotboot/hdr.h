@@ -37,6 +37,8 @@ extern "C" {
 #endif
 
 #include <stdint.h>
+#include "riotboot/hdr.h"
+#include "hashes/sha256.h"
 
 /**
  * @brief  Magic number for riotboot_hdr
@@ -52,6 +54,8 @@ typedef struct {
     uint32_t magic_number;      /**< Header magic number (always "RIOT")              */
     uint32_t version;           /**< Integer representing the partition version       */
     uint32_t start_addr;        /**< Address after the allocated space for the header */
+    uint32_t img_size;              /**< Firmware size                                */
+    uint8_t digest[SHA256_DIGEST_LENGTH]; /**< sh256 of image                         */
     uint32_t chksum;            /**< Checksum of riotboot_hdr                         */
 } riotboot_hdr_t;
 /** @} */
@@ -82,6 +86,18 @@ int riotboot_hdr_validate(const riotboot_hdr_t *riotboot_hdr);
  * @returns the checksum of the given riotboot_hdr
  */
 uint32_t riotboot_hdr_checksum(const riotboot_hdr_t *riotboot_hdr);
+
+/**
+ * @brief       Verify the digest of an image
+ *
+ * @param[in]   hdr             riotboot hdr
+ * @param[in]   target_slot     the image slot number
+ *
+ * @returns     -1 when image is too small
+ * @returns     0 if the digest is valid
+ * @returns     1 if the digest is invalid
+ */
+int riotboot_hdr_verify_sha256(const riotboot_hdr_t *hdr);
 
 #ifdef __cplusplus
 }

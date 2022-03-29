@@ -11,6 +11,8 @@ CFLAGS += -DRIOTBOOT
 
 # Disable unused modules
 CFLAGS += -DNDEBUG -DLOG_LEVEL=LOG_NONE
+# Slightly increase ISR_STACSIZE
+CFLAGS += -DISR_STACKSIZE=768
 DISABLE_MODULE += core_init core_msg core_panic
 DISABLE_MODULE += auto_init auto_init_%
 DISABLE_MODULE += pm_layered
