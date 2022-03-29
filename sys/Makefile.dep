@@ -788,6 +788,11 @@ endif
 ifneq (,$(filter riotboot_hdr, $(USEMODULE)))
   USEMODULE += checksum
   USEMODULE += riotboot
+  USEMODULE += riotboot_verify_sha256
+endif
+
+ifneq (,$(filter riotboot_verify_sha256,$(USEMODULE)))
+  USEMODULE += hashes
 endif
 
 ifneq (,$(filter riotboot_usb_dfu, $(USEMODULE)))
@@ -839,7 +844,6 @@ ifneq (,$(filter suit_storage_flashwrite, $(USEMODULE)))
   FEATURES_REQUIRED += riotboot
   USEMODULE += riotboot_slot
   USEMODULE += riotboot_flashwrite
-  USEMODULE += riotboot_flashwrite_verify_sha256
 endif
 
 ifneq (,$(filter suit_%,$(USEMODULE)))
