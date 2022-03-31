@@ -141,6 +141,7 @@ PSEUDOMODULES += mpu_stack_guard
 PSEUDOMODULES += mpu_noexec_ram
 
 PSEUDOMODULES += mtd_write_page
+PSEUDOMODULES += mtd_vfs
 PSEUDOMODULES += nanocoap_%
 PSEUDOMODULES += netdev_default
 PSEUDOMODULES += netdev_ieee802154_%

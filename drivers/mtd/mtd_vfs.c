@@ -6,8 +6,6 @@
  * details.
  */
 
-#if MODULE_VFS
-
 #include <fcntl.h>
 #include <errno.h>
 #include <unistd.h>
@@ -133,7 +131,3 @@ static ssize_t mtd_vfs_write(vfs_file_t *filp, const void *src, size_t nbytes)
 }
 
 /** @} */
-
-#else
-typedef int dont_be_pedantic;
-#endif /* MODULE_VFS */
