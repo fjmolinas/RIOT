@@ -1,0 +1,3 @@
+ifeq ($(BOARD),native)
+  USEMODULE += netdev_default
+endif

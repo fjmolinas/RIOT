@@ -16,7 +16,7 @@
 #include <net/gcoap.h>
 #include <vfs.h>
 #include <fcntl.h>
-#include <error.h>
+#include <errno.h>
 
 #define ENABLE_DEBUG 0
 #include "debug.h"
