@@ -24,19 +24,27 @@ USEMODULE += shell
 USEMODULE += shell_commands
 USEMODULE += ps
 
+USEMODULE += gcoap
+USEMODULE += coapfileserver
+USEMODULE += netdev_default
+USEMODULE += gnrc_ipv6_default
+USEMODULE += gnrc_icmpv6_echo
+USEMODULE += auto_init_gnrc_netif
+
 # Use MTD (flash layer)
 USEMODULE += mtd
 # USEMODULE += mtd_sdcard
 
 # Use VFS
 USEMODULE += vfs
+USEMODULE += vfs_default
 
 # Use a file system
 # USEMODULE += littlefs
-USEMODULE += littlefs2
+# USEMODULE += littlefs2
 # USEMODULE += spiffs
-# USEMODULE += fatfs_vfs
-# USEMODULE += fatfs_vfs_format
+USEMODULE += fatfs_vfs
+USEMODULE += fatfs_vfs_format
 USEMODULE += constfs
 # USEMODULE += devfs
 
