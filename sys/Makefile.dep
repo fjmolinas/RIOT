@@ -554,6 +554,10 @@ ifneq (,$(filter devfs,$(USEMODULE)))
   USEMODULE += vfs
 endif
 
+ifneq (,$(filter coapfileserver,$(USEMODULE)))
+  USEMODULE += vfs
+endif
+
 ifneq (,$(filter vfs_default,$(USEMODULE)))
   USEMODULE += vfs
   DEFAULT_MODULE += vfs_auto_mount
