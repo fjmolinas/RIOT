@@ -210,7 +210,7 @@ static int _mtd_get_seq_no(const suit_storage_t *storage, uint32_t *seq_no)
     const suit_storage_mtd_t *mtd = _get_mtd_const(storage);
 
     *seq_no = mtd->sequence_no;
-    LOG_INFO("Retrieved sequence number: %" PRIu32 "\n", *seq_no);
+    LOG_DEBUG("Retrieved sequence number: %" PRIu32 "\n", *seq_no);
     return SUIT_OK;
 }
 
@@ -219,7 +219,7 @@ static int _mtd_set_seq_no(suit_storage_t *storage, uint32_t seq_no)
     suit_storage_mtd_t *mtd = _get_mtd(storage);
 
     if (mtd->sequence_no < seq_no) {
-        LOG_INFO("Stored sequence number: %" PRIu32 "\n", seq_no);
+        LOG_DEBUG("Stored sequence number: %" PRIu32 "\n", seq_no);
         mtd->sequence_no = seq_no;
         return SUIT_OK;
     }

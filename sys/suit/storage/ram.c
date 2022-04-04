@@ -192,7 +192,7 @@ static int _ram_get_seq_no(const suit_storage_t *storage, uint32_t *seq_no)
     const suit_storage_ram_t *ram = _get_ram_const(storage);
 
     *seq_no = ram->sequence_no;
-    LOG_INFO("Retrieved sequence number: %" PRIu32 "\n", *seq_no);
+    LOG_DEBUG("Retrieved sequence number: %" PRIu32 "\n", *seq_no);
     return SUIT_OK;
 }
 
@@ -201,7 +201,7 @@ static int _ram_set_seq_no(suit_storage_t *storage, uint32_t seq_no)
     suit_storage_ram_t *ram = _get_ram(storage);
 
     if (ram->sequence_no < seq_no) {
-        LOG_INFO("Stored sequence number: %" PRIu32 "\n", seq_no);
+        LOG_DEBUG("Stored sequence number: %" PRIu32 "\n", seq_no);
         ram->sequence_no = seq_no;
         return SUIT_OK;
     }
