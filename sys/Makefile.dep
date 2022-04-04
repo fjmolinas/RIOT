@@ -846,6 +846,10 @@ ifneq (,$(filter suit_storage_flashwrite, $(USEMODULE)))
   USEMODULE += riotboot_flashwrite
 endif
 
+ifneq (,$(filter suit_storage_mtd,$(USEMODULE)))
+  USEMODULE += mtd
+endif
+
 ifneq (,$(filter suit_%,$(USEMODULE)))
   USEMODULE += suit
 endif
