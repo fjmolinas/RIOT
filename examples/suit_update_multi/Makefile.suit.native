@@ -1,0 +1,21 @@
+# Required variables defined in riotboot.inc.mk or Makefile.include
+BINDIR_APP = $(CURDIR)/bin/$(BOARD)/$(APPLICATION)
+EPOCH := $(shell date +%s)
+APP_VER ?= $(EPOCH)
+
+# Recipe to generate dummy payload
+SUIT_NATIVE_PAYLOAD ?= "AABBCCDD"
+SUIT_NATIVE_PAYLOAD_BIN ?= $(BINDIR_APP).$(APP_VER).bin
+$(SUIT_NATIVE_PAYLOAD_BIN):
+	@$(Q)echo $(SUIT_NATIVE_PAYLOAD) > $@
+
+# Only a single RAM secotor is being updated, so change accordingly
+SUIT_STORAGE ?= /sda/SLOT0.txt
+SUIT_MANIFEST_PAYLOADS ?= $(SUIT_NATIVE_PAYLOAD_BIN)
+SUIT_MANIFEST_SLOTFILES ?= $(SUIT_NATIVE_PAYLOAD_BIN):0:$(SUIT_STORAGE)
+# Make sure it is built
+BUILD_FILES += $(SUIT_NATIVE_PAYLOAD_BIN)
+
+#
+SUIT_COAP_SERVER ?= [2001:db8::1]
+SUIT_CLIENT ?= [2001:db8::2]

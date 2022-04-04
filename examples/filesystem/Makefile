@@ -33,7 +33,7 @@ USEMODULE += auto_init_gnrc_netif
 
 # Use MTD (flash layer)
 USEMODULE += mtd
-# USEMODULE += mtd_sdcard
+USEMODULE += mtd_sdcard
 
 # Use VFS
 USEMODULE += vfs

@@ -1,0 +1,11 @@
+ifeq ($(BOARD),native)
+  USEMODULE += fatfs_vfs
+  USEMODULE += netdev_default
+  USEMODULE += suit_storage_vfs
+  USEMODULE += fatfs_vfs_format
+else
+  USEMODULE += fatfs_vfs
+  USEMODULE += fatfs_vfs_format
+  USEMODULE += suit_storage_vfs
+  USEMODULE += mtd_sdcard
+endif
