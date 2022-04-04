@@ -105,6 +105,33 @@ enum {
 #endif
 /** @} */
 
+
+/**
+ * @name    Set default configuration parameters for the sdcard_spi driver
+ * @{
+ */
+#ifndef SDCARD_SPI_PARAM_SPI
+#define SDCARD_SPI_PARAM_SPI         (SPI_DEV(1))
+#endif
+#ifndef SDCARD_SPI_PARAM_CS
+#define SDCARD_SPI_PARAM_CS          (GPIO_PIN(PB,3))
+#endif
+#ifndef SDCARD_SPI_PARAM_CLK
+#define SDCARD_SPI_PARAM_CLK         (GPIO_PIN(PB,23))
+#endif
+#ifndef SDCARD_SPI_PARAM_MOSI
+#define SDCARD_SPI_PARAM_MOSI        (GPIO_PIN(PB,22))
+#endif
+#ifndef SDCARD_SPI_PARAM_MISO
+#define SDCARD_SPI_PARAM_MISO        (GPIO_PIN(PB,2))
+#endif
+#ifndef SDCARD_SPI_PARAM_POWER
+#define SDCARD_SPI_PARAM_POWER       (GPIO_UNDEF)
+#endif
+#ifndef SDCARD_SPI_PARAM_POWER_AH
+#define SDCARD_SPI_PARAM_POWER_AH    (true)
+#endif
+
 /**
  * @brief   Set antenna switch
  */
