@@ -88,6 +88,11 @@ void auto_init(void)
         extern void auto_init_candev(void);
         auto_init_candev();
     }
+    if (IS_USED(MODULE_AUTO_INIT_CSP)) {
+        printf("Auto init LibCSP\n");
+        extern void auto_init_csp(void);
+        auto_init_csp();
+    }
     if (IS_USED(MODULE_AUTO_INIT_GNRC_PKTBUF)) {
         LOG_DEBUG("Auto init gnrc_pktbuf.\n");
         extern void gnrc_pktbuf_init(void);
