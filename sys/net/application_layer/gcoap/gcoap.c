@@ -776,10 +776,16 @@ static void _find_req_memo(gcoap_request_memo_t **memo_ptr, coap_pkt_t *src_pdu,
         } else if (coap_get_token_len(memo_pdu) == cmplen) {
             memo_pdu->token = coap_hdr_data_ptr(memo_pdu->hdr);
             if ((memcmp(src_pdu->token, memo_pdu->token, cmplen) == 0)
-                    && sock_udp_ep_equal(&memo->remote_ep, remote)) {
+            && sock_udp_ep_equal(&memo->remote_ep, remote)) {
+                    // ) {
                 *memo_ptr = memo;
                 break;
             }
+            printf("memo AF: %d, addr: %"PRIu32", netif: %d, port: %d\n",
+                   remote->family, remote->addr.ipv4_u32, remote->netif, remote->port);
+            printf("remo AF: %d, addr: %"PRIu32", netif: %d, port: %d\n",
+                   memo->remote_ep.family, memo->remote_ep.addr.ipv4_u32,
+                   memo->remote_ep.netif, memo->remote_ep.port);
         }
     }
 }
