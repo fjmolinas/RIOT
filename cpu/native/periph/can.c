@@ -138,6 +138,10 @@ static void _callback_can_sigio(int sockfd, void *arg)
 
     native_async_read_continue(sockfd);
 
+    if (dev->candev.event_callback) {
+        dev->candev.event_callback(&dev->candev, CANDEV_EVENT_ISR, NULL);
+    }
+
     if (sched_context_switch_request) {
         thread_yield_higher();
     }
