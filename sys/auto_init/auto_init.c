@@ -83,6 +83,11 @@ void auto_init(void)
         extern void profiling_init(void);
         profiling_init();
     }
+    if (IS_USED(MODULE_AUTO_INIT_CAN)) {
+        LOG_DEBUG("Auto init CAN.\n");
+        extern void auto_init_candev(void);
+        auto_init_candev();
+    }
     if (IS_USED(MODULE_AUTO_INIT_GNRC_PKTBUF)) {
         LOG_DEBUG("Auto init gnrc_pktbuf.\n");
         extern void gnrc_pktbuf_init(void);
@@ -243,13 +248,6 @@ void auto_init(void)
         LOG_DEBUG("Auto init gnrc_rpl.\n");
         extern void auto_init_gnrc_rpl(void);
         auto_init_gnrc_rpl();
-    }
-
-    if (IS_USED(MODULE_AUTO_INIT_CAN)) {
-        LOG_DEBUG("Auto init CAN.\n");
-
-        extern void auto_init_candev(void);
-        auto_init_candev();
     }
 
     if (IS_USED(MODULE_SUIT)) {
