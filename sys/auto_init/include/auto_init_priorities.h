@@ -275,6 +275,11 @@ extern "C" {
  */
 #define AUTO_INIT_PRIO_MOD_CAN                          1111
 #endif
+/**
+ * @brief   CSP priority
+ */
+#define AUTO_INIT_PRIO_MOD_CSP                          1112
+#endif
 #ifndef AUTO_INIT_PRIO_MOD_SUIT
 /**
  * @brief   SUIT priority

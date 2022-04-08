@@ -1,0 +1,27 @@
+From 8e790cab4a0844af38ca11e21796fc73f632c9de Mon Sep 17 00:00:00 2001
+From: Francisco Molina <femolina@uc.cl>
+Date: Fri, 8 Apr 2022 17:45:25 +0200
+Subject: [PATCH 10/11] src/csp_dedup: fix empty initializers
+
+---
+ src/csp_dedup.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/csp_dedup.c b/src/csp_dedup.c
+index f78ff01..6fcd933 100644
+--- a/src/csp_dedup.c
++++ b/src/csp_dedup.c
+@@ -15,8 +15,8 @@
+ #define CSP_DEDUP_WINDOW_MS 100
+ 
+ /* Store packet CRC's in a ringbuffer */
+-static uint32_t csp_dedup_array[CSP_DEDUP_COUNT] = {};
+-static uint32_t csp_dedup_timestamp[CSP_DEDUP_COUNT] = {};
++static uint32_t csp_dedup_array[CSP_DEDUP_COUNT] = {0};
++static uint32_t csp_dedup_timestamp[CSP_DEDUP_COUNT] = {0};
+ static int csp_dedup_in = 0;
+ 
+ bool csp_dedup_is_duplicate(csp_packet_t * packet) {
+-- 
+2.32.0
+

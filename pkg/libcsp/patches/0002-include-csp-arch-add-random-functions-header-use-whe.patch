@@ -1,0 +1,92 @@
+From f731046cb96a0bb7a48e78448af16f2854e85ca8 Mon Sep 17 00:00:00 2001
+From: Francisco Molina <femolina@uc.cl>
+Date: Fri, 8 Apr 2022 17:24:35 +0200
+Subject: [PATCH 02/11] include/csp/arch: add random functions header, use
+ where possible
+
+---
+ include/csp/arch/csp_rand.h |  6 ++++++
+ src/arch/posix/csp_rand.c   | 11 +++++++++++
+ src/csp_rdp.c               |  4 ++--
+ src/interfaces/csp_if_can.c |  5 +++--
+ 4 files changed, 22 insertions(+), 4 deletions(-)
+ create mode 100644 include/csp/arch/csp_rand.h
+ create mode 100644 src/arch/posix/csp_rand.c
+
+diff --git a/include/csp/arch/csp_rand.h b/include/csp/arch/csp_rand.h
+new file mode 100644
+index 0000000..f28cfe1
+--- /dev/null
++++ b/include/csp/arch/csp_rand.h
+@@ -0,0 +1,6 @@
++#pragma once
++
++#include <inttypes.h>
++
++uint8_t csp_rand8(void);
++uint16_t csp_rand16(void);
+diff --git a/src/arch/posix/csp_rand.c b/src/arch/posix/csp_rand.c
+new file mode 100644
+index 0000000..2bed293
+--- /dev/null
++++ b/src/arch/posix/csp_rand.c
+@@ -0,0 +1,11 @@
++#include <stdlib.h>
++#include <csp/arch/csp_rand.h>
++
++uint8_t csp_rand8(void)
++{
++    return (uint8_t)rand();
++}
++uint16_t csp_rand16(void)
++{
++    return rand();
++}
+diff --git a/src/csp_rdp.c b/src/csp_rdp.c
+index 8afa6a5..c17129f 100644
+--- a/src/csp_rdp.c
++++ b/src/csp_rdp.c
+@@ -17,6 +17,7 @@
+ #include <csp/csp_error.h>
+ #include <csp/arch/csp_queue.h>
+ #include <csp/arch/csp_time.h>
++#include <csp/arch/csp_rand.h>
+ 
+ #include "csp_port.h"
+ #include "csp_conn.h"
+@@ -835,8 +836,7 @@ retry:
+ 	}
+ 
+ 	/* Randomize ISS */
+-	unsigned int seed = csp_get_ms();
+-	conn->rdp.snd_iss = (uint16_t)rand_r(&seed);
++	conn->rdp.snd_iss = csp_rand16();
+ 	conn->rdp.snd_nxt = conn->rdp.snd_iss + 1;
+ 	conn->rdp.snd_una = conn->rdp.snd_iss;
+ 
+diff --git a/src/interfaces/csp_if_can.c b/src/interfaces/csp_if_can.c
+index e700258..61ea22e 100644
+--- a/src/interfaces/csp_if_can.c
++++ b/src/interfaces/csp_if_can.c
+@@ -1,6 +1,7 @@
+ 
+ 
+ #include <csp/interfaces/csp_if_can.h>
++#include <csp/arch/csp_rand.h>
+ 
+ #include <string.h>
+ #include <stdlib.h>
+@@ -47,8 +48,8 @@ int csp_can1_rx(csp_iface_t * iface, uint32_t id, const uint8_t * data, uint8_t
+ 
+ 	/* Test: random packet loss */
+ 	if (0) {
+-		int random = rand();
+-		if (random < RAND_MAX * 0.00005) {
++		int random = csp_rand16();
++		if (random < UINT16_MAX * 0.00005) {
+ 			return CSP_ERR_DRIVER;
+ 		}
+ 	}
+-- 
+2.32.0
+

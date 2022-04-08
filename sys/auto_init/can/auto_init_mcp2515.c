@@ -15,19 +15,17 @@
  * @author      Vincent Dupont <vincent@otakeys.com>
  * @}
  */
-
-#ifdef MODULE_MCP2515
 #include "can/device.h"
 #include "mcp2515_params.h"
 
-#define CANDEV_MCP2515_NUMOF ((ARRAY_SIZE(candev_mcp2515_params) / ARRAY_SIZE(candev_params_t)))
+#define CANDEV_MCP2515_NUMOF (ARRAY_SIZE(candev_mcp2515_params))
 
 #ifndef CANDEV_MCP2515_STACKSIZE
-#define CANDEV_MCP2515_STACKSIZE (THREAD_STACKSIZE_DEFAULT + THREAD_EXTRA_STACKSIZE_PRINTF)
+#define CANDEV_MCP2515_STACKSIZE (THREAD_STACKSIZE_LARGE + THREAD_EXTRA_STACKSIZE_PRINTF)
 #endif
 
 #ifndef CANDEV_MCP2515_BASE_PRIORITY
-#define CANDEV_MCP2515_BASE_PRIORITY (THREAD_PRIORITY_MAIN - CANDEV_MCP2515_NUMOF - 2)
+#define CANDEV_MCP2515_BASE_PRIORITY (THREAD_PRIORITY_MAIN - 4)
 #endif
 
 static candev_dev_t candev_dev_mcp2515[CANDEV_MCP2515_NUMOF];
@@ -55,6 +53,3 @@ void auto_init_can_mcp2515(void) {
                             &candev_dev_mcp2515[i]);
     }
 }
-#else
-typedef int dont_be_pedantic;
-#endif

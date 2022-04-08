@@ -1,0 +1,65 @@
+From 5dcca5183356c7146c44d4cd2d6d5ca71e9d0f1e Mon Sep 17 00:00:00 2001
+From: Francisco Molina <femolina@uc.cl>
+Date: Fri, 8 Apr 2022 17:48:49 +0200
+Subject: [PATCH 11/11] src/csp_buffer: use explicit sizes for skbf_data and
+ data arrays
+
+---
+ include/csp/csp_types.h | 11 ++---------
+ src/csp_buffer.c        |  4 ++--
+ 2 files changed, 4 insertions(+), 11 deletions(-)
+
+diff --git a/include/csp/csp_types.h b/include/csp/csp_types.h
+index 293a0cf..7aeaf3f 100644
+--- a/include/csp/csp_types.h
++++ b/include/csp/csp_types.h
+@@ -156,14 +156,7 @@ typedef struct csp_packet_s {
+ 	 * When using the csp_buffer API, the size of the data part is set by
+ 	 * csp_buffer_init(), and can later be accessed by csp_buffer_data_size()
+ 	 */
+-	union {
+-		/** Access data as uint8_t. */
+-		uint8_t data[0];
+-		/** Access data as uint16_t */
+-		uint16_t data16[0];
+-		/** Access data as uint32_t */
+-		uint32_t data32[0];
+-	};
++	uint8_t data[CSP_BUFFER_SIZE];
+ 
+ } csp_packet_t;
+ 
+@@ -174,7 +167,7 @@ typedef struct csp_packet_s {
+    The overhead is the difference between the total buffer size (returned by csp_buffer_size()) and the data part
+    of the #csp_packet_t (returned by csp_buffer_data_size()).
+ */
+-#define CSP_BUFFER_PACKET_OVERHEAD      (sizeof(csp_packet_t) - sizeof(((csp_packet_t *)0)->data))
++#define CSP_BUFFER_PACKET_OVERHEAD      (sizeof(csp_packet_t) - CSP_BUFFER_SIZE)
+ 
+ /** Forward declaration of CSP interface, see #csp_iface_s for details. */
+ typedef struct csp_iface_s csp_iface_t;
+diff --git a/src/csp_buffer.c b/src/csp_buffer.c
+index 75d82ef..6a5bdde 100644
+--- a/src/csp_buffer.c
++++ b/src/csp_buffer.c
+@@ -13,7 +13,7 @@
+ typedef struct csp_skbf_s {
+ 	unsigned int refcount;
+ 	void * skbf_addr;
+-	char skbf_data[];  // -> csp_packet_t
++	char skbf_data[CSP_BUFFER_SIZE + CSP_BUFFER_PACKET_OVERHEAD];  // -> csp_packet_t
+ } csp_skbf_t;
+ 
+ #define SKBUF_SIZE CSP_BUFFER_ALIGN *((sizeof(csp_skbf_t) + CSP_BUFFER_SIZE + CSP_BUFFER_PACKET_OVERHEAD + (CSP_BUFFER_ALIGN - 1)) / CSP_BUFFER_ALIGN)
+@@ -126,7 +126,7 @@ void csp_buffer_free(void * packet) {
+ 		return;
+ 	}
+ 
+-	csp_skbf_t * buf = (void *)(((uint8_t *)packet) - sizeof(csp_skbf_t));
++	csp_skbf_t * buf = (void *)(((uint8_t *)packet) + CSP_BUFFER_SIZE + CSP_BUFFER_PACKET_OVERHEAD - sizeof(csp_skbf_t) );
+ 
+ 	if (((uintptr_t)buf % CSP_BUFFER_ALIGN) > 0) {
+ 		csp_dbg_errno = CSP_DBG_ERR_CORRUPT_BUFFER;
+-- 
+2.32.0
+
