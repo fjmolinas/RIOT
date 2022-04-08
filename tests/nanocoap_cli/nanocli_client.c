@@ -23,6 +23,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "net/ipv6.h"
 #include "net/coap.h"
 #include "net/gnrc/netif.h"
 #include "net/ipv6.h"
@@ -34,42 +35,15 @@
 
 static ssize_t _send(coap_pkt_t *pkt, size_t len, char *addr_str, char *port_str)
 {
-    ipv6_addr_t addr;
+    (void)addr_str;
     sock_udp_ep_t remote;
 
     remote.family = AF_INET6;
 
     /* parse for interface */
-    char *iface = ipv6_addr_split_iface(addr_str);
-    if (!iface) {
-        if (gnrc_netif_numof() == 1) {
-            /* assign the single interface found in gnrc_netif_numof() */
-            remote.netif = (uint16_t)gnrc_netif_iter(NULL)->pid;
-        }
-        else {
-            remote.netif = SOCK_ADDR_ANY_NETIF;
-        }
-    }
-    else {
-        int pid = atoi(iface);
-        if (gnrc_netif_get_by_pid(pid) == NULL) {
-            puts("nanocli: interface not valid");
-            return 0;
-        }
-        remote.netif = pid;
-    }
+    remote.netif = SOCK_ADDR_ANY_NETIF;
 
-    /* parse destination address */
-    if (ipv6_addr_from_str(&addr, addr_str) == NULL) {
-        puts("nanocli: unable to parse destination address");
-        return 0;
-    }
-    if ((remote.netif == SOCK_ADDR_ANY_NETIF) && ipv6_addr_is_link_local(&addr)) {
-        puts("nanocli: must specify interface for link local target");
-        return 0;
-    }
-    memcpy(&remote.addr.ipv6[0], &addr.u8[0], sizeof(addr.u8));
-
+    remote.addr.ipv4_u32 = 0x0033;
     /* parse port */
     remote.port = atoi(port_str);
     if (remote.port == 0) {

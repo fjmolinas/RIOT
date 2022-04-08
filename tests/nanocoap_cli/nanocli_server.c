@@ -24,7 +24,7 @@
 #include "net/nanocoap_sock.h"
 #include "net/sock/udp.h"
 
-#define ENABLE_DEBUG 0
+#define ENABLE_DEBUG 1
 #include "debug.h"
 
 /*
@@ -48,7 +48,7 @@ static int _nanocoap_server(sock_udp_ep_t *local, uint8_t *buf, size_t bufsize,
 
     int recv_count = 0;
     while (1) {
-        res = sock_udp_recv(&sock, buf, bufsize, -1, &remote);
+        res = sock_udp_recv(&sock, buf, bufsize, SOCK_NO_TIMEOUT, &remote);
         if (++recv_count <= ignore_count) {
             DEBUG("ignoring request\n");
             continue;
@@ -65,6 +65,7 @@ static int _nanocoap_server(sock_udp_ep_t *local, uint8_t *buf, size_t bufsize,
             }
             if ((res = coap_handle_req(&pkt, buf, bufsize)) > 0) {
                 res = sock_udp_send(&sock, buf, res, &remote);
+                printf("respond to %"PRIx16":%"PRId16"\n", remote.addr.ipv4_u32, remote.port);
             }
         }
     }
