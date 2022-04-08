@@ -11,20 +11,28 @@ RIOTBASE ?= $(CURDIR)/../..
 
 # Include packages that pull up and auto-init the link layer.
 # NOTE: 6LoWPAN will be included if IEEE802.15.4 devices are present
-USEMODULE += netdev_default
 
 # use GNRC by default
 LWIP ?= 0
+CSP ?= 1
 
-ifeq (0,$(LWIP))
+ifeq (1,$(LWIP))
+  USEMODULE += lwip_ipv6
+  USEMODULE += lwip_netdev
+  USEMODULE += netdev_default
+else ifeq (1,$(CSP))
+  CFLAGS += -DCOAP_PORT=2
+  CFLAGS += -DGOAP_PORT=2
+  CFLAGS += -DCONFIG_GCOAP_PORT=2
+  USEPKG += libcsp
+  FEATURES_REQUIRED += periph_can
+else
   USEMODULE += auto_init_gnrc_netif
   # Specify the mandatory networking modules
   USEMODULE += gnrc_ipv6_default
   # Additional networking modules that can be dropped if not needed
   USEMODULE += gnrc_icmpv6_echo
-else
-  USEMODULE += lwip_ipv6
-  USEMODULE += lwip_netdev
+  USEMODULE += netdev_default
 endif
 
 USEMODULE += gcoap
