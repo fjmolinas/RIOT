@@ -99,7 +99,9 @@ int mcp2515_init(candev_mcp2515_t *dev, void (*irq_handler_cb)(void *))
         DEBUG("Error setting interrupt pin!\n");
         return -1;
     }
-    gpio_init(dev->conf->rst_pin, GPIO_OUT);
+    if (gpio_is_valid(dev->conf->rst_pin)) {
+        gpio_init(dev->conf->rst_pin, GPIO_OUT);
+    }
 
     res = mcp2515_spi_init(dev);
     if (res < 0) {
@@ -118,10 +120,12 @@ int mcp2515_init(candev_mcp2515_t *dev, void (*irq_handler_cb)(void *))
 
 void mcp2515_reset(candev_mcp2515_t *dev)
 {
-    gpio_clear(dev->conf->rst_pin);
-    xtimer_usleep(RESET_DELAY_US);
-    gpio_set(dev->conf->rst_pin);
-    xtimer_usleep(_osc_startup(dev));
+    if (gpio_is_valid(dev->conf->rst_pin)) {
+        gpio_clear(dev->conf->rst_pin);
+        xtimer_usleep(RESET_DELAY_US);
+        gpio_set(dev->conf->rst_pin);
+        xtimer_usleep(_osc_startup(dev));
+    }
 }
 
 static void _fill_standard_id(uint32_t id, uint8_t *bytebuf)
