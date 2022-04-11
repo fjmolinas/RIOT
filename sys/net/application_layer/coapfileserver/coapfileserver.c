@@ -18,7 +18,7 @@
 #include <fcntl.h>
 #include <error.h>
 
-#define ENABLE_DEBUG 1
+#define ENABLE_DEBUG 0
 #include "debug.h"
 
 /** Maximum length of an expressible path, including the trailing 0 character. */
@@ -114,12 +114,12 @@ ssize_t coapfileserver_handler(coap_pkt_t *pdu, uint8_t *buf, size_t len, void *
                     trailing_slash = true;
                     continue;
                 }
-                if (memchr(value, '0', optlen) != NULL ||
-                        memchr(value, '/', optlen) != NULL) {
-                    /* Path can not be expressed in the file system */
-                    errorcode = COAP_CODE_PATH_NOT_FOUND;
-                    goto error;
-                }
+                // if (memchr(value, '0', optlen) != NULL ||
+                //         memchr(value, '/', optlen) != NULL) {
+                //     /* Path can not be expressed in the file system */
+                //     errorcode = COAP_CODE_PATH_NOT_FOUND;
+                //     goto error;
+                // }
                 size_t newlength = namelength + 1 + optlen;
                 if (newlength > sizeof(request.namebuf) - 1) {
                     /* Path too long, therefore can't exist in this mapping */
