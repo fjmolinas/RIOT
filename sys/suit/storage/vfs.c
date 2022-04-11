@@ -71,6 +71,7 @@ static int _vfs_update_seq_no(uint32_t seq_no)
         vfs_lseek(fd, 0, SEEK_SET);
         if (vfs_write(fd, buf, len) == len) {
             res = SUIT_OK;
+            LOG_DEBUG("Stored sequence number: %" PRIu32 "\n", seq_no);
         }
         else {
             LOG_INFO("ERROR: failed to write seq_no %" PRIu32 " to %s\n", seq_no,
@@ -237,6 +238,7 @@ static int _vfs_get_seq_no(const suit_storage_t *storage, uint32_t *seq_no)
     if (vfs_read(fd, buf, strlen("4294967295")) > 0) {
         *seq_no = strtoul(buf, NULL, 0);
     }
+    LOG_DEBUG("Retrieved sequence number: %" PRIu32 "\n", *seq_no);
     vfs_close(fd);
     return SUIT_OK;
 }
