@@ -273,6 +273,7 @@ int nanocoap_get_blockwise_url(const char *url,
         return res;
     }
 
+    DEBUG("nanocoap: downloading \"%s\"\n", url);
     res = nanocoap_sock_get_blockwise(&sock, urlpath, blksize, buf, callback, arg);
     nanocoap_sock_close(&sock);
 
