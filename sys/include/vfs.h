@@ -127,7 +127,7 @@ extern "C" {
 #endif
 
 #define FATFS_VFS_DIR_BUFFER_SIZE       (44 + _FATFS_DIR_LFN + _FATFS_DIR_EXFAT)
-#define FATFS_VFS_FILE_BUFFER_SIZE      (72 + _FATFS_FILE_CACHE + _FATFS_FILE_SEEK_PTR + _FATFS_FILE_EXFAT)
+#define FATFS_VFS_FILE_BUFFER_SIZE      (104 + _FATFS_FILE_CACHE + _FATFS_FILE_SEEK_PTR + _FATFS_FILE_EXFAT)
 #else
 #define FATFS_VFS_DIR_BUFFER_SIZE       (1)
 #define FATFS_VFS_FILE_BUFFER_SIZE      (1)
@@ -250,7 +250,7 @@ extern "C" {
  *
  * Similar to the POSIX macro NAME_MAX
  */
-#define VFS_NAME_MAX (31)
+#define VFS_NAME_MAX (63)
 #endif
 
 /**
