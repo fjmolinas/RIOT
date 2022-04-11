@@ -1133,6 +1133,22 @@ static int _auto_mount(vfs_mount_t *mountp, unsigned i)
     return res;
 }
 
+static int _auto_umount(vfs_mount_t *mountp, unsigned i)
+{
+    (void) i;
+    DEBUG("vfs%u: unmounting as '%s'\n", i, mountp->mount_point);
+    int res = vfs_umount(mountp);
+    if (res == 0) {
+        return 0;
+    }
+
+    if (res) {
+        DEBUG("vfs%u umount: error %d\n", i, res);
+    }
+
+    return res;
+}
+
 void auto_init_vfs(void)
 {
     for (unsigned i = 0; i < MOUNTPOINTS_NUMOF; ++i) {
@@ -1145,6 +1161,17 @@ int vfs_mount_by_path(const char *path)
     for (unsigned i = 0; i < MOUNTPOINTS_NUMOF; ++i) {
         if (strcmp(path, vfs_mountpoints_xfa[i].mount_point) == 0) {
             return _auto_mount(&vfs_mountpoints_xfa[i], i);
+        }
+    }
+
+    return -ENOENT;
+}
+
+int vfs_umount_by_path(const char *path)
+{
+    for (unsigned i = 0; i < MOUNTPOINTS_NUMOF; ++i) {
+        if (strcmp(path, vfs_mountpoints_xfa[i].mount_point) == 0) {
+            return _auto_umount(&vfs_mountpoints_xfa[i], i);
         }
     }
 
