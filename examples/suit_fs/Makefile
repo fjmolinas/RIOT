@@ -21,17 +21,23 @@ USEMODULE += shell_commands
 USEMODULE += ps
 
 # Networked File Server
+CSP ?= 1
 USEMODULE += gcoap
-USEMODULE += coapfileserver
-USEMODULE += auto_init_gnrc_netif
-USEMODULE += gnrc_ipv6_router_default
-USEMODULE += gnrc_icmpv6_echo
+ifeq (1,$(CSP))
+  CFLAGS += -DCOAP_PORT=2
+  CFLAGS += -DGOAP_PORT=2
+  CFLAGS += -DCONFIG_GCOAP_PORT=2
+  USEPKG += libcsp
+else
+  USEMODULE += auto_init_gnrc_netif
+  USEMODULE += gnrc_ipv6_router_default
+  USEMODULE += gnrc_icmpv6_echo
+endif
 
 # Use VFS
 USEMODULE += vfs
 USEMODULE += vfs_default
 USEMODULE += vfs_auto_format
-CFLAGS=-DFATFS_FFCONF_OPT_FS_EXFAT=1
 CFLAGS=-DFATFS_FFCONF_OPT_USE_LFN=1
 
 # Add SUIT

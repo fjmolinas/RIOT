@@ -13,8 +13,10 @@ RIOTBASE = os.path.abspath(os.environ.get("RIOTBASE"))
 APPLICATION_FS = f"{RIOTBASE}/examples/gcoap_fs"
 APPLICATION_DUT = f"{RIOTBASE}/examples/suit_fs"
 BOARD = os.getenv("BOARD", "native")
-SUIT_COAP_SERVER = os.environ.get("SUIT_COAP_SERVER") or "[2001:db8::2]/vfs/nvm0"
 UPDATING_TIMEOUT = 10
+CSP = int(os.getenv("CSP", "1"))
+SERVER_ADDR = "[2001:db8::2]" if CSP == 0 else "[::33]"
+SUIT_COAP_SERVER = os.environ.get("SUIT_COAP_SERVER") or f"{SERVER_ADDR}/vfs/nvm0"
 
 
 class VFSShell(Reboot, VFS):
@@ -112,8 +114,12 @@ with RIOTCtrlAppFactory() as factory:
     termargs = {}
     termargs["logfile"] = sys.stdout
     if BOARD == "native":
-        dut_env.update({"PORT": "tap0"})
-        fs_env.update({"PORT": "tap1"})
+        if CSP == 1:
+            dut_env.update({"PORT": "tap0"})
+            fs_env.update({"PORT": "tap1"})
+        else:
+            dut_env.update({"VCAN_IFNAME": "vcan0"})
+            fs_env.update({"VCAN_IFNAME": "vcan1"})
     fs_ctrl = factory.get_ctrl(
         env=fs_env,
         application_directory=APPLICATION_FS,

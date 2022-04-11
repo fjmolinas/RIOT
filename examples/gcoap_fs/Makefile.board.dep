@@ -1,3 +1,7 @@
 ifeq ($(BOARD),native)
-  USEMODULE += netdev_default
+  ifneq (,$(filter libcsp,$(USEPKG)))
+    FEATURES_REQUIRED += periph_can
+  else
+    USEMODULE += netdev_default
+  endif
 endif

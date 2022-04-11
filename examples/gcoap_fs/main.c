@@ -31,6 +31,10 @@
 #include "net/gcoap.h"
 #include "net/coapfileserver.h"
 
+#if IS_USED(MODULE_LIBCSP)
+#include "csp/csp.h"
+#endif
+
 #define MAIN_QUEUE_SIZE (4)
 static msg_t _main_msg_queue[MAIN_QUEUE_SIZE];
 
@@ -53,11 +57,17 @@ static gcoap_listener_t _listener = {
 
 int main(void)
 {
+
+#if IS_USED(MODULE_GNRC)
     ipv6_addr_t addr;
     const char addr_str[] = "2001:db8::2";
-
     ipv6_addr_from_str(&addr, addr_str);
     gnrc_netif_ipv6_addr_add(gnrc_netif_iter(NULL), &addr, 64, 0);
+#endif
+#if IS_USED(MODULE_LIBCSP)
+    csp_iface_t *iface = csp_iflist_get_by_name("can0");
+    iface->addr = 0x0033;
+#endif
 
     msg_init_queue(_main_msg_queue, MAIN_QUEUE_SIZE);
     gcoap_register_listener(&_listener);
