@@ -1,5 +1,5 @@
 # name of your application
-APPLICATION = filesystem
+APPLICATION = gcoap_fs
 
 # If no BOARD is found in the environment, use this default:
 BOARD ?= native
@@ -59,7 +59,7 @@ endif
 
 # FATFS for the fileserver
 FATFS_IMAGE_FILE_SIZE_MIB ?= 128
-FATFS_IMAGE_FILE ?= $(RIOTBASE)/riot_fatfs_disk.img
+FATFS_IMAGE_FILE ?= $(RIOTBASE)/examples/gcoap_fs/riot_fatfs_disk.img
 ifeq ($(BOARD),native)
   CFLAGS += -DMTD_NATIVE_FILENAME=\"$(FATFS_IMAGE_FILE)\"
   CFLAGS += -DMTD_SECTOR_NUM=\($(FATFS_IMAGE_FILE_SIZE_MIB)*1024*1024/MTD_SECTOR_SIZE\)
