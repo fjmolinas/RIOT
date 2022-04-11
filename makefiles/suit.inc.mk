@@ -4,7 +4,7 @@
 # makefiles/suit.base.inc.mk
 #
 #
-SUIT_COAP_BASEPATH ?= fw/$(BOARD)
+SUIT_COAP_BASEPATH ?= $(APPLICATION)/$(BOARD)
 SUIT_COAP_SERVER ?= localhost
 SUIT_COAP_ROOT ?= coap://$(SUIT_COAP_SERVER)/$(SUIT_COAP_BASEPATH)
 SUIT_COAP_FSROOT ?= $(RIOTBASE)/coaproot
@@ -14,14 +14,15 @@ $(BINDIR_SUIT): $(CLEAN)
 	$(Q)mkdir -p $(BINDIR_SUIT)
 
 #
-SUIT_MANIFEST_BASENAME ?= riot.suit
-SUIT_MANIFEST ?= $(BINDIR_SUIT)/$(SUIT_MANIFEST_BASENAME)_unsigned.$(APP_VER).bin
-SUIT_MANIFEST_LATEST ?= $(BINDIR_SUIT)/$(SUIT_MANIFEST_BASENAME)_unsigned.latest.bin
-SUIT_MANIFEST_SIGNED ?= $(BINDIR_SUIT)/$(SUIT_MANIFEST_BASENAME).$(APP_VER).bin
-SUIT_MANIFEST_SIGNED_LATEST ?= $(BINDIR_SUIT)/$(SUIT_MANIFEST_BASENAME).latest.bin
+SUIT_SEPARATOR ?= .
+SUIT_MANIFEST_BASENAME ?= riot_suit
+SUIT_MANIFEST ?= $(BINDIR_SUIT)/$(SUIT_MANIFEST_BASENAME)$(SUIT_SEPARATOR)unsigned$(SUIT_SEPARATOR)$(APP_VER).bin
+SUIT_MANIFEST_LATEST ?= $(BINDIR_SUIT)/$(SUIT_MANIFEST_BASENAME)$(SUIT_SEPARATOR)unsigned$(SUIT_SEPARATOR)latest.bin
+SUIT_MANIFEST_SIGNED ?= $(BINDIR_SUIT)/$(SUIT_MANIFEST_BASENAME)$(SUIT_SEPARATOR)$(APP_VER).bin
+SUIT_MANIFEST_SIGNED_LATEST ?= $(BINDIR_SUIT)/$(SUIT_MANIFEST_BASENAME)$(SUIT_SEPARATOR)latest.bin
 
 SUIT_NOTIFY_VERSION ?= latest
-SUIT_NOTIFY_MANIFEST ?= $(SUIT_MANIFEST_BASENAME).$(SUIT_NOTIFY_VERSION).bin
+SUIT_NOTIFY_MANIFEST ?= $(SUIT_MANIFEST_BASENAME)$(SUIT_SEPARATOR)$(SUIT_NOTIFY_VERSION).bin
 
 # Long manifest names require more buffer space when parsing
 export CFLAGS += -DCONFIG_SOCK_URLPATH_MAXLEN=128
@@ -77,3 +78,27 @@ suit/notify: | $(filter suit/publish, $(MAKECMDGOALS))
 	aiocoap-client -m POST "coap://$(SUIT_CLIENT)/suit/trigger" \
 		--payload "$(SUIT_COAP_ROOT)/$(SUIT_NOTIFY_MANIFEST)" && \
 		echo "Triggered $(SUIT_CLIENT) to update."
+
+# TODO: move the fatfs stuff to a generic place
+FATFS_IMAGE_FILE ?= $(RIOTBASE)/examples/gcoap_fs/riot_fatfs_disk.img
+FATFS_IMAGE_FILE_SIZE_MIB ?= 128
+
+SUIT_FATFS_IMAGE ?= $(FATFS_IMAGE_FILE)
+
+suit/fatfs-image:
+	$(Q)if [ ! -f "$(FATFS_IMAGE_FILE)" ]; then \
+	$(Q)echo "Creating $(FATFS_IMAGE_FILE) ..."; \
+	$(Q)dd if=/dev/zero of=$(FATFS_IMAGE_FILE) bs=1M count=$(FATFS_IMAGE_FILE_SIZE_MIB); \
+	$(Q)mkfs.fat $(FATFS_IMAGE_FILE); \
+	$(Q)fi
+
+suit/publish-fs: $(SUIT_MANIFESTS) $(SUIT_MANIFEST_PAYLOADS)
+	sudo mkdir -p $(SUIT_COAP_FSROOT)
+	sudo mount -o loop,umask=000 $(FATFS_IMAGE_FILE) $(SUIT_COAP_FSROOT)
+	mkdir -p $(SUIT_COAP_FSROOT)/$(SUIT_COAP_BASEPATH)
+	cp $^ $(SUIT_COAP_FSROOT)/$(SUIT_COAP_BASEPATH)
+	$(Q)for file in $(notdir $^); do \
+		echo "published \"$$file\""; \
+		echo "       as \"$(SUIT_COAP_ROOT)/$$file\""; \
+	done
+	sudo umount $(SUIT_COAP_FSROOT)
