@@ -26,7 +26,6 @@ USEMODULE += gcoap
 USEMODULE += coapfileserver
 ifeq (1,$(CSP))
   CFLAGS += -DCOAP_PORT=2
-  CFLAGS += -DGOAP_PORT=2
   CFLAGS += -DCONFIG_GCOAP_PORT=2
   USEPKG += libcsp
 else
@@ -39,7 +38,7 @@ endif
 USEMODULE += vfs
 USEMODULE += vfs_default
 USEMODULE += vfs_auto_format
-CFLAGS=-DFATFS_FFCONF_OPT_USE_LFN=1
+CFLAGS += -DFATFS_FFCONF_OPT_USE_LFN=1
 
 # Enable test_utils_interactive_sync, only used when running automatic test
 DEFAULT_MODULE += test_utils_interactive_sync

@@ -4,4 +4,10 @@ ifeq ($(BOARD),native)
   else
     USEMODULE += netdev_default
   endif
+else
+  ifneq (,$(filter libcsp,$(USEPKG)))
+    USEMODULE += mcp2515
+  endif
+
+  CFLAGS += -DGCOAP_STACK_SIZE=THREAD_STACKSIZE_LARGE
 endif
