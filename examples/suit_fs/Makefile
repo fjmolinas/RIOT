@@ -24,6 +24,7 @@ USEMODULE += ps
 CSP ?= 1
 USEMODULE += gcoap
 ifeq (1,$(CSP))
+  USE_ETHOS ?= 0
   CFLAGS += -DCOAP_PORT=2
   CFLAGS += -DGOAP_PORT=2
   CFLAGS += -DCONFIG_GCOAP_PORT=2
@@ -34,16 +35,18 @@ else
   USEMODULE += gnrc_icmpv6_echo
 endif
 
-# Use VFS
-USEMODULE += vfs
-USEMODULE += vfs_default
-USEMODULE += vfs_auto_format
-CFLAGS=-DFATFS_FFCONF_OPT_USE_LFN=1
-
 # Add SUIT
 USEMODULE += suit
 USEMODULE += suit_transport_coap
-USEMODULE += suit_storage_vfs
+# Configure one RAM regions with 2K
+CFLAGS += -DCONFIG_SUIT_STORAGE_RAM_REGIONS=1
+CFLAGS += -DCONFIG_SUIT_STORAGE_RAM_SIZE=2048
+USEMODULE += suit_storage_ram
+# Add mock application
+F12R_BLOBS += $(CURDIR)/application/fletcher32_fc.bin
+BLOBS += application/fletcher32_fc.bin
+USEPKG += femto-container
+
 # Display a progress bar during firmware download
 USEMODULE += progress_bar
 
@@ -52,9 +55,6 @@ DEFAULT_MODULE += test_utils_interactive_sync
 
 ifeq ($(BOARD),native)
   USE_ETHOS ?= 0
-  # Configure two RAM regions with 2K each
-  CFLAGS += -DCONFIG_SUIT_STORAGE_RAM_REGIONS=2
-  CFLAGS += -DCONFIG_SUIT_STORAGE_RAM_SIZE=2048
 endif
 
 # Change this to 0 to not use ethos
@@ -91,7 +91,7 @@ TEST_EXTRA_FILES += $(SLOT_RIOT_ELFS) $(SUIT_SEC) $(SUIT_PUB)
 # a terminal is opened to synchronize.
 TESTRUNNER_RESET_AFTER_TERM ?= 1
 
-include $(CURDIR)/Makefile.suit.native
+include $(CURDIR)/Makefile.suit.custom
 
 include $(RIOTBASE)/Makefile.include
 
@@ -99,5 +99,11 @@ include $(RIOTBASE)/Makefile.include
 
 host-tools:
 	$(Q)env -u CC -u CFLAGS $(MAKE) -C $(RIOTTOOLS)
+
+suit/publish-fletcher: suit/publish-fs
+	@true
+
+suit/publish-fw: suit/publish-fs
+	@true
 
 include $(RIOTMAKE)/default-radio-settings.inc.mk

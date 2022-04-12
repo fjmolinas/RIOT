@@ -1,5 +1,10 @@
 ifeq ($(BOARD),native)
-  USEMODULE += suit_storage_ram
+  USEMODULE += suit_storage_vfs
+  # Use VFS
+  USEMODULE += vfs
+  USEMODULE += vfs_default
+  USEMODULE += vfs_auto_format
+  CFLAGS += -DFATFS_FFCONF_OPT_USE_LFN=1
   ifneq (,$(filter libcsp,$(USEPKG)))
     FEATURES_REQUIRED += periph_can
   else
@@ -7,4 +12,7 @@ ifeq ($(BOARD),native)
   endif
 else
   USEMODULE += suit_storage_flashwrite
+  ifneq (,$(filter libcsp,$(USEPKG)))
+    USEMODULE += mcp2515
+  endif
 endif
