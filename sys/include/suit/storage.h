@@ -287,11 +287,21 @@ typedef struct suit_storage_driver {
     char separator;
 } suit_storage_driver_t;
 
+typedef void (*suit_storage_cb_t)(void *arg);
+
+typedef struct suit_storage_hook {
+    struct suit_storage_hook *next;
+    suit_storage_cb_t cb;
+    void *arg;
+} suit_storage_hook_t;
+
 /**
  * @brief Generic storage backend state.
  */
 struct suit_storage {
     const suit_storage_driver_t *driver; /**< Storage driver functions */
+    suit_storage_hook_t *pre;
+    suit_storage_hook_t *post;
 };
 
 /**
@@ -397,6 +407,8 @@ static inline bool suit_storage_has_offset(const suit_storage_t *storage)
  */
 static inline int suit_storage_init(suit_storage_t *storage)
 {
+    storage->post = NULL;
+    storage->pre = NULL;
     return storage->driver->init(storage);
 }
 
@@ -414,6 +426,11 @@ static inline int suit_storage_start(suit_storage_t *storage,
                                      const suit_manifest_t *manifest,
                                      size_t len)
 {
+    for (suit_storage_hook_t *i = storage->pre; i != NULL; i = i->next) {
+        if (i->cb) {
+            i->cb(i->arg);
+        }
+    }
     return storage->driver->start(storage, manifest, len);
 }
 
@@ -499,6 +516,12 @@ static inline int suit_storage_read_ptr(suit_storage_t *storage, const uint8_t
 static inline int suit_storage_install(suit_storage_t *storage,
                                        const suit_manifest_t *manifest)
 {
+    for (suit_storage_hook_t *i = storage->post; i != NULL; i = i->next) {
+        if (i->cb) {
+            i->cb(i->arg);
+        }
+    }
+
     return storage->driver->install(storage, manifest);
 }
 
@@ -512,6 +535,12 @@ static inline int suit_storage_install(suit_storage_t *storage,
  */
 static inline int suit_storage_erase(suit_storage_t *storage)
 {
+    for (suit_storage_hook_t *i = storage->post; i != NULL; i = i->next) {
+        if (i->cb) {
+            i->cb(i->arg);
+        }
+    }
+
     return storage->driver->erase(storage);
 }
 
@@ -605,6 +634,42 @@ static inline int suit_storage_set_seq_no(suit_storage_t *storage,
 {
     return storage->driver->set_seq_no(storage, seq_no);
 }
+
+/**
+ * @brief
+ *
+ * @param storage
+ * @param hook
+ * @return int
+ */
+int suit_storage_add_pre_hook(suit_storage_t* storage, suit_storage_hook_t *hook);
+
+/**
+ * @brief
+ *
+ * @param storage
+ * @param hook
+ * @return int
+ */
+int suit_storage_add_post_hook(suit_storage_t* storage, suit_storage_hook_t *hook);
+
+/**
+ * @brief
+ *
+ * @param storage
+ * @param hook
+ * @return int
+ */
+int suit_storage_rmv_pre_hook(suit_storage_t* storage, suit_storage_hook_t *hook);
+
+/**
+ * @brief
+ *
+ * @param storage
+ * @param hook
+ * @return int
+ */
+int suit_storage_rmv_post_hook(suit_storage_t* storage, suit_storage_hook_t *hook);
 /** @} */
 
 #ifdef __cplusplus
