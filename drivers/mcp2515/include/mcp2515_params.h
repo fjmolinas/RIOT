@@ -87,7 +87,7 @@ static const candev_mcp2515_conf_t candev_mcp2515_conf[] = {
  */
 static const candev_params_t candev_mcp2515_params[] = {
     {
-        .name = "can_mcp2515_0",
+        .name = "can0",
     },
 };
 
