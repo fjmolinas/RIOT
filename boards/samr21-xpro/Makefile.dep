@@ -6,6 +6,16 @@ ifneq (,$(filter eui_provider,$(USEMODULE)))
   USEMODULE += edbg_eui
 endif
 
-ifneq (,$(filter saul_default,$(USEMODULE)))
-  USEMODULE += saul_gpio
+ifneq (,$(filter saul_default,$(usemodule)))
+  usemodule += saul_gpio
+endif
+
+ifneq (,$(filter mtd,$(USEMODULE)))
+  USEMODULE += mtd_sdcard
+endif
+
+# default to using fatfs on the external flash
+ifneq (,$(filter vfs_default,$(USEMODULE)))
+  USEMODULE += fatfs_vfs
+  USEMODULE += mtd
 endif

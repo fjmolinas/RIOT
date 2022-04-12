@@ -23,6 +23,30 @@
 #include "board.h"
 #include "periph/gpio.h"
 
+#if defined(MODULE_MTD_SDCARD) || defined(DOXYGEN)
+#include "mtd_sdcard.h"
+#include "sdcard_spi.h"
+#include "sdcard_spi_params.h"
+ /* this is provided by the sdcard_spi driver
+  * see drivers/sdcard_spi/sdcard_spi.c */
+extern sdcard_spi_t sdcard_spi_devs[ARRAY_SIZE(sdcard_spi_params)];
+mtd_sdcard_t samr21_xpro_dev = {
+    .base = {
+        .driver = &mtd_sdcard_driver,
+    },
+    .sd_card = &sdcard_spi_devs[0],
+    .params = &sdcard_spi_params[0]
+};
+
+mtd_dev_t *mtd0 = (mtd_dev_t *)&samr21_xpro_dev;
+
+#ifdef MODULE_VFS_DEFAULT
+#include "vfs_default.h"
+VFS_AUTO_MOUNT(fatfs, VFS_MTD(samr21_xpro_dev), VFS_DEFAULT_NVM(0), 0);
+#endif
+#endif /* MODULE_MTD_SDCARD || DOXYGEN */
+
+
 void board_antenna_config(uint8_t antenna)
 {
     if (antenna == RFCTL_ANTENNA_EXT){

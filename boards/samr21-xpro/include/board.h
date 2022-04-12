@@ -133,6 +133,25 @@ enum {
 #endif
 
 /**
+ * @name    Set default configuration parameters for the MCP2515
+ * @{
+ */
+#define MCP2515_PARAM_SPI SPI_DEV(1)
+#define MCP2515_PARAM_CS GPIO_PIN(PA, 14)
+#define MCP2515_PARAM_INT GPIO_PIN(PA, 15)
+
+#if defined(MODULE_MTD_SDCARD) || defined(DOXYGEN)
+#include "mtd_sdcard.h"
+/**
+ * @brief MTD device 0 (SD Card) definition. mtd0 is defined in board.c
+ * @{
+ */
+extern mtd_dev_t *mtd0;
+#define MTD_0 mtd0
+#endif
+/** @} */
+
+/**
  * @brief   Set antenna switch
  */
 void board_antenna_config(uint8_t antenna);
