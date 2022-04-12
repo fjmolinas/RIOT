@@ -87,18 +87,21 @@ SUIT_FATFS_IMAGE ?= $(FATFS_IMAGE_FILE)
 
 suit/fatfs-image:
 	$(Q)if [ ! -f "$(FATFS_IMAGE_FILE)" ]; then \
-	$(Q)echo "Creating $(FATFS_IMAGE_FILE) ..."; \
-	$(Q)dd if=/dev/zero of=$(FATFS_IMAGE_FILE) bs=1M count=$(FATFS_IMAGE_FILE_SIZE_MIB); \
-	$(Q)mkfs.fat $(FATFS_IMAGE_FILE); \
-	$(Q)fi
+	echo "Creating $(FATFS_IMAGE_FILE) ..."; \
+	dd if=/dev/zero of=$(FATFS_IMAGE_FILE) bs=1M count=$(FATFS_IMAGE_FILE_SIZE_MIB); \
+	mkfs.fat $(FATFS_IMAGE_FILE); \
+	fi
 
 suit/publish-fs: $(SUIT_MANIFESTS) $(SUIT_MANIFEST_PAYLOADS)
-	sudo mkdir -p $(SUIT_COAP_FSROOT)
-	sudo mount -o loop,umask=000 $(FATFS_IMAGE_FILE) $(SUIT_COAP_FSROOT)
+	$(Q)if [ "$${BOARD}" = "native" ]; then \
+	sudo mkdir -p $(SUIT_COAP_FSROOT); \
+	fi
 	mkdir -p $(SUIT_COAP_FSROOT)/$(SUIT_COAP_BASEPATH)
 	cp $^ $(SUIT_COAP_FSROOT)/$(SUIT_COAP_BASEPATH)
 	$(Q)for file in $(notdir $^); do \
 		echo "published \"$$file\""; \
 		echo "       as \"$(SUIT_COAP_ROOT)/$$file\""; \
 	done
-	sudo umount $(SUIT_COAP_FSROOT)
+	$(Q)if [ "$${BOARD}" = "native" ]; then \
+	sudo umount $(SUIT_COAP_FSROOT); \
+	fi
