@@ -23,8 +23,11 @@ USEMODULE += gnrc_netif_single
 USEMODULE += gnrc_ipv6
 # Additional networking modules that can be dropped if not needed
 USEMODULE += gnrc_icmpv6_echo
+USEMODULE += gnrc_rpl
 # Use minimal standard PRNG
 USEMODULE += prng_minstd
+
+USEMODULE += nanocoap_sock
 
 CFLAGS += -DLOG_LEVEL=LOG_NONE  # disable log output
 CFLAGS += -DCONFIG_GNRC_NETIF_IPV6_ADDRS_NUMOF=2 \
