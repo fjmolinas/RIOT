@@ -1,0 +1,18 @@
+ifeq ($(BOARD),native)
+  USEMODULE += suit_storage_vfs
+  # Use VFS
+  USEMODULE += vfs
+  USEMODULE += vfs_default
+  USEMODULE += vfs_auto_format
+  CFLAGS += -DFATFS_FFCONF_OPT_USE_LFN=1
+  ifneq (,$(filter libcsp,$(USEPKG)))
+    FEATURES_REQUIRED += periph_can
+  else
+    USEMODULE += netdev_default
+  endif
+else
+  USEMODULE += suit_storage_flashwrite
+  ifneq (,$(filter libcsp,$(USEPKG)))
+    FEATURES_REQUIRED += periph_can
+  endif
+endif

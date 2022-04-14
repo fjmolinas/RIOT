@@ -1,0 +1,48 @@
+# Required variables defined in riotboot.inc.mk or Makefile.include
+BINDIR_APP = $(CURDIR)/bin/$(BOARD)/$(APPLICATION)
+EPOCH := $(shell date +%s)
+APP_VER ?= $(EPOCH)
+# File-System igore '.'
+SUIT_SEPARATOR ?= _
+# Default Mount
+SUIT_COAP_FSROOT ?= /media/francisco/sdcard
+
+# Default addressing
+ifneq (,$(filter libcsp,$(USEPKG)))
+  SUIT_SERVER ?= [::33]
+  SUIT_CLIENT ?= [::22]
+else
+  SUIT_SERVER ?= [2001:db8::2]
+  SUIT_CLIENT ?= [2001:db8::3]
+endif
+SUIT_COAP_SERVER ?= $(SUIT_SERVER)/vfs/nvm0
+
+# Set settings for publishing fetcher payload
+ifneq (,$(filter suit/publish-fletcher,$(MAKECMDGOALS)))
+    SUIT_FLETCHER_PAYLOAD ?= $(CURDIR)/application/fletcher32_fc.bin
+    SUIT_FLETCHER_PAYLOAD_BIN ?= $(CURDIR)/bin/$(BOARD)/ram_fc$(SUIT_SEPARATOR)$(APP_VER).bin
+    BUILD_FILES += $(SUIT_FLETCHER_PAYLOAD_BIN)
+
+    $(SUIT_FLETCHER_PAYLOAD_BIN): $(SUIT_FLETCHER_PAYLOAD)
+			$(Q)cp $(SUIT_FLETCHER_PAYLOAD) $@
+
+    SUIT_STORAGE ?= ram:0
+    SUIT_MANIFEST_BASENAME ?= ram_suit
+    SUIT_MANIFEST_PAYLOADS ?= $(SUIT_FLETCHER_PAYLOAD_BIN)
+    SUIT_MANIFEST_SLOTFILES ?= $(SUIT_FLETCHER_PAYLOAD_BIN):0:$(SUIT_STORAGE)
+endif
+# Set settings for publishing fake fw payloads to native
+ifneq (,$(filter suit/publish-fw,$(MAKECMDGOALS)))
+  ifeq ($(BOARD),native)
+    SUIT_NATIVE_PAYLOAD ?= "AABBCCDD"
+    SUIT_NATIVE_PAYLOAD_BIN ?= $(BINDIR_APP)$(SUIT_SEPARATOR)$(APP_VER).bin
+    BUILD_FILES += $(SUIT_NATIVE_PAYLOAD_BIN)
+
+    $(SUIT_NATIVE_PAYLOAD_BIN): $(BINDIR_APP)
+			@$(Q)echo $(SUIT_NATIVE_PAYLOAD) > $@
+
+    SUIT_STORAGE ?= /nvm0/SLOT0.TXT
+    SUIT_MANIFEST_PAYLOADS ?= $(SUIT_NATIVE_PAYLOAD_BIN)
+    SUIT_MANIFEST_SLOTFILES ?= $(SUIT_NATIVE_PAYLOAD_BIN):0:$(SUIT_STORAGE)
+  endif
+endif
