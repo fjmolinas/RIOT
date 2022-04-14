@@ -53,3 +53,8 @@ ifneq (,$(filter suit/publish-all suit/publish-fw,$(MAKECMDGOALS)))
   endif
 endif
 
+# TODO: move the fatfs stuff to a generic place
+FATFS_IMAGE_FILE ?= $(RIOTBASE)/examples/gcoap_fs/riot_fatfs_disk.img
+FATFS_IMAGE_FILE_SIZE_MIB ?= 128
+
+SUIT_FATFS_IMAGE ?= $(FATFS_IMAGE_FILE)

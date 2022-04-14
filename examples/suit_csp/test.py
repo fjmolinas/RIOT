@@ -7,11 +7,11 @@ from factory import RIOTCtrlAppFactory
 from riotctrl_shell.sys import Reboot, SUIT, SUITSequenceNoParser
 from riotctrl_shell.vfs import VFS
 
-PUBLISH_TARGET = "suit/publish-fs"
+PUBLISH_TARGET = "suit/publish-fw"
 
 RIOTBASE = os.path.abspath(os.environ.get("RIOTBASE"))
 APPLICATION_FS = f"{RIOTBASE}/examples/gcoap_fs"
-APPLICATION_DUT = f"{RIOTBASE}/examples/suit_fs"
+APPLICATION_DUT = f"{RIOTBASE}/examples/suit_csp"
 BOARD = os.getenv("BOARD", "native")
 UPDATING_TIMEOUT = 10
 CSP = int(os.getenv("CSP", "1"))
@@ -115,11 +115,11 @@ with RIOTCtrlAppFactory() as factory:
     termargs["logfile"] = sys.stdout
     if BOARD == "native":
         if CSP == 1:
+            fs_env.update({"VCAN_IFNAME": "vcan1"})
+            dut_env.update({"VCAN_IFNAME": "vcan0"})
+        else:
             dut_env.update({"PORT": "tap0"})
             fs_env.update({"PORT": "tap1"})
-        else:
-            dut_env.update({"VCAN_IFNAME": "vcan0"})
-            fs_env.update({"VCAN_IFNAME": "vcan1"})
     fs_ctrl = factory.get_ctrl(
         env=fs_env,
         application_directory=APPLICATION_FS,

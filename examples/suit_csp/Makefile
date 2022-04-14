@@ -1,6 +1,5 @@
 # name of your application
-APPLICATION = suit_fs
-
+APPLICATION = suit_csp
 # If no BOARD is found in the environment, use this default:
 BOARD ?= native
 
@@ -25,6 +24,7 @@ CSP ?= 1
 ifeq (1,$(CSP))
   USE_ETHOS ?= 0
   CFLAGS += -DCOAP_PORT=2
+  CFLAGS += -DCONFIG_GCOAP_PORT=2
   USEPKG += libcsp
 else
   USEMODULE += auto_init_gnrc_netif
@@ -96,6 +96,21 @@ include $(RIOTBASE)/Makefile.include
 
 host-tools:
 	$(Q)env -u CC -u CFLAGS $(MAKE) -C $(RIOTTOOLS)
+
+suit/publish-fs: $(SUIT_MANIFESTS) $(SUIT_MANIFEST_PAYLOADS)
+	$(Q)if [ "$${BOARD}" = "native" ]; then \
+	sudo mkdir -p $(SUIT_COAP_FSROOT); \
+  sudo mount -o loop,umask=000 $(FATFS_IMAGE_FILE) $(SUIT_COAP_FSROOT); \
+	fi
+	mkdir -p $(SUIT_COAP_FSROOT)/$(SUIT_COAP_BASEPATH)
+	cp $^ $(SUIT_COAP_FSROOT)/$(SUIT_COAP_BASEPATH)
+	$(Q)for file in $(notdir $^); do \
+		echo "published \"$$file\""; \
+		echo "       as \"$(SUIT_COAP_ROOT)/$$file\""; \
+	done
+	$(Q)if [ "$${BOARD}" = "native" ]; then \
+	sudo umount $(SUIT_COAP_FSROOT); \
+	fi
 
 suit/publish-fletcher: suit/publish-fs
 	@true
