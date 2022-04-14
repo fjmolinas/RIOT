@@ -22,12 +22,9 @@ USEMODULE += ps
 
 # Networked File Server
 CSP ?= 1
-USEMODULE += gcoap
 ifeq (1,$(CSP))
   USE_ETHOS ?= 0
   CFLAGS += -DCOAP_PORT=2
-  CFLAGS += -DGOAP_PORT=2
-  CFLAGS += -DCONFIG_GCOAP_PORT=2
   USEPKG += libcsp
 else
   USEMODULE += auto_init_gnrc_netif
