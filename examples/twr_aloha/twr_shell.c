@@ -83,7 +83,7 @@ static void _print_usage(void)
 {
     puts("Usage:");
     puts("\ttwr req <short_addr> [-p <proto>] [-c <count>] [-h]"
-         "[-i <ms interval>] ");
+         "[-i <ms interval>] [-b]");
     puts("\t - short_addr: short address of request destination");
     puts("\t - count: number of requests (default: 1)");
     puts("\t - ms interval: wait interval milliseconds between requests"
@@ -123,6 +123,7 @@ int _twr_handler(int argc, char **argv)
         int proto = UWB_DATA_CODE_SS_TWR;
         uint8_t addr[IEEE802154_SHORT_ADDRESS_LEN];
         uint16_t short_addr = 0x0000;
+        bool bias = false;
         int res = 0;
         if (argc < 3) {
             _print_usage();
@@ -188,11 +189,16 @@ int _twr_handler(int argc, char **argv)
                         }
                     }
                 /* intentionally falls through */
+                case 'b':
+                    bias = true;
+                    continue;
+                /* intentionally falls through */
                 case 'i':
                     if ((++i) < argc) {
                         interval_ms = atoi(argv[i]);
                         continue;
                     }
+
                 /* intentionally falls through */
                 default:
                     res = 1;
@@ -204,6 +210,8 @@ int _twr_handler(int argc, char **argv)
             _print_usage();
             return 1;
         }
+        /* set bias correction */
+        uwb_core_rng_set_bias_correction(bias);
         puts("[twr]: start ranging");
         uwb_core_rng_start(short_addr, proto, interval_ms, count);
         if (IS_ACTIVE(CONFIG_TWR_SHELL_BLOCKING)) {

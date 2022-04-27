@@ -55,8 +55,9 @@ static void _rng_listen(void *arg);
 static void _rng_request(void *arg);
 static event_callback_t _rng_listen_event = EVENT_CALLBACK_INIT(_rng_listen, NULL);
 
-#define TWR_STATUS_INITIATOR      (1 << 0)
-#define TWR_STATUS_RESPONDER      (1 << 1)
+#define TWR_STATUS_INITIATOR        (1 << 0)
+#define TWR_STATUS_RESPONDER        (1 << 1)
+#define TWR_ENABLE_BIAS_CORRECTION  (1 << 2)
 static uint8_t _status;
 
 typedef struct uwb_core_rng_event {
@@ -82,6 +83,7 @@ static struct uwb_mac_interface _uwb_mac_cbs = (struct uwb_mac_interface){
 /* callback to offload printing */
 static void _print_rng_data_cb(void *arg)
 {
+    (void)arg;
     uwb_core_rng_data_t *rng_data = (uwb_core_rng_data_t *)arg;
     turo_t ctx;
 
@@ -117,6 +119,43 @@ static void _print_rng_data_cb(void *arg)
 static uwb_core_rng_data_t _rng_data;
 static event_callback_t _print_rng_data_event = EVENT_CALLBACK_INIT(
     _print_rng_data_cb, &_rng_data);
+
+
+void uwb_core_rng_set_bias_correction(bool status)
+{
+    if (status) {
+        _status |= TWR_ENABLE_BIAS_CORRECTION;
+    }
+    else {
+        _status &= ~TWR_ENABLE_BIAS_CORRECTION;
+    }
+}
+
+static float _get_fc(uint8_t ch)
+{
+    switch (ch) {
+    case 1: return 3494.4e6;
+    case 2: return 3993.6e6;
+    case 3: return 4492.8e6;
+    case 4: return 3993.6e6;
+    case 5: return 6489.6e6;
+    case 6: return 6489.6e6;
+    default:
+        return 0.0;
+    }
+}
+
+static float _get_bias(struct uwb_dev *inst, float range)
+{
+    if (_status & TWR_ENABLE_BIAS_CORRECTION) {
+        float prl = uwb_rng_path_loss(MYNEWT_VAL(DW1000_DEVICE_TX_PWR),
+                                      MYNEWT_VAL(DW1000_DEVICE_ANT_GAIN),
+                                      _get_fc(inst->config.channel), range);
+        float bias_cm = 2 * uwb_rng_bias_correction(inst, prl);
+        return bias_cm / 100;
+    }
+    return 0;
+}
 
 /**
  * @brief Range request complete callback.
@@ -171,10 +210,8 @@ static bool _complete_cb(struct uwb_dev *inst, struct uwb_mac_interface *cbs)
     data.dest = frame->dst_address;
     data.time = ztimer_now(ZTIMER_MSEC);
     float range_f = uwb_rng_tof_to_meters(uwb_rng_twr_to_tof(rng, rng->idx_current));
-    data.d_m = range_f;
+    data.d_m = range_f - _get_bias(inst, range_f);
 
-    /* convert from float meters to cm */
-    data.d_cm = range_f;
 #if IS_USED(MODULE_UWB_CORE_RNG_TRX_INFO)
     data.rssi = (int16_t)uwb_calc_rssi(inst, inst->rxdiag);
     data.fppl = uwb_calc_fppl(inst, inst->rxdiag);

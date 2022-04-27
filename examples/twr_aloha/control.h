@@ -24,6 +24,8 @@
 extern "C" {
 #endif
 
+#include "kernel_defines.h"
+
 #include "uwb/uwb.h"
 #include "uwb/uwb_ftypes.h"
 
@@ -111,6 +113,11 @@ void uwb_core_rng_start(uint16_t addr, twr_protocol_t proto, uint32_t interval,
  * @brief   Returns remaining rng requests
  */
 uint32_t uwb_core_rng_req_remaining(void);
+
+/**
+ * @brief   Enable/Disable bias correction
+ */
+void uwb_core_rng_set_bias_correction(bool status);
 
 #ifdef __cplusplus
 }
