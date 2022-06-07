@@ -29,6 +29,21 @@ config MODULE_AUTO_INIT_UWB-CORE
 config MODULE_UWB-CORE_CONTRIB
     bool
 
+config MODULE_UWB-CORE_TWR
+    bool "uwb-core two-way-ranging helper"
+    select MODULE_EVENT
+    select MODULE_EVENT_CALLBACK
+    select MODULE_EVENT_TIMEOUT_ZTIMER
+    select MODULE_EVENT_PERIODIC
+
+config MODULE_UWB-CORE_TWR_GATT
+    bool "uwb-core two-way-ranging helper GATT service"
+
+config MODULE_UWB-CORE_TWR_SHELL
+    bool "uwb-core two-way-ranging helper shell commands"
+    select MODULE_L2UTIL
+    select MODULE_TEST_UTILS_RESULT_OUTPUT
+
 config MODULE_UWB-CORE_DPL
     bool
     select PACKAGE_MYNEWT-CORE
