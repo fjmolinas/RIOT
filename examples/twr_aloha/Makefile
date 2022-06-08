@@ -31,6 +31,8 @@ USEMODULE += uwb-core_twr_ds
 USEMODULE += uwb-core_twr_ds_ext
 ## Uncomment to enable trx info such as rssi, los, fppl calculation
 # USEMODULE += uwb-core_rng_trx_info
+## Include GATT interface
+USEMODULE += uwb-core_twr_gatt
 
 # System modules used by this application
 USEMODULE += shell

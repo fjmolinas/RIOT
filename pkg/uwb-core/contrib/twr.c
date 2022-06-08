@@ -278,6 +278,11 @@ void uwb_core_twr_init(void)
         uwb_sleep_config(_udev);
         uwb_enter_sleep(_udev);
     }
+
+    if (IS_USED(MODULE_UWB_CORE_TWR_GATT)) {
+        /* start GATT service */
+        uwb_core_twr_gatt_init();
+    }
 }
 
 uint32_t uwb_core_twr_req_remaining(void)

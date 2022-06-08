@@ -38,6 +38,13 @@ ifneq (,$(filter uwb-core_twr,$(USEMODULE)))
   USEMODULE += event_periodic
 endif
 
+ifneq (,$(filter uwb-core_twr_gatt,$(USEMODULE)))
+  USEMODULE += nimble_autoadv
+  USEMODULE += nimble_svc_gap
+  USEMODULE += nimble_svc_gatt
+  CFLAGS +=-DCONFIG_NIMBLE_AUTOADV_START_MANUALLY
+endif
+
 ifneq (,$(filter uwb-core_shell,$(USEMODULE)))
   USEMODULE += l2util
   USEMODULE += test_utils_result_output

@@ -77,7 +77,7 @@ typedef struct uwb_core_twr_data {
  * @brief   Callback signature triggered by this module for each completed TWR
  *          exchange.
  */
-typedef void(*uwb_core_twr_cb_t)(void *data);
+typedef void (*uwb_core_twr_cb_t)(void *data);
 
 /**
  * @brief   Initialize the uwb_rng wrapper
@@ -126,6 +126,57 @@ bool uwb_core_twr_listen_is_enabled(void);
  * @param[in]   cb          the callback
  */
 void uwb_core_twr_set_cb(uwb_core_twr_cb_t cb);
+
+void uwb_core_twr_register_cb(uwb_core_twr_cb_t cb);
+
+void uwb_core_twr_unregister_cb(uwb_core_twr_cb_t cb);
+
+#include "memarray.h"
+
+/**
+ * @brief   TWR events to allocate, used to schedule rng_request/listen
+ */
+#ifndef CONFIG_UWB_CORE_TWR_DATA_BUF_SIZE
+#define CONFIG_UWB_CORE_TWR_DATA_BUF_SIZE       20
+#endif
+
+/**
+ * @brief   TWR event buffer memory manager
+ */
+typedef struct uwb_core_twr_data_mem {
+    uint8_t buf[CONFIG_UWB_CORE_TWR_DATA_BUF_SIZE * sizeof(uint16_t)];      /**< event buffer */
+    memarray_t mem;                                                         /**< Memarray management */
+} uwb_core_twr_data_mem_t;
+
+/**
+ * @brief   Initialize uwb-core rng gatt service
+ */
+void uwb_core_twr_gatt_init(void);
+
+/**
+ * @brief   Init the memory manager
+ *
+ * @param[in]   manager     the memory manager structure to init
+ */
+void uwb_core_gatt_mem_manager_init(uwb_core_twr_data_mem_t *mem);
+
+/**
+ * @brief   Free an allocated element
+ *
+ * @param[in]       manager     the memory manager
+ * @param[inout]    event       the event to to free
+ */
+void uwb_core_gatt_mem_manager_free(uwb_core_twr_data_mem_t *mem,
+                                    uint16_t d_cm);
+
+/**
+ * @brief   Allocate some space for a twr event
+ *
+ * @param[in]       manager     the memory manager
+ *
+ * @returns         pointer to the allocated event
+ */
+uint16_t *uwb_core_gatt_mem_manager_calloc(uwb_core_twr_data_mem_t *mem);
 
 #ifdef __cplusplus
 }
