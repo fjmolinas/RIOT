@@ -79,7 +79,7 @@ void _stmpe811_set_event_callback(const touch_dev_t *touch_dev, touch_event_cb_t
     assert(dev);
 
     if (gpio_is_valid(dev->params.int_pin)) {
-        gpio_init_int(dev->params.int_pin, GPIO_IN, GPIO_FALLING, cb, arg);
+        gpio_init_int(dev->params.int_pin, GPIO_IN_PU, GPIO_FALLING, cb, arg);
     }
 }
 
