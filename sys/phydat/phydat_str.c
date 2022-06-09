@@ -47,23 +47,8 @@ void phydat_dump(phydat_t *data, uint8_t dim)
     }
 
     for (uint8_t i = 0; i < dim; i++) {
-        char scale_prefix;
-
-        switch (data->unit) {
-            case UNIT_UNDEF:
-            case UNIT_NONE:
-            case UNIT_M2:
-            case UNIT_M3:
-            case UNIT_PERCENT:
-            case UNIT_TEMP_C:
-            case UNIT_TEMP_F:
-            case UNIT_DBM:
-                /* no string conversion */
-                scale_prefix = '\0';
-                break;
-            default:
-                scale_prefix = phydat_prefix_from_scale(data->scale);
-        }
+        char scale_prefix = phydat_prefix_from_unit_scale(data->unit,
+                                                          data->scale);
 
         printf("\t");
         if (dim > 1) {
@@ -150,17 +135,39 @@ const char *phydat_unit_to_str_verbose(uint8_t unit)
 char phydat_prefix_from_scale(int8_t scale)
 {
     switch (scale) {
-        case -3:    return 'm';
-        case -6:    return 'u';
-        case -9:    return 'n';
-        case -12:   return 'p';
-        case -15:   return 'f';
-        case 2:     return 'h';
-        case 3:     return 'k';
-        case 6:     return 'M';
-        case 9:     return 'G';
-        case 12:    return 'T';
-        case 15:    return 'P';
-        default:    return '\0';
+    case -3:    return 'm';
+    case -6:    return 'u';
+    case -9:    return 'n';
+    case -12:   return 'p';
+    case -15:   return 'f';
+    case 2:     return 'h';
+    case 3:     return 'k';
+    case 6:     return 'M';
+    case 9:     return 'G';
+    case 12:    return 'T';
+    case 15:    return 'P';
+    default:    return '\0';
     }
+}
+
+char phydat_prefix_from_unit_scale(uint8_t unit, int8_t scale)
+{
+    char scale_prefix;
+
+    switch (unit) {
+    case UNIT_UNDEF:
+    case UNIT_NONE:
+    case UNIT_M2:
+    case UNIT_M3:
+    case UNIT_PERCENT:
+    case UNIT_TEMP_C:
+    case UNIT_TEMP_F:
+    case UNIT_DBM:
+        /* no string conversion */
+        scale_prefix = '\0';
+        break;
+    default:
+        scale_prefix = phydat_prefix_from_scale(scale);
+    }
+    return scale_prefix;
 }

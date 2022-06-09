@@ -199,6 +199,21 @@ const char *phydat_unit_to_str(uint8_t unit);
 const char *phydat_unit_to_str_verbose(uint8_t unit);
 
 /**
+ * @brief   Convert the given scale factor to an SI prefix, ignores units
+ *          where this doe snot apply.
+ *
+ * The given scaling factor is returned as a SI unit prefix (e.g. M for Mega, u
+ * for micro, etc), or `\0` otherwise.
+ *
+ * @param[in] unit      unit
+ * @param[in] scale     scale factor to convert
+ *
+ * @return  SI prefix if applicable
+ * @return  `\0` if no SI prefix was found
+ */
+char phydat_prefix_from_unit_scale(uint8_t unit, int8_t scale);
+
+/**
  * @brief   Convert the given scale factor to an SI prefix
  *
  * The given scaling factor is returned as a SI unit prefix (e.g. M for Mega, u
