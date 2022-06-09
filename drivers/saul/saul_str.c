@@ -97,3 +97,32 @@ const char *saul_class_to_str(const uint8_t class_id)
 
     return result;
 }
+
+const char *saul_class_to_name(const uint8_t type, const uint8_t subtype)
+{
+    switch (type) {
+    case SAUL_SENSE_PM:
+        switch (subtype) {
+        case SAUL_SENSE_PM_1:
+            return "PM1";
+        case SAUL_SENSE_PM_2p5:
+            return "PM2.5";
+        case SAUL_SENSE_PM_10:
+            return "PM10";
+        default:
+            return "PM";
+        }
+    case SAUL_SENSE_CO2:
+        return "CO2";
+    case SAUL_SENSE_TVOC:
+        return "TVOC";
+    case SAUL_SENSE_HUM:
+        return "HUM";
+    case SAUL_SENSE_PRESS:
+        return "PRESS";
+    case SAUL_SENSE_TEMP:
+        return "TEMP";
+    default:
+        return "SAUL";
+    }
+}

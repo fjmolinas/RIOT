@@ -334,6 +334,8 @@ int saul_notsup(const void *dev, phydat_t *dat);
  */
 const char *saul_class_to_str(const uint8_t class_id);
 
+
+const char *saul_class_to_name(const uint8_t type, const uint8_t subtype);
 #ifdef __cplusplus
 }
 #endif
