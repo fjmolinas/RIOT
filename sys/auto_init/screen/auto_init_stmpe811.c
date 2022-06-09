@@ -26,10 +26,23 @@
 #include "stmpe811_params.h"
 #include "stmpe811_touch_dev.h"
 
+#if IS_USED(MODULE_LVGL_CONTRIB_TOUCH)
+#include "lvgl/lvgl.h"
+#include "lvgl_riot.h"
+#endif
+
 #define STMPE811_NUMOF           ARRAY_SIZE(stmpe811_params)
 
 stmpe811_t stmpe811_devs[STMPE811_NUMOF];
 static touch_dev_reg_t touch_dev_entries[STMPE811_NUMOF];
+
+static void _touch_event_cb(void *arg)
+{
+    (void)arg;
+#if IS_USED(MODULE_LVGL_CONTRIB_TOUCH)
+    lvgl_wakeup();
+#endif
+}
 
 void auto_init_stmpe811(void)
 {
@@ -37,7 +50,8 @@ void auto_init_stmpe811(void)
 
     for (size_t i = 0; i < STMPE811_NUMOF; i++) {
         LOG_DEBUG("[auto_init_screen] initializing stmpe811 #%u\n", i);
-        if (stmpe811_init(&stmpe811_devs[i], &stmpe811_params[i], NULL, NULL) < 0) {
+        if (stmpe811_init(&stmpe811_devs[i], &stmpe811_params[i], _touch_event_cb,
+                          &stmpe811_devs[i]) < 0) {
             LOG_ERROR("[auto_init_screen] error initializing stmpe811 #%u\n", i);
             continue;
         }
