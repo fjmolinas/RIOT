@@ -9,6 +9,7 @@
  */
 
 #include "event/callback.h"
+#include "stdio.h"
 
 void _event_callback_handler(event_t *event)
 {
@@ -18,6 +19,7 @@ void _event_callback_handler(event_t *event)
 
 void event_callback_init(event_callback_t *event_callback, void (callback)(void *), void *arg)
 {
+    event_callback->super.list_node.next = NULL;
     event_callback->super.handler = _event_callback_handler;
     event_callback->callback = callback;
     event_callback->arg = arg;
