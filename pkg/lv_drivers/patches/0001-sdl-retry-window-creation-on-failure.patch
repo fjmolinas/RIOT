@@ -1,0 +1,73 @@
+From ec090a378a578aaf1968b28ce147004271d03549 Mon Sep 17 00:00:00 2001
+From: Francisco Molina <francois-music@gmail.com>
+Date: Sun, 22 Mar 2026 16:08:52 +0100
+Subject: [PATCH] sdl: retry window creation on failure
+
+SDL_CreateWindow() can return NULL when the display server is not
+ready, which causes a NULL-pointer dereference in the subsequent
+SDL_CreateRenderer() call.  Add error checking to sdl_init() and
+window_create() with a retry loop (up to 5 attempts, 200 ms apart)
+so transient display-server delays no longer crash the application.
+---
+ sdl/sdl.c | 26 ++++++++++++++++++++++----
+ 1 file changed, 22 insertions(+), 4 deletions(-)
+
+diff --git a/sdl/sdl.c b/sdl/sdl.c
+index 6cc6783..e7bedfd 100644
+--- a/sdl/sdl.c
++++ b/sdl/sdl.c
+@@ -50,6 +50,7 @@
+ #include <stdlib.h>
+ #include <stdbool.h>
+ #include <string.h>
++#include <stdio.h>
+ #include SDL_INCLUDE_PATH
+ 
+ /*********************
+@@ -127,7 +128,9 @@ static char buf[KEYBOARD_BUFFER_SIZE];
+ void sdl_init(void)
+ {
+     /*Initialize the SDL*/
+-    SDL_Init(SDL_INIT_VIDEO);
++    if(SDL_Init(SDL_INIT_VIDEO) != 0) {
++        fprintf(stderr, "SDL_Init failed: %s\n", SDL_GetError());
++    }
+ 
+     SDL_SetEventFilter(quit_filter, NULL);
+ 
+@@ -430,14 +433,29 @@ static void monitor_sdl_clean_up(void)
+ static void window_create(monitor_t * m)
+ {
+ 
++    const int max_retries = 5;
++    const int retry_delay_ms = 200;
+     int flag = 0;
+ #if SDL_FULLSCREEN
+     flag |= SDL_WINDOW_FULLSCREEN;
+ #endif
+ 
+-    m->window = SDL_CreateWindow("TFT Simulator",
+-                              SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+-                              SDL_HOR_RES * SDL_ZOOM, SDL_VER_RES * SDL_ZOOM, flag);       /*last param. SDL_WINDOW_BORDERLESS to hide borders*/
++    for(int attempt = 0; attempt < max_retries; attempt++) {
++        m->window = SDL_CreateWindow("TFT Simulator",
++                                  SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
++                                  SDL_HOR_RES * SDL_ZOOM, SDL_VER_RES * SDL_ZOOM, flag);
++        if(m->window != NULL) {
++            break;
++        }
++        fprintf(stderr, "SDL_CreateWindow attempt %d/%d failed: %s\n",
++                attempt + 1, max_retries, SDL_GetError());
++        SDL_Delay(retry_delay_ms);
++    }
++    if(m->window == NULL) {
++        fprintf(stderr, "SDL_CreateWindow failed after %d attempts, giving up\n",
++                max_retries);
++        return;
++    }
+ 
+     m->renderer = SDL_CreateRenderer(m->window, -1, SDL_RENDERER_SOFTWARE);
+     m->texture = SDL_CreateTexture(m->renderer,
+-- 
+2.43.0
+
