@@ -1,0 +1,29 @@
+From 0ac333945e539cd1bb2beb5da878eadf53cbadcd Mon Sep 17 00:00:00 2001
+From: Francisco Molina <fjmolinas28@gmail.com>
+Date: Mon, 27 Apr 2026 19:53:44 +0200
+Subject: [PATCH] sdl: only enable text input with keyboard
+
+---
+ sdl/sdl.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/sdl/sdl.c b/sdl/sdl.c
+index 6cc6783..2eff498 100644
+--- a/sdl/sdl.c
++++ b/sdl/sdl.c
+@@ -140,7 +140,13 @@ void sdl_init(void)
+     SDL_SetWindowPosition(monitor2.window, x - (SDL_HOR_RES * SDL_ZOOM) / 2 - 10, y);
+ #endif
+ 
++#if USE_KEYBOARD
++    /* Only enable SDL text input when the LVGL keyboard driver is in use.
++     * On native Linux this avoids the X11/XIM startup path for pointer-only
++     * applications.
++     */
+     SDL_StartTextInput();
++#endif
+ 
+ #if LV_TICK_CUSTOM == 0
+     /* Tick init.
+-- 
+2.54.0
