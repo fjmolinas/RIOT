@@ -52,20 +52,20 @@ typedef enum {
  * @name      Max delays for SGP30 I2C commands completion
  * @{
  */
-#define SGP30_DELAY_INIT_AIR_QUALITY        (10 * US_PER_MS)
-#define SGP30_DELAY_MEASURE_AIR_QUALITY     (12 * US_PER_MS)
-#define SGP30_DELAY_GET_BASELINE            (10 * US_PER_MS)
-#define SGP30_DELAY_SET_BASELINE            (10 * US_PER_MS)
-#define SGP30_DELAY_SET_HUMIDITY            (10 * US_PER_MS)
-#define SGP30_DELAY_MEASURE_TEST            (220 * US_PER_MS)
-#define SGP30_DELAY_GET_FEATURE_SET_VERSION (2 * US_PER_MS)
-#define SGP30_DELAY_MEASURE_RAW_SIGNALS     (25 * US_PER_MS)
-#define SGP30_DELAY_READ_SERIAL             (500)
-#define SGP30_DELAY_SOFT_RESET              (60 * US_PER_MS)
+#define SGP30_DELAY_INIT_AIR_QUALITY        (10)
+#define SGP30_DELAY_MEASURE_AIR_QUALITY     (12)
+#define SGP30_DELAY_GET_BASELINE            (10)
+#define SGP30_DELAY_SET_BASELINE            (10)
+#define SGP30_DELAY_SET_HUMIDITY            (10)
+#define SGP30_DELAY_MEASURE_TEST            (220)
+#define SGP30_DELAY_GET_FEATURE_SET_VERSION (2)
+#define SGP30_DELAY_MEASURE_RAW_SIGNALS     (25)
+#define SGP30_DELAY_READ_SERIAL             (1) /* rounded-up 500us */
+#define SGP30_DELAY_SOFT_RESET              (60)
 /** @} */
 
 /* Device power up time */
-#define SGP30_POWER_UP_TIME         (60 * US_PER_MS)
+#define SGP30_POWER_UP_TIME         (60)
 /* Polynomial used in crc check */
 #define SGP30_CRC8_POLYNOMIAL       0x31
 /* Seed used in crc check */
@@ -110,10 +110,10 @@ static int _rx_tx_data(sgp30_t *dev, uint16_t cmd, uint8_t *data,
     if (res == 0 && do_read) {
         /* delay for command completion */
         if (!irq_is_in()) {
-            ztimer_sleep(ZTIMER_USEC, delay);
+            ztimer_sleep(ZTIMER_MSEC, delay);
         }
         else {
-            ztimer_spin(ZTIMER_USEC, delay);
+            ztimer_spin(ZTIMER_MSEC, delay);
         }
         res = i2c_read_bytes(dev->params.i2c_dev, SGP30_I2C_ADDRESS,
                              data, len, 0);
@@ -157,7 +157,7 @@ static void _read_cb(void *arg)
         dev->ready = true;
     }
     _read_measurements(dev, &dev->_data);
-    dev->_data.timestamp = ztimer_now(ZTIMER_USEC);
+    dev->_data.timestamp = ztimer_now(ZTIMER_MSEC);
     event_timeout_set(&dev->_timeout, SGP30_RECOMMENDED_SAMPLING_PERIOD);
 }
 #endif
@@ -186,7 +186,7 @@ int sgp30_init(sgp30_t *dev, const sgp30_params_t *params)
 #endif
 
     /* delay while powering up */
-    ztimer_sleep(ZTIMER_USEC, SGP30_POWER_UP_TIME);
+    ztimer_sleep(ZTIMER_MSEC, SGP30_POWER_UP_TIME);
 
     /* read future set */
     uint16_t version;
